@@ -1,0 +1,1032 @@
+{
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "Vero OMS Streaming API",
+    "version": "1.0.23",
+    "description": "Tài liệu AsyncAPI cho các stream Centrifugo/WebSocket của Vero OMS. Client đăng ký kênh và nhận publication JSON UTF-8."
+  },
+  "defaultContentType": "application/json",
+  "servers": {
+    "centrifugoWebSocket": {
+      "host": "streaming.verolabs.co",
+      "protocol": "wss",
+      "description": "Centrifugo WebSocket endpoint từ tenant.json. Client mobile hiện kết nối không kèm token; server cho phép đăng ký anonymous với các kênh này.",
+      "bindings": {
+        "ws": {
+          "method": "GET"
+        }
+      },
+      "x-client": {
+        "library": "centrifuge",
+        "connectTimeoutSeconds": 10,
+        "minReconnectDelaySeconds": 1,
+        "maxReconnectDelaySeconds": 30,
+        "auth": "anonymous"
+      },
+      "x-alternateTransportsFromTenant": {
+        "httpStream": "https://streaming.verolabs.co/connection/http_stream",
+        "sse": "https://streaming.verolabs.co/connection/sse",
+        "note": "Configured in tenant.json but not used by the current mobile StreamingService."
+      },
+      "pathname": "/connection/websocket"
+    }
+  },
+  "channels": {
+    "mkt:{dataType}:{symbol}": {
+      "address": "mkt:{dataType}:{symbol}",
+      "description": "Kênh market-data tổng quát dùng bởi subscribeMarketData(symbol, dataType). Các helper cụ thể bên dưới dùng định dạng kênh chính xác hơn cho depth, OHLCV và product info.",
+      "parameters": {
+        "dataType": {
+          "$ref": "#/components/parameters/dataType"
+        },
+        "symbol": {
+          "$ref": "#/components/parameters/symbol"
+        }
+      },
+      "messages": {
+        "GenericMarketDataMessage": {
+          "$ref": "#/components/messages/GenericMarketDataMessage"
+        }
+      },
+      "servers": [
+        {
+          "$ref": "#/servers/centrifugoWebSocket"
+        }
+      ]
+    },
+    "mkt:depth:{symbol}-{boardId}": {
+      "address": "mkt:depth:{symbol}-{boardId}",
+      "description": "Cập nhật độ sâu sổ lệnh. boardId mặc định hiện tại của ứng dụng là G1.",
+      "parameters": {
+        "symbol": {
+          "$ref": "#/components/parameters/symbol"
+        },
+        "boardId": {
+          "$ref": "#/components/parameters/boardId"
+        }
+      },
+      "messages": {
+        "MarketDepthMessage": {
+          "$ref": "#/components/messages/MarketDepthMessage"
+        }
+      },
+      "servers": [
+        {
+          "$ref": "#/servers/centrifugoWebSocket"
+        }
+      ]
+    },
+    "mkt:OhlcvDTO:{symbol}:{time}": {
+      "address": "mkt:OhlcvDTO:{symbol}:{time}",
+      "description": "Cập nhật nến/OHLCV. time mặc định hiện tại của ứng dụng là 60 giây.",
+      "parameters": {
+        "symbol": {
+          "$ref": "#/components/parameters/symbol"
+        },
+        "time": {
+          "$ref": "#/components/parameters/time"
+        }
+      },
+      "messages": {
+        "OhlcvMessage": {
+          "$ref": "#/components/messages/OhlcvMessage"
+        }
+      },
+      "servers": [
+        {
+          "$ref": "#/servers/centrifugoWebSocket"
+        }
+      ]
+    },
+    "mkt:productInfo:{symbol}-{boardId}": {
+      "address": "mkt:productInfo:{symbol}-{boardId}",
+      "description": "Cập nhật product info/quote. boardId mặc định hiện tại của ứng dụng là G1.",
+      "parameters": {
+        "symbol": {
+          "$ref": "#/components/parameters/symbol"
+        },
+        "boardId": {
+          "$ref": "#/components/parameters/boardId"
+        }
+      },
+      "messages": {
+        "ProductInfoMessage": {
+          "$ref": "#/components/messages/ProductInfoMessage"
+        }
+      },
+      "servers": [
+        {
+          "$ref": "#/servers/centrifugoWebSocket"
+        }
+      ]
+    },
+    "order:{accountId}": {
+      "address": "order:{accountId}",
+      "description": "Cập nhật lệnh realtime cho một tài khoản.",
+      "parameters": {
+        "accountId": {
+          "$ref": "#/components/parameters/accountId"
+        }
+      },
+      "messages": {
+        "OrderMessage": {
+          "$ref": "#/components/messages/OrderMessage"
+        }
+      },
+      "servers": [
+        {
+          "$ref": "#/servers/centrifugoWebSocket"
+        }
+      ]
+    },
+    "order:Account:{accountId}": {
+      "address": "order:Account:{accountId}",
+      "description": "Cập nhật tài khoản/danh mục realtime.",
+      "parameters": {
+        "accountId": {
+          "$ref": "#/components/parameters/accountId"
+        }
+      },
+      "messages": {
+        "AccountMessage": {
+          "$ref": "#/components/messages/AccountMessage"
+        }
+      },
+      "servers": [
+        {
+          "$ref": "#/servers/centrifugoWebSocket"
+        }
+      ]
+    },
+    "order:OrderExecutionReport:{connectionId}": {
+      "address": "order:OrderExecutionReport:{connectionId}",
+      "description": "Báo cáo thực thi lệnh realtime cho connection_id hiện tại.",
+      "parameters": {
+        "connectionId": {
+          "$ref": "#/components/parameters/connectionId"
+        }
+      },
+      "messages": {
+        "OrderMessage": {
+          "$ref": "#/components/messages/OrderMessage"
+        }
+      },
+      "servers": [
+        {
+          "$ref": "#/servers/centrifugoWebSocket"
+        }
+      ]
+    },
+    "order:{notificationType}:{accountId}": {
+      "address": "order:{notificationType}:{accountId}",
+      "description": "Thông báo giao dịch/tài khoản. Ứng dụng đăng ký Deposit, ForceClose, MarginCall và Withdraw.",
+      "parameters": {
+        "notificationType": {
+          "$ref": "#/components/parameters/notificationType"
+        },
+        "accountId": {
+          "$ref": "#/components/parameters/accountId"
+        }
+      },
+      "messages": {
+        "NotificationMessage": {
+          "$ref": "#/components/messages/NotificationMessage"
+        }
+      },
+      "servers": [
+        {
+          "$ref": "#/servers/centrifugoWebSocket"
+        }
+      ]
+    }
+  },
+  "operations": {
+    "receiveGenericMarketData": {
+      "action": "receive",
+      "title": "Nhận cập nhật dữ liệu thị trường tổng quát",
+      "summary": "Nhận cập nhật dữ liệu thị trường tổng quát",
+      "channel": {
+        "$ref": "#/channels/mkt:{dataType}:{symbol}"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/mkt:{dataType}:{symbol}/messages/GenericMarketDataMessage"
+        }
+      ]
+    },
+    "receiveMarketDepth": {
+      "action": "receive",
+      "title": "Nhận cập nhật bid/ask depth",
+      "summary": "Nhận cập nhật bid/ask depth",
+      "channel": {
+        "$ref": "#/channels/mkt:depth:{symbol}-{boardId}"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/mkt:depth:{symbol}-{boardId}/messages/MarketDepthMessage"
+        }
+      ]
+    },
+    "receiveOhlcv": {
+      "action": "receive",
+      "title": "Nhận cập nhật nến OHLCV",
+      "summary": "Nhận cập nhật nến OHLCV",
+      "channel": {
+        "$ref": "#/channels/mkt:OhlcvDTO:{symbol}:{time}"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/mkt:OhlcvDTO:{symbol}:{time}/messages/OhlcvMessage"
+        }
+      ]
+    },
+    "receiveProductInfo": {
+      "action": "receive",
+      "title": "Nhận cập nhật thông tin sản phẩm",
+      "summary": "Nhận cập nhật thông tin sản phẩm",
+      "channel": {
+        "$ref": "#/channels/mkt:productInfo:{symbol}-{boardId}"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/mkt:productInfo:{symbol}-{boardId}/messages/ProductInfoMessage"
+        }
+      ]
+    },
+    "receiveOrderUpdates": {
+      "action": "receive",
+      "title": "Nhận cập nhật lệnh",
+      "summary": "Nhận cập nhật lệnh",
+      "channel": {
+        "$ref": "#/channels/order:{accountId}"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/order:{accountId}/messages/OrderMessage"
+        }
+      ]
+    },
+    "receiveAccountUpdates": {
+      "action": "receive",
+      "title": "Nhận cập nhật tài khoản",
+      "summary": "Nhận cập nhật tài khoản",
+      "channel": {
+        "$ref": "#/channels/order:Account:{accountId}"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/order:Account:{accountId}/messages/AccountMessage"
+        }
+      ]
+    },
+    "receiveOrderExecutionReports": {
+      "action": "receive",
+      "title": "Nhận báo cáo thực thi lệnh",
+      "summary": "Nhận báo cáo thực thi lệnh",
+      "channel": {
+        "$ref": "#/channels/order:OrderExecutionReport:{connectionId}"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/order:OrderExecutionReport:{connectionId}/messages/OrderMessage"
+        }
+      ]
+    },
+    "receiveNotifications": {
+      "action": "receive",
+      "title": "Nhận sự kiện thông báo",
+      "summary": "Nhận sự kiện thông báo",
+      "channel": {
+        "$ref": "#/channels/order:{notificationType}:{accountId}"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/order:{notificationType}:{accountId}/messages/NotificationMessage"
+        }
+      ]
+    }
+  },
+  "components": {
+    "parameters": {
+      "symbol": {
+        "description": "Mã giao dịch, ví dụ VN30F1M.",
+        "schema": {
+          "type": "string",
+          "examples": [
+            "VN30F1M"
+          ]
+        }
+      },
+      "boardId": {
+        "description": "Mã bảng giao dịch. Ứng dụng mobile mặc định dùng G1.",
+        "schema": {
+          "type": "string",
+          "default": "G1",
+          "examples": [
+            "G1"
+          ]
+        }
+      },
+      "time": {
+        "description": "Độ phân giải nến tính bằng giây. Ứng dụng dùng 60 cho 1 phút và 86400 cho ngày.",
+        "schema": {
+          "type": "integer",
+          "default": 60,
+          "enum": [
+            60,
+            86400
+          ]
+        }
+      },
+      "dataType": {
+        "description": "Loại dữ liệu thị trường được cấu hình trong ApiConfig.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "depth",
+            "productInfo",
+            "productStat",
+            "tradeLog"
+          ]
+        }
+      },
+      "accountId": {
+        "description": "ID tài khoản giao dịch.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "connectionId": {
+        "description": "Centrifugo connection id của kết nối client hiện tại.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "notificationType": {
+        "description": "Loại topic thông báo được ứng dụng mobile hỗ trợ.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "Deposit",
+            "ForceClose",
+            "MarginCall",
+            "Withdraw"
+          ]
+        }
+      }
+    },
+    "messages": {
+      "GenericMarketDataMessage": {
+        "name": "GenericMarketData",
+        "title": "Publication dữ liệu thị trường tổng quát",
+        "summary": "Publication dữ liệu thị trường cho productStat, tradeLog hoặc topic market-data thô khác.",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "#/components/schemas/GenericObject"
+        },
+        "x-handler": "StreamingService._handleMarketData"
+      },
+      "MarketDepthMessage": {
+        "name": "MarketDepth",
+        "title": "Publication độ sâu sổ lệnh",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "#/components/schemas/PriceDepth"
+        },
+        "x-handler": "StreamingService._handleDepthUpdate"
+      },
+      "OhlcvMessage": {
+        "name": "Ohlcv",
+        "title": "Publication nến OHLCV",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "#/components/schemas/OhlcvBar"
+        },
+        "x-handler": "StreamingService._handleOhlcvUpdate"
+      },
+      "ProductInfoMessage": {
+        "name": "ProductInfo",
+        "title": "Publication thông tin sản phẩm",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "#/components/schemas/SymbolInfo"
+        },
+        "x-handler": "StreamingService._handleMarketData"
+      },
+      "OrderMessage": {
+        "name": "Order",
+        "title": "Publication lệnh",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "#/components/schemas/Order"
+        },
+        "x-handler": "StreamingService._handleOrderUpdate"
+      },
+      "AccountMessage": {
+        "name": "Account",
+        "title": "Publication tài khoản",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "#/components/schemas/Account"
+        },
+        "x-handler": "StreamingService._handleAccountUpdate"
+      },
+      "NotificationMessage": {
+        "name": "Notification",
+        "title": "Publication thông báo",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "#/components/schemas/StreamingNotification"
+        },
+        "x-handler": "StreamingService._handleNotification"
+      }
+    },
+    "schemas": {
+      "GenericObject": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "OrderSide": {
+        "type": "string",
+        "enum": [
+          "B",
+          "S"
+        ],
+        "description": "B = Buy, S = Sell."
+      },
+      "OrderType": {
+        "type": "string",
+        "enum": [
+          "LO",
+          "MO",
+          "ATO",
+          "ATC",
+          "MTL"
+        ],
+        "description": "LO = Limit, MO = Market, ATO = At The Open, ATC = At The Close, MTL = Market To Limit."
+      },
+      "OrderStatus": {
+        "type": "string",
+        "description": "The app handles FIX-style status codes and text aliases.",
+        "enum": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "pending",
+          "new",
+          "open",
+          "partial_filled",
+          "partially_filled",
+          "filled",
+          "complete",
+          "completed",
+          "cancelled",
+          "canceled",
+          "stopped",
+          "stop",
+          "rejected",
+          "reject"
+        ]
+      },
+      "Order": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "orderID": {
+            "type": "string"
+          },
+          "order_id": {
+            "type": "string",
+            "description": "Snake_case alias accepted by the mobile parser."
+          },
+          "refOrderID": {
+            "type": "string"
+          },
+          "ref_order_id": {
+            "type": "string",
+            "description": "Snake_case alias accepted by the mobile parser."
+          },
+          "externalOrderID": {
+            "type": "string"
+          },
+          "externalSecondOrderID": {
+            "type": "string"
+          },
+          "accountID": {
+            "type": "string"
+          },
+          "account_id": {
+            "type": "string",
+            "description": "Snake_case alias accepted by the mobile parser."
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "orderSide": {
+            "$ref": "#/components/schemas/OrderSide"
+          },
+          "order_side": {
+            "$ref": "#/components/schemas/OrderSide"
+          },
+          "orderStatus": {
+            "$ref": "#/components/schemas/OrderStatus"
+          },
+          "order_status": {
+            "$ref": "#/components/schemas/OrderStatus"
+          },
+          "orderType": {
+            "$ref": "#/components/schemas/OrderType"
+          },
+          "order_type": {
+            "$ref": "#/components/schemas/OrderType"
+          },
+          "orderEntryPrice": {
+            "type": "number"
+          },
+          "order_entry_price": {
+            "type": "number"
+          },
+          "orderEntryQty": {
+            "type": "integer"
+          },
+          "order_entry_qty": {
+            "type": "integer"
+          },
+          "orderCurrentPrice": {
+            "type": "number"
+          },
+          "order_current_price": {
+            "type": "number"
+          },
+          "orderCurrentQty": {
+            "type": "integer"
+          },
+          "order_current_qty": {
+            "type": "integer"
+          },
+          "filledQty": {
+            "type": "integer"
+          },
+          "filled_qty": {
+            "type": "integer"
+          },
+          "avgFillPrice": {
+            "type": "number"
+          },
+          "avg_fill_price": {
+            "type": "number"
+          },
+          "cancelledQty": {
+            "type": "integer"
+          },
+          "cancelled_qty": {
+            "type": "integer"
+          },
+          "orderText": {
+            "type": "string"
+          },
+          "unixUTCTimeMs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix timestamp in milliseconds."
+          },
+          "createunixUTCTimeMs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix timestamp in milliseconds."
+          },
+          "persisState": {
+            "type": "string"
+          },
+          "algoID": {
+            "type": "string"
+          },
+          "positionID": {
+            "type": "string"
+          },
+          "parentOrderId": {
+            "type": "string"
+          }
+        }
+      },
+      "Account": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "totalEquity": {
+            "type": "number"
+          },
+          "credit": {
+            "type": "number"
+          },
+          "maintenanceMargin": {
+            "type": "number"
+          },
+          "tempMaintenanceMargin": {
+            "type": "number"
+          },
+          "totalRealizedPnl": {
+            "type": "number"
+          },
+          "totalUnrealizedPnl": {
+            "type": "number"
+          },
+          "tradingPower": {
+            "type": "number"
+          },
+          "crossMargin": {
+            "type": "boolean"
+          },
+          "refCode": {
+            "type": "string"
+          },
+          "positions": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Position"
+            }
+          },
+          "tempPositions": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/TempPosition"
+            }
+          }
+        }
+      },
+      "Position": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "avgPrice": {
+            "type": "number"
+          },
+          "qty": {
+            "type": "integer",
+            "description": "Positive = long, negative = short."
+          },
+          "marketPrice": {
+            "type": "number"
+          },
+          "marketValue": {
+            "type": "number"
+          },
+          "portPercent": {
+            "type": "number"
+          },
+          "realizePnl": {
+            "type": "number"
+          },
+          "unrealizePnl": {
+            "type": "number"
+          },
+          "coveredMarginCall": {
+            "type": "number"
+          },
+          "marginRatio": {
+            "$ref": "#/components/schemas/MarginRatio"
+          },
+          "forceClosePrice": {
+            "type": "number"
+          },
+          "forceCloseStatus": {
+            "type": "string"
+          },
+          "marginCallPrice": {
+            "type": "number"
+          },
+          "marginCallStatus": {
+            "type": "string"
+          }
+        }
+      },
+      "TempPosition": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "netQty": {
+            "type": "integer"
+          },
+          "avgPrice": {
+            "type": "number"
+          },
+          "orderCount": {
+            "type": "integer"
+          },
+          "marketPrice": {
+            "type": "number"
+          }
+        }
+      },
+      "MarginRatio": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "marginRatio": {
+            "type": "number"
+          },
+          "forceCloseRate": {
+            "type": "number"
+          },
+          "marginCallRate": {
+            "type": "number"
+          },
+          "tradingFee": {
+            "type": "number"
+          },
+          "productCommission": {
+            "type": "number"
+          },
+          "tax": {
+            "type": "number"
+          },
+          "overnightFee": {
+            "type": "number"
+          }
+        }
+      },
+      "PriceDepth": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "seq": {
+            "type": "number"
+          },
+          "time": {
+            "type": "number"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "boardID": {
+            "type": "string"
+          },
+          "bidPriceDepth": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriceLevel"
+            }
+          },
+          "askPriceDepth": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriceLevel"
+            }
+          }
+        }
+      },
+      "PriceLevel": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "prc": {
+            "type": "number"
+          },
+          "vol": {
+            "type": "number"
+          }
+        }
+      },
+      "OhlcvBar": {
+        "type": "object",
+        "required": [
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "unixTime": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix timestamp. The mobile handler also accepts time."
+          },
+          "time": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Alias accepted by the mobile handler."
+          },
+          "open": {
+            "type": "number"
+          },
+          "high": {
+            "type": "number"
+          },
+          "low": {
+            "type": "number"
+          },
+          "close": {
+            "type": "number"
+          },
+          "volume": {
+            "type": "number"
+          }
+        }
+      },
+      "SymbolInfo": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "seq": {
+            "type": "number"
+          },
+          "time": {
+            "type": "number"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "boardID": {
+            "type": "string"
+          },
+          "currFR": {
+            "type": "number"
+          },
+          "totalFR": {
+            "type": "number"
+          },
+          "totBuyFR": {
+            "type": "number"
+          },
+          "totSellFR": {
+            "type": "number"
+          },
+          "nomiPrc": {
+            "type": "number"
+          },
+          "ceilPrc": {
+            "type": "number"
+          },
+          "floorPrc": {
+            "type": "number"
+          },
+          "lsPrc": {
+            "type": "number"
+          },
+          "lsVol": {
+            "type": "number"
+          },
+          "AucEstPrc": {
+            "type": "number"
+          },
+          "AucEstVol": {
+            "type": "number"
+          },
+          "isAuction": {
+            "type": "boolean"
+          },
+          "openPrc": {
+            "type": "number"
+          },
+          "closePrc": {
+            "type": "number"
+          },
+          "highPrc": {
+            "type": "number"
+          },
+          "lowPrc": {
+            "type": "number"
+          },
+          "vWAP": {
+            "type": "number"
+          },
+          "totVol": {
+            "type": "number"
+          },
+          "totVal": {
+            "type": "number"
+          },
+          "totVolPT": {
+            "type": "number"
+          },
+          "totValPT": {
+            "type": "number"
+          },
+          "lsWay": {
+            "type": "number"
+          },
+          "dynInfo": {
+            "type": "string"
+          },
+          "marketMakingPossible": {
+            "type": "string"
+          },
+          "halt": {
+            "type": "string"
+          },
+          "liquidationTrading": {
+            "type": "string"
+          },
+          "tradingSession": {
+            "type": "string"
+          },
+          "boardEventID": {
+            "type": "string"
+          },
+          "sessionOpenCloseCode": {
+            "type": "string"
+          },
+          "openInterest": {
+            "type": "number"
+          }
+        }
+      },
+      "NotificationType": {
+        "type": "string",
+        "enum": [
+          "Deposit",
+          "ForceClose",
+          "MarginCall",
+          "Withdraw"
+        ]
+      },
+      "StreamingNotification": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "Type": {
+            "$ref": "#/components/schemas/NotificationType"
+          },
+          "type": {
+            "$ref": "#/components/schemas/NotificationType"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "account_id": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "amount": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "position": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "account": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "MessageID": {
+            "type": "string"
+          },
+          "messageID": {
+            "type": "string"
+          },
+          "message_id": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "x-source": {
+    "tenantConfig": "tenant.json",
+    "serviceFile": "lib/services/streaming_service.dart"
+  }
+}

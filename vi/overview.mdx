@@ -1,0 +1,58 @@
+---
+title: 'Tổng quan'
+description: 'Tài liệu Vero OMS API cho tích hợp quản lý lệnh'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<div style={{ width: '100%', height: 4, marginBottom: 24, borderRadius: 2, background: 'rgba(0,0,0,0.08)' }}>
+  <div style={{ width: '12.5%', height: '100%', borderRadius: 2, background: 'linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-light) 50%, var(--accent-dark) 100%)' }} />
+</div>
+
+Vero OMS API giúp ứng dụng tích hợp với các quy trình quản lý lệnh của Vero qua REST/JSON và Centrifugo WebSocket streams. Tham chiếu REST được tạo từ `openapi.json`; tham chiếu streaming được tạo từ `asyncapi.json`.
+
+<CardGroup cols={4}>
+  <Card title="Xác thực" icon="key">
+    Dùng Ory native flows, `X-Session-Token` và bearer JWT.
+  </Card>
+  <Card title="Giao dịch" icon="arrow-right-arrow-left">
+    Làm việc với tài khoản, lệnh, khớp lệnh, lịch sử, rút tiền và tài khoản ngân hàng.
+  </Card>
+  <Card title="Dữ liệu thị trường" icon="chart-line">
+    Lấy watchlist, tìm kiếm mã, product master và lịch sử OHLCV.
+  </Card>
+  <Card title="Streaming" icon="tower-broadcast">
+    Subscribe kênh market, order, account và notification qua WebSocket.
+  </Card>
+</CardGroup>
+
+## Độ phủ API
+
+| Mục | Nguồn |
+|---|---|
+| REST API | `openapi.json`, 44 HTTP operations |
+| Streaming API | `asyncapi.json`, 8 WebSocket channel patterns |
+| Tham chiếu tiếng Anh | Tạo từ spec docs EN đã bản địa hóa |
+| Tham chiếu tiếng Việt | Tạo từ spec docs VI đã bản địa hóa |
+
+## Cách đọc tài liệu
+
+<Steps>
+  <Step title="Bắt đầu với hướng dẫn nhanh">
+    Xem REST base URL, header xác thực và WebSocket endpoint.
+  </Step>
+  <Step title="Mở REST API">
+    Dùng các trang REST được tạo tự động để xem tham số request, schema và ví dụ.
+  </Step>
+  <Step title="Mở Streaming API">
+    Dùng các trang streaming được tạo tự động để xem channel, tham số và message.
+  </Step>
+  <Step title="Kiểm tra tích hợp">
+    Dùng checklist hỗ trợ để gửi đủ thông tin request khi cần gỡ lỗi.
+  </Step>
+</Steps>

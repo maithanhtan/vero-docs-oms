@@ -1,0 +1,81 @@
+---
+title: 'Receive product info updates'
+description: 'Receive product info updates'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+mkt:productInfo:{symbol}-{boardId}
+```
+
+## Description
+
+Product info/quote updates. Current app default boardId is G1.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Channel parameters
+
+| Parameter | Type | Description | Values |
+|---|---|---|---|
+| `symbol` | string | Trading symbol, for example VN30F1M. | example: VN30F1M |
+| `boardId` | string | Trading board id. The mobile app defaults to G1. | default: G1<br />example: G1 |
+
+## Message
+
+| Item | Value |
+|---|---|
+| Operation | `receiveProductInfo` |
+| Name | `ProductInfo` |
+| Payload | `SymbolInfo` |
+| Handler | `StreamingService._handleMarketData` |
+
+## Payload schema
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | string | - |
+| `seq` | number | - |
+| `time` | number | - |
+| `symbol` | string | - |
+| `boardID` | string | - |
+| `currFR` | number | - |
+| `totalFR` | number | - |
+| `totBuyFR` | number | - |
+| `totSellFR` | number | - |
+| `nomiPrc` | number | - |
+| `ceilPrc` | number | - |
+| `floorPrc` | number | - |
+| `lsPrc` | number | - |
+| `lsVol` | number | - |
+| `AucEstPrc` | number | - |
+| `AucEstVol` | number | - |
+| `isAuction` | boolean | - |
+| `openPrc` | number | - |
+| `closePrc` | number | - |
+| `highPrc` | number | - |
+| `lowPrc` | number | - |
+| `vWAP` | number | - |
+| `totVol` | number | - |
+| `totVal` | number | - |
+| `totVolPT` | number | - |
+| `totValPT` | number | - |
+| `lsWay` | number | - |
+| `dynInfo` | string | - |
+| `marketMakingPossible` | string | - |
+| `halt` | string | - |
+| `liquidationTrading` | string | - |
+| `tradingSession` | string | - |
+| `boardEventID` | string | - |
+| `sessionOpenCloseCode` | string | - |
+| `openInterest` | number | - |
+
+<Info>
+This page is generated from `asyncapi.json`.
+</Info>

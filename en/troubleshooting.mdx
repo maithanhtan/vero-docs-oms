@@ -1,0 +1,60 @@
+---
+title: 'Troubleshooting'
+description: 'Common issues when calling Vero OMS API'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<div style={{ width: '100%', height: 4, marginBottom: 24, borderRadius: 2, background: 'rgba(0,0,0,0.08)' }}>
+  <div style={{ width: '100%', height: '100%', borderRadius: 2, background: 'linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-light) 50%, var(--accent-dark) 100%)' }} />
+</div>
+
+## Quick checklist
+
+<Steps>
+  <Step title="Check method and path">
+    Compare your request against the endpoint definition provided for your integration.
+  </Step>
+  <Step title="Check credentials">
+    For `401`, verify the bearer JWT or `X-Session-Token` expected by the endpoint.
+  </Step>
+  <Step title="Check time format">
+    Use ISO 8601 UTC timestamps with a `Z` suffix when sending date-time parameters.
+  </Step>
+  <Step title="Check response status">
+    Use the status code and response body to identify the failing validation rule.
+  </Step>
+</Steps>
+
+## Common errors
+
+| Symptom | Common cause | Fix |
+|---|---|---|
+| `400 Invalid query parameter` | Missing required parameter or invalid time format | Check required params and use UTC `Z` timestamps |
+| `401 Unauthorized` | Missing or invalid credential | Check bearer JWT or `X-Session-Token` |
+| `404 Not found` | Resource ID or path does not exist | Verify the requested resource |
+| `422 Unprocessable` | Correct format but unsupported value | Check documented enum values and constraints |
+| `429 Too many requests` | Request limit exceeded | Reduce request rate and retry later |
+| `503 Unavailable` | API temporarily unavailable | Retry with backoff |
+
+## Time format examples
+
+| Valid | Invalid |
+|---|---|
+| `2026-05-15T00:00:00Z` | `2026-05-15 00:00:00` |
+| `2026-05-15T00:00:00.123Z` | `2026-05-15T07:00:00+07:00` |
+
+## Information to include when asking for support
+
+| Information | Example |
+|---|---|
+| Endpoint | Method and path being called |
+| Query params | Request query string or JSON body |
+| HTTP status | `400`, `401`, `404`, `429`, `503` |
+| Response body | JSON response or error body |
+| Request time | UTC timestamp |

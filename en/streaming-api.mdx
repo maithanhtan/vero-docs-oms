@@ -1,0 +1,39 @@
+---
+title: 'Streaming API'
+description: 'WebSocket channels generated from asyncapi.json'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+Vero OMS Streaming API uses Centrifugo over WebSocket for market data, order, account and notification publications.
+
+<CardGroup cols={3}>
+  <Card title="AsyncAPI source" icon="file-code">
+    The streaming reference is generated from `asyncapi.json`; docs use a Mintlify-compatible AsyncAPI 3.0 mirror.
+  </Card>
+  <Card title="WebSocket URL" icon="tower-broadcast">
+    `wss://streaming.verolabs.co/connection/websocket`
+  </Card>
+  <Card title="Coverage" icon="diagram-project">
+    8 channel patterns are available in the Streaming API reference.
+  </Card>
+</CardGroup>
+
+## Client flow
+
+<Steps>
+  <Step title="Connect">
+    Open a Centrifugo WebSocket connection to the streaming server.
+  </Step>
+  <Step title="Subscribe">
+    Subscribe to the channel pattern that matches the account, symbol or notification type you need.
+  </Step>
+  <Step title="Handle publications">
+    Decode UTF-8 JSON publications and route them by channel and payload schema.
+  </Step>
+</Steps>

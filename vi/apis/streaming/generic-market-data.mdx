@@ -1,0 +1,45 @@
+---
+title: 'Nhận cập nhật dữ liệu thị trường tổng quát'
+description: 'Nhận cập nhật dữ liệu thị trường tổng quát'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+mkt:{dataType}:{symbol}
+```
+
+## Mô tả
+
+Kênh market-data tổng quát dùng bởi subscribeMarketData(symbol, dataType). Các helper cụ thể dùng định dạng kênh chính xác hơn cho depth, OHLCV và product info.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Tham số channel
+
+| Tham số | Kiểu | Mô tả | Giá trị |
+|---|---|---|---|
+| `dataType` | string | Loại dữ liệu thị trường được cấu hình trong ApiConfig. | enum: depth, productInfo, productStat, tradeLog |
+| `symbol` | string | Mã giao dịch, ví dụ VN30F1M. | example: VN30F1M |
+
+## Message
+
+| Mục | Giá trị |
+|---|---|
+| Operation | `receiveGenericMarketData` |
+| Tên | `GenericMarketData` |
+| Payload | `GenericObject` |
+| Handler | `StreamingService._handleMarketData` |
+
+## Payload schema
+
+Payload là object JSON linh hoạt và có thể chứa thêm field theo publication thực tế.
+
+<Info>
+Trang này được tạo từ `asyncapi.json`.
+</Info>

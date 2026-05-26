@@ -1,0 +1,58 @@
+---
+title: 'Overview'
+description: 'Vero OMS API documentation for order management integrations'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<div style={{ width: '100%', height: 4, marginBottom: 24, borderRadius: 2, background: 'rgba(0,0,0,0.08)' }}>
+  <div style={{ width: '12.5%', height: '100%', borderRadius: 2, background: 'linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-light) 50%, var(--accent-dark) 100%)' }} />
+</div>
+
+Vero OMS API helps applications integrate with Vero order management workflows through REST/JSON and Centrifugo WebSocket streams. The REST reference is generated from `openapi.json`; the streaming reference is generated from `asyncapi.json`.
+
+<CardGroup cols={4}>
+  <Card title="Authentication" icon="key">
+    Use Ory native flows, `X-Session-Token` and bearer JWT credentials.
+  </Card>
+  <Card title="Trading" icon="arrow-right-arrow-left">
+    Work with accounts, orders, trades, history, withdrawals and bank accounts.
+  </Card>
+  <Card title="Market Data" icon="chart-line">
+    Fetch watchlists, symbol search, product master data and OHLCV history.
+  </Card>
+  <Card title="Streaming" icon="tower-broadcast">
+    Subscribe to market, order, account and notification channels over WebSocket.
+  </Card>
+</CardGroup>
+
+## API coverage
+
+| Section | Source |
+|---|---|
+| REST API | `openapi.json`, 44 HTTP operations |
+| Streaming API | `asyncapi.json`, 8 WebSocket channel patterns |
+| English reference | Generated from localized EN docs specs |
+| Vietnamese reference | Generated from localized VI docs specs |
+
+## How to use these docs
+
+<Steps>
+  <Step title="Start with Quickstart">
+    Learn the REST base URL, authentication headers and WebSocket endpoint.
+  </Step>
+  <Step title="Open REST API">
+    Use the generated REST pages for request parameters, schemas and examples.
+  </Step>
+  <Step title="Open Streaming API">
+    Use the generated streaming pages for channel names, parameters and messages.
+  </Step>
+  <Step title="Validate integration">
+    Use the support checklist to share request details when debugging.
+  </Step>
+</Steps>

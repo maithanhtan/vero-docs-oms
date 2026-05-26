@@ -1,0 +1,57 @@
+---
+title: 'Receive notification events'
+description: 'Receive notification events'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+order:{notificationType}:{accountId}
+```
+
+## Description
+
+Trading/account notifications. The app subscribes to Deposit, ForceClose, MarginCall and Withdraw.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Channel parameters
+
+| Parameter | Type | Description | Values |
+|---|---|---|---|
+| `notificationType` | string | Notification topic type supported by the mobile app. | enum: Deposit, ForceClose, MarginCall, Withdraw |
+| `accountId` | string | Trading account id. | - |
+
+## Message
+
+| Item | Value |
+|---|---|
+| Operation | `receiveNotifications` |
+| Name | `Notification` |
+| Payload | `StreamingNotification` |
+| Handler | `StreamingService._handleNotification` |
+
+## Payload schema
+
+| Field | Type | Notes |
+|---|---|---|
+| `Type` | NotificationType | - |
+| `type` | NotificationType | - |
+| `accountId` | string | - |
+| `account_id` | string | - |
+| `symbol` | string | - |
+| `amount` | number \| string | - |
+| `position` | object | - |
+| `account` | object | - |
+| `MessageID` | string | - |
+| `messageID` | string | - |
+| `message_id` | string | - |
+
+<Info>
+This page is generated from `asyncapi.json`.
+</Info>

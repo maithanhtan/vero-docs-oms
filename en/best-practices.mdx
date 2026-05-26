@@ -1,0 +1,58 @@
+---
+title: 'Best Practices'
+description: 'Use Vero OMS API efficiently and reliably'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<div style={{ width: '100%', height: 4, marginBottom: 24, borderRadius: 2, background: 'rgba(0,0,0,0.08)' }}>
+  <div style={{ width: '87.5%', height: '100%', borderRadius: 2, background: 'linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-light) 50%, var(--accent-dark) 100%)' }} />
+</div>
+
+## Request hygiene
+
+| Recommendation | Why it matters |
+|---|---|
+| Send the smallest useful request | Smaller responses and easier debugging |
+| Set a reasonable `limit` | Avoids fetching more data than needed |
+| Follow endpoint pagination | Use `limit`, `offset` or time-range parameters exactly as documented |
+| Cache slow-changing data | Configuration and reference metadata do not need constant refetching |
+| Retry with backoff | Avoids retry storms during temporary errors |
+
+## Request guidance
+
+| Use case | Recommendation |
+|---|---|
+| List views | Request only the fields and page size needed by the UI |
+| Detail views | Fetch by stable resource identifiers |
+| Background sync | Use pagination and store progress on the client side |
+| Temporary failures | Retry with exponential backoff and a maximum retry count |
+
+## Pagination flow
+
+<Steps>
+  <Step title="Send the first request">
+    Include the `limit` that matches your UI or processing batch size.
+  </Step>
+  <Step title="Check the response">
+    Inspect whether the endpoint returns enough data for the current view or batch.
+  </Step>
+  <Step title="Request the next page">
+    Increase `offset` or advance the time range according to that endpoint's reference page.
+  </Step>
+</Steps>
+
+## Error handling
+
+| Status | Suggested handling |
+|---|---|
+| `400` | Fix query parameters or time format |
+| `401` | Check account credentials |
+| `404` | Check the requested resource ID or path |
+| `429` | Slow down and retry later |
+| `503` | Retry with backoff after a short delay |

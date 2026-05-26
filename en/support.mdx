@@ -1,0 +1,39 @@
+---
+title: 'Support'
+description: 'Support for Vero OMS API'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+## Support channels
+
+If an API request fails or the returned data does not match your expectations, prepare the request details and contact the support channel provided for your account.
+
+<CardGroup cols={2}>
+  <Card title="API integration" icon="code">
+    Request params, authentication, pagination, schema mapping and status codes.
+  </Card>
+  <Card title="Workflow questions" icon="diagram-project">
+    Business flows, resource states, validation rules and response fields.
+  </Card>
+</CardGroup>
+
+## Information to include
+
+| Information | Example |
+|---|---|
+| Endpoint | Method and path being called |
+| Query params | Request query string or JSON body |
+| HTTP status | `200`, `400`, `401`, `404`, `429`, `503` |
+| Response body | JSON response or error body |
+| Request time | UTC timestamp |
+| Use case | Backend sync, order workflow, dashboard or operations tool |
+
+<Info>
+Do not include bearer tokens, session tokens or credentials in support messages.
+</Info>

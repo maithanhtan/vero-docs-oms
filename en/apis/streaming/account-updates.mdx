@@ -1,0 +1,58 @@
+---
+title: 'Receive account updates'
+description: 'Receive account updates'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+order:Account:{accountId}
+```
+
+## Description
+
+Realtime account/portfolio updates.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Channel parameters
+
+| Parameter | Type | Description | Values |
+|---|---|---|---|
+| `accountId` | string | Trading account id. | - |
+
+## Message
+
+| Item | Value |
+|---|---|
+| Operation | `receiveAccountUpdates` |
+| Name | `Account` |
+| Payload | `Account` |
+| Handler | `StreamingService._handleAccountUpdate` |
+
+## Payload schema
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | string | - |
+| `accountId` | string | - |
+| `totalEquity` | number | - |
+| `credit` | number | - |
+| `maintenanceMargin` | number | - |
+| `tempMaintenanceMargin` | number | - |
+| `totalRealizedPnl` | number | - |
+| `totalUnrealizedPnl` | number | - |
+| `tradingPower` | number | - |
+| `crossMargin` | boolean | - |
+| `refCode` | string | - |
+| `positions` | object | - |
+| `tempPositions` | object | - |
+
+<Info>
+This page is generated from `asyncapi.json`.
+</Info>

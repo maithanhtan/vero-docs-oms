@@ -1,0 +1,52 @@
+---
+title: 'Nhận cập nhật bid/ask depth'
+description: 'Nhận cập nhật bid/ask depth'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+mkt:depth:{symbol}-{boardId}
+```
+
+## Mô tả
+
+Cập nhật độ sâu sổ lệnh. boardId mặc định hiện tại của ứng dụng là G1.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Tham số channel
+
+| Tham số | Kiểu | Mô tả | Giá trị |
+|---|---|---|---|
+| `symbol` | string | Mã giao dịch, ví dụ VN30F1M. | example: VN30F1M |
+| `boardId` | string | Mã bảng giao dịch. Ứng dụng mobile mặc định dùng G1. | default: G1<br />example: G1 |
+
+## Message
+
+| Mục | Giá trị |
+|---|---|
+| Operation | `receiveMarketDepth` |
+| Tên | `MarketDepth` |
+| Payload | `PriceDepth` |
+| Handler | `StreamingService._handleDepthUpdate` |
+
+## Payload schema
+
+| Field | Type | Notes |
+|---|---|---|
+| `seq` | number | - |
+| `time` | number | - |
+| `symbol` | string | - |
+| `boardID` | string | - |
+| `bidPriceDepth` | array&lt;PriceLevel&gt; | - |
+| `askPriceDepth` | array&lt;PriceLevel&gt; | - |
+
+<Info>
+Trang này được tạo từ `asyncapi.json`.
+</Info>

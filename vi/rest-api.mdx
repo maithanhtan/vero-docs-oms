@@ -1,0 +1,33 @@
+---
+title: 'REST API'
+description: 'Endpoint HTTP được tạo từ openapi.json'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+Vero OMS REST API cung cấp endpoint cho xác thực, tài khoản, lệnh, dữ liệu thị trường, thông báo, giới thiệu, chẩn đoán và tài nguyên tĩnh.
+
+<CardGroup cols={3}>
+  <Card title="Nguồn OpenAPI" icon="file-code">
+    Tham chiếu REST được tạo từ `openapi.json` thông qua các spec tài liệu đã bản địa hóa.
+  </Card>
+  <Card title="Base URL" icon="globe">
+    `https://api-gw.verolabs.co/api/v1`
+  </Card>
+  <Card title="Độ phủ" icon="route">
+    44 HTTP operation có trong phần tham chiếu REST API.
+  </Card>
+</CardGroup>
+
+## Xác thực
+
+Phần lớn endpoint giao dịch và tài khoản dùng `Authorization: Bearer <jwt>`. Các endpoint Ory dùng luồng login, registration, recovery và settings native; một số endpoint Ory dùng `X-Session-Token`.
+
+## Nhóm tham chiếu
+
+Dùng nhóm **REST API** trong sidebar để xem endpoint, tham số request, schema response và ví dụ tương tác được tạo tự động.

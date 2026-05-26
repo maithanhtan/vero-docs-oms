@@ -1,126 +1,432 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mintlify Starter Kit",
-  "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+  "theme": "maple",
+  "name": "Vero OMS API",
+  "seo": {
+    "indexing": "all",
+    "metatags": {
+      "description": "Vero OMS API documentation for order management integrations.",
+      "og:title": "Vero OMS API",
+      "og:description": "REST API documentation for Vero OMS",
+      "og:site_name": "Vero OMS API Docs",
+      "twitter:title": "Vero OMS API",
+      "twitter:description": "REST API documentation for Vero OMS"
+    }
   },
-  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#073B31",
+    "light": "#DCEBE4",
+    "dark": "#0A211D"
+  },
+  "appearance": {
+    "default": "dark",
+    "strict": false
+  },
+  "fonts": {
+    "heading": {
+      "family": "Be Vietnam Pro"
+    },
+    "body": {
+      "family": "Noto Sans"
+    }
+  },
+  "icons": {
+    "library": "fontawesome"
+  },
+  "background": {
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#0D1210"
+    }
+  },
+  "favicon": "/logo/favicon.png",
   "navigation": {
-    "tabs": [
+    "style": "minimal",
+    "languages": [
       {
-        "tab": "Guides",
+        "language": "en",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Overview",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "en/overview",
+              "en/quickstart",
+              "en/conventions"
             ]
           },
           {
-            "group": "Customization",
+            "group": "API Guides",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "en/rest-api"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "REST API",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/components",
-              "essentials/reusable-snippets"
+              {
+                "group": "Auth",
+                "icon": "key",
+                "expanded": false,
+                "pages": [
+                  "en/apis/rest/auth/create-login-flow",
+                  "en/apis/rest/auth/submit-login-flow",
+                  "en/apis/rest/auth/get-whoami-session",
+                  "en/apis/rest/auth/create-registration-flow",
+                  "en/apis/rest/auth/submit-registration-flow",
+                  "en/apis/rest/auth/create-recovery-flow",
+                  "en/apis/rest/auth/update-recovery-flow",
+                  "en/apis/rest/auth/create-settings-flow",
+                  "en/apis/rest/auth/update-settings-flow",
+                  "en/apis/rest/auth/logout"
+                ]
+              },
+              {
+                "group": "Accounts",
+                "icon": "wallet",
+                "expanded": false,
+                "pages": [
+                  "en/apis/rest/accounts/list-accounts",
+                  "en/apis/rest/accounts/withdraw-equity"
+                ]
+              },
+              {
+                "group": "Bank Accounts",
+                "icon": "building-columns",
+                "expanded": false,
+                "pages": [
+                  "en/apis/rest/bank-accounts/list-bank-accounts",
+                  "en/apis/rest/bank-accounts/create-bank-account"
+                ]
+              },
+              {
+                "group": "Orders",
+                "icon": "arrow-right-arrow-left",
+                "expanded": false,
+                "pages": [
+                  "en/apis/rest/orders/place-order",
+                  "en/apis/rest/orders/cancel-order",
+                  "en/apis/rest/orders/modify-order",
+                  "en/apis/rest/orders/list-execution-reports",
+                  "en/apis/rest/orders/list-orders",
+                  "en/apis/rest/orders/list-trades"
+                ]
+              },
+              {
+                "group": "History",
+                "icon": "clock-rotate-left",
+                "expanded": false,
+                "pages": [
+                  "en/apis/rest/history/list-account-orders",
+                  "en/apis/rest/history/list-account-trades",
+                  "en/apis/rest/history/list-account-transactions",
+                  "en/apis/rest/history/list-account-commissions",
+                  "en/apis/rest/history/list-account-fees"
+                ]
+              },
+              {
+                "group": "Market Data",
+                "icon": "chart-line",
+                "expanded": false,
+                "pages": [
+                  "en/apis/rest/market-data/get-watch-list",
+                  "en/apis/rest/market-data/get-vn30-spot",
+                  "en/apis/rest/market-data/search-symbols",
+                  "en/apis/rest/market-data/get-product-master",
+                  "en/apis/rest/market-data/get-ohlcv-history",
+                  "en/apis/rest/market-data/get-ohlcv-history-count-back"
+                ]
+              },
+              {
+                "group": "Notifications",
+                "icon": "bell",
+                "expanded": false,
+                "pages": [
+                  "en/apis/rest/notifications/list-notifications",
+                  "en/apis/rest/notifications/mark-notification-as-read",
+                  "en/apis/rest/notifications/register-fcm-token",
+                  "en/apis/rest/notifications/unregister-fcm-token"
+                ]
+              },
+              {
+                "group": "Referral",
+                "icon": "share-nodes",
+                "expanded": false,
+                "pages": [
+                  "en/apis/rest/referral/get-referral-stats",
+                  "en/apis/rest/referral/get-referral-code-info",
+                  "en/apis/rest/referral/get-referral-history",
+                  "en/apis/rest/referral/set-referral-code"
+                ]
+              },
+              {
+                "group": "Diagnostics",
+                "icon": "stethoscope",
+                "expanded": false,
+                "pages": [
+                  "en/apis/rest/diagnostics/get-margin-ratio",
+                  "en/apis/rest/diagnostics/check-health"
+                ]
+              },
+              {
+                "group": "Static Assets",
+                "icon": "file",
+                "expanded": false,
+                "pages": [
+                  "en/apis/rest/static-assets/get-symbol-logo-svg",
+                  "en/apis/rest/static-assets/get-customer-contract-pdf",
+                  "en/apis/rest/static-assets/get-user-guide-pdf"
+                ]
+              }
             ]
           },
           {
-            "group": "Agent ready",
+            "group": "Streaming API",
             "pages": [
-              "agent-ready/prompt",
-              "agent-ready/visibility",
-              "agent-ready/contextual",
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "en/streaming-api",
+              {
+                "group": "Market Streams",
+                "icon": "chart-line",
+                "expanded": false,
+                "pages": [
+                  "en/apis/streaming/generic-market-data",
+                  "en/apis/streaming/market-depth",
+                  "en/apis/streaming/ohlcv-updates",
+                  "en/apis/streaming/product-info"
+                ]
+              },
+              {
+                "group": "Order Streams",
+                "icon": "tower-broadcast",
+                "expanded": false,
+                "pages": [
+                  "en/apis/streaming/order-updates",
+                  "en/apis/streaming/account-updates",
+                  "en/apis/streaming/execution-reports",
+                  "en/apis/streaming/notification-events"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Support",
+            "pages": [
+              "en/best-practices",
+              "en/troubleshooting",
+              "en/support"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "language": "vi",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Tổng quan",
             "pages": [
-              "api-reference/introduction"
+              "vi/overview",
+              "vi/quickstart",
+              "vi/conventions"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Hướng dẫn API",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "vi/rest-api"
+            ]
+          },
+          {
+            "group": "REST API",
+            "pages": [
+              {
+                "group": "Xác thực",
+                "icon": "key",
+                "expanded": false,
+                "pages": [
+                  "vi/apis/rest/auth/create-login-flow",
+                  "vi/apis/rest/auth/submit-login-flow",
+                  "vi/apis/rest/auth/get-whoami-session",
+                  "vi/apis/rest/auth/create-registration-flow",
+                  "vi/apis/rest/auth/submit-registration-flow",
+                  "vi/apis/rest/auth/create-recovery-flow",
+                  "vi/apis/rest/auth/update-recovery-flow",
+                  "vi/apis/rest/auth/create-settings-flow",
+                  "vi/apis/rest/auth/update-settings-flow",
+                  "vi/apis/rest/auth/logout"
+                ]
+              },
+              {
+                "group": "Tài khoản",
+                "icon": "wallet",
+                "expanded": false,
+                "pages": [
+                  "vi/apis/rest/accounts/list-accounts",
+                  "vi/apis/rest/accounts/withdraw-equity"
+                ]
+              },
+              {
+                "group": "Tài khoản ngân hàng",
+                "icon": "building-columns",
+                "expanded": false,
+                "pages": [
+                  "vi/apis/rest/bank-accounts/list-bank-accounts",
+                  "vi/apis/rest/bank-accounts/create-bank-account"
+                ]
+              },
+              {
+                "group": "Lệnh",
+                "icon": "arrow-right-arrow-left",
+                "expanded": false,
+                "pages": [
+                  "vi/apis/rest/orders/place-order",
+                  "vi/apis/rest/orders/cancel-order",
+                  "vi/apis/rest/orders/modify-order",
+                  "vi/apis/rest/orders/list-execution-reports",
+                  "vi/apis/rest/orders/list-orders",
+                  "vi/apis/rest/orders/list-trades"
+                ]
+              },
+              {
+                "group": "Lịch sử",
+                "icon": "clock-rotate-left",
+                "expanded": false,
+                "pages": [
+                  "vi/apis/rest/history/list-account-orders",
+                  "vi/apis/rest/history/list-account-trades",
+                  "vi/apis/rest/history/list-account-transactions",
+                  "vi/apis/rest/history/list-account-commissions",
+                  "vi/apis/rest/history/list-account-fees"
+                ]
+              },
+              {
+                "group": "Dữ liệu thị trường",
+                "icon": "chart-line",
+                "expanded": false,
+                "pages": [
+                  "vi/apis/rest/market-data/get-watch-list",
+                  "vi/apis/rest/market-data/get-vn30-spot",
+                  "vi/apis/rest/market-data/search-symbols",
+                  "vi/apis/rest/market-data/get-product-master",
+                  "vi/apis/rest/market-data/get-ohlcv-history",
+                  "vi/apis/rest/market-data/get-ohlcv-history-count-back"
+                ]
+              },
+              {
+                "group": "Thông báo",
+                "icon": "bell",
+                "expanded": false,
+                "pages": [
+                  "vi/apis/rest/notifications/list-notifications",
+                  "vi/apis/rest/notifications/mark-notification-as-read",
+                  "vi/apis/rest/notifications/register-fcm-token",
+                  "vi/apis/rest/notifications/unregister-fcm-token"
+                ]
+              },
+              {
+                "group": "Giới thiệu",
+                "icon": "share-nodes",
+                "expanded": false,
+                "pages": [
+                  "vi/apis/rest/referral/get-referral-stats",
+                  "vi/apis/rest/referral/get-referral-code-info",
+                  "vi/apis/rest/referral/get-referral-history",
+                  "vi/apis/rest/referral/set-referral-code"
+                ]
+              },
+              {
+                "group": "Chẩn đoán",
+                "icon": "stethoscope",
+                "expanded": false,
+                "pages": [
+                  "vi/apis/rest/diagnostics/get-margin-ratio",
+                  "vi/apis/rest/diagnostics/check-health"
+                ]
+              },
+              {
+                "group": "Tài nguyên tĩnh",
+                "icon": "file",
+                "expanded": false,
+                "pages": [
+                  "vi/apis/rest/static-assets/get-symbol-logo-svg",
+                  "vi/apis/rest/static-assets/get-customer-contract-pdf",
+                  "vi/apis/rest/static-assets/get-user-guide-pdf"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Streaming API",
+            "pages": [
+              "vi/streaming-api",
+              {
+                "group": "Market Streams",
+                "icon": "chart-line",
+                "expanded": false,
+                "pages": [
+                  "vi/apis/streaming/generic-market-data",
+                  "vi/apis/streaming/market-depth",
+                  "vi/apis/streaming/ohlcv-updates",
+                  "vi/apis/streaming/product-info"
+                ]
+              },
+              {
+                "group": "Order Streams",
+                "icon": "tower-broadcast",
+                "expanded": false,
+                "pages": [
+                  "vi/apis/streaming/order-updates",
+                  "vi/apis/streaming/account-updates",
+                  "vi/apis/streaming/execution-reports",
+                  "vi/apis/streaming/notification-events"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Hỗ trợ",
+            "pages": [
+              "vi/best-practices",
+              "vi/troubleshooting",
+              "vi/support"
             ]
           }
         ]
       }
     ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    "global": {}
+  },
+  "sidebar": {
+    "items": "border"
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/vero-logo.png",
+    "dark": "/logo/vero-logo-white.png"
   },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
+  "navbar": {},
+  "footer": {},
+  "api": {
+    "playground": {
+      "display": "interactive",
+      "proxy": false
+    },
+    "examples": {
+      "languages": [
+        "curl",
+        "javascript",
+        "python"
+      ],
+      "autogenerate": true,
+      "prefill": true
+    },
+    "params": {
+      "expanded": "all"
+    },
+    "url": "full",
+    "openapi": [
+      "openapi.docs.en.json",
+      "openapi.docs.vi.json"
     ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    "asyncapi": [
+      "asyncapi.docs.en.json",
+      "asyncapi.docs.vi.json"
+    ]
   }
 }

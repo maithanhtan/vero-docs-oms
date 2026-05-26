@@ -1,0 +1,3942 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Vero OMS REST API",
+    "version": "1.0.23",
+    "description": "Tài liệu REST API cho xác thực, tài khoản, lệnh, lịch sử, dữ liệu thị trường, thông báo, giới thiệu, chẩn đoán và tài nguyên tĩnh của Vero OMS."
+  },
+  "servers": [
+    {
+      "url": "https://api-gw.verolabs.co/api/v1",
+      "description": "Backend REST API"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Xác thực",
+      "description": "Luồng xác thực Ory Kratos native và đăng xuất ứng dụng",
+      "x-original-name": "Auth"
+    },
+    {
+      "name": "Tài khoản",
+      "description": "Tài khoản người dùng, số dư, vị thế, nạp và rút tiền",
+      "x-original-name": "Accounts"
+    },
+    {
+      "name": "Tài khoản ngân hàng",
+      "description": "Quản lý tài khoản ngân hàng đã lưu",
+      "x-original-name": "Bank Accounts"
+    },
+    {
+      "name": "Lệnh",
+      "description": "Đặt lệnh, hủy lệnh, sửa lệnh và lịch sử lệnh",
+      "x-original-name": "Orders"
+    },
+    {
+      "name": "Lịch sử",
+      "description": "Giao dịch tài khoản, khớp lệnh, hoa hồng và phí",
+      "x-original-name": "History"
+    },
+    {
+      "name": "Dữ liệu thị trường",
+      "description": "Watchlist, tìm kiếm mã, dữ liệu sản phẩm và lịch sử OHLCV",
+      "x-original-name": "Market Data"
+    },
+    {
+      "name": "Thông báo",
+      "description": "Thông báo trong ứng dụng và đăng ký FCM token",
+      "x-original-name": "Notifications"
+    },
+    {
+      "name": "Giới thiệu",
+      "description": "Mã giới thiệu, rebate và tổng hợp hoa hồng",
+      "x-original-name": "Referral"
+    },
+    {
+      "name": "Chẩn đoán",
+      "description": "Endpoint kiểm tra sức khỏe và chẩn đoán hệ thống",
+      "x-original-name": "Diagnostics"
+    },
+    {
+      "name": "Tài nguyên tĩnh",
+      "description": "PDF cấu hình và logo mã giao dịch được ứng dụng tải về",
+      "x-original-name": "Static Assets"
+    }
+  ],
+  "paths": {
+    "/self-service/login/api": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/authen",
+          "description": "Ory Kratos authentication API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Xác thực"
+        ],
+        "operationId": "createLoginFlow",
+        "summary": "Tạo luồng đăng nhập native",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Login flow with UI nodes including csrf_token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OryFlow"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Tạo luồng đăng nhập native",
+            "sidebarTitle": "Tạo luồng đăng nhập native",
+            "description": "GET /self-service/login/api"
+          }
+        }
+      }
+    },
+    "/self-service/login": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/authen",
+          "description": "Ory Kratos authentication API"
+        }
+      ],
+      "post": {
+        "tags": [
+          "Xác thực"
+        ],
+        "operationId": "submitLoginFlow",
+        "summary": "Gửi thông tin đăng nhập vào luồng login",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Flow"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginFlowUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login flow response. The app reads session_token from this payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OryLoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/OryFlowError"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Gửi thông tin đăng nhập vào luồng login",
+            "sidebarTitle": "Gửi thông tin đăng nhập vào luồng login",
+            "description": "POST /self-service/login"
+          }
+        }
+      }
+    },
+    "/sessions/whoami": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/authen",
+          "description": "Ory Kratos authentication API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Xác thực"
+        ],
+        "operationId": "getWhoamiSession",
+        "summary": "Lấy session hiện tại hoặc JWT session",
+        "description": "Ứng dụng gọi endpoint này với X-Session-Token và tokenize_as=jwt_template_1 sau khi đăng nhập, sau đó dùng Authorization: Bearer <jwt> để lấy dữ liệu identity.",
+        "security": [
+          {
+            "sessionToken": []
+          },
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tokenize_as",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "jwt_template_1"
+            },
+            "description": "When set to jwt_template_1, response should include tokenized JWT used as app bearer token."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ory session object with identity and optional tokenized JWT.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrySession"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy session hiện tại hoặc JWT session",
+            "sidebarTitle": "Lấy session hiện tại hoặc JWT session",
+            "description": "GET /sessions/whoami"
+          }
+        }
+      }
+    },
+    "/self-service/registration/api": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/authen",
+          "description": "Ory Kratos authentication API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Xác thực"
+        ],
+        "operationId": "createRegistrationFlow",
+        "summary": "Tạo luồng đăng ký native",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Registration flow with UI nodes including csrf_token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OryFlow"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Tạo luồng đăng ký native",
+            "sidebarTitle": "Tạo luồng đăng ký native",
+            "description": "GET /self-service/registration/api"
+          }
+        }
+      }
+    },
+    "/self-service/registration": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/authen",
+          "description": "Ory Kratos authentication API"
+        }
+      ],
+      "post": {
+        "tags": [
+          "Xác thực"
+        ],
+        "operationId": "submitRegistrationFlow",
+        "summary": "Gửi dữ liệu đăng ký vào luồng registration",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Flow"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationFlowUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registration flow accepted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OryFlow"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/OryFlowError"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Gửi dữ liệu đăng ký vào luồng registration",
+            "sidebarTitle": "Gửi dữ liệu đăng ký vào luồng registration",
+            "description": "POST /self-service/registration"
+          }
+        }
+      }
+    },
+    "/self-service/recovery/api": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/authen",
+          "description": "Ory Kratos authentication API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Xác thực"
+        ],
+        "operationId": "createRecoveryFlow",
+        "summary": "Tạo luồng khôi phục tài khoản",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Recovery flow data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OryFlow"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Tạo luồng khôi phục tài khoản",
+            "sidebarTitle": "Tạo luồng khôi phục tài khoản",
+            "description": "GET /self-service/recovery/api"
+          }
+        }
+      }
+    },
+    "/self-service/recovery": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/authen",
+          "description": "Ory Kratos authentication API"
+        }
+      ],
+      "post": {
+        "tags": [
+          "Xác thực"
+        ],
+        "operationId": "updateRecoveryFlow",
+        "summary": "Gửi hoặc xác thực mã khôi phục",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Flow"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/RecoveryCodeRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/RecoveryVerifyRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Recovery flow updated. A passed challenge returns session_token or continue_with set_ory_session_token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OryRecoveryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/OryFlowError"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Gửi hoặc xác thực mã khôi phục",
+            "sidebarTitle": "Gửi hoặc xác thực mã khôi phục",
+            "description": "POST /self-service/recovery"
+          }
+        }
+      }
+    },
+    "/self-service/settings/api": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/authen",
+          "description": "Ory Kratos authentication API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Xác thực"
+        ],
+        "operationId": "createSettingsFlow",
+        "summary": "Tạo luồng cài đặt để đổi mật khẩu",
+        "security": [
+          {
+            "sessionToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Settings flow data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OryFlow"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Tạo luồng cài đặt để đổi mật khẩu",
+            "sidebarTitle": "Tạo luồng cài đặt để đổi mật khẩu",
+            "description": "GET /self-service/settings/api"
+          }
+        }
+      }
+    },
+    "/self-service/settings": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/authen",
+          "description": "Ory Kratos authentication API"
+        }
+      ],
+      "post": {
+        "tags": [
+          "Xác thực"
+        ],
+        "operationId": "updateSettingsFlow",
+        "summary": "Cập nhật mật khẩu trong luồng settings",
+        "security": [
+          {
+            "sessionToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Flow"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingsPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OryFlow"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/OryFlowError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Cập nhật mật khẩu trong luồng settings",
+            "sidebarTitle": "Cập nhật mật khẩu trong luồng settings",
+            "description": "POST /self-service/settings"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Xác thực"
+        ],
+        "operationId": "logout",
+        "summary": "Đăng xuất session ứng dụng hiện tại",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/GenericSuccess"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Đăng xuất session ứng dụng hiện tại",
+            "sidebarTitle": "Đăng xuất session ứng dụng hiện tại",
+            "description": "POST /auth/logout"
+          }
+        }
+      }
+    },
+    "/users/accounts": {
+      "get": {
+        "tags": [
+          "Tài khoản"
+        ],
+        "operationId": "listAccounts",
+        "summary": "Lấy danh sách tài khoản của người dùng hiện tại",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Accounts for the current user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Account"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy danh sách tài khoản của người dùng hiện tại",
+            "sidebarTitle": "Lấy danh sách tài khoản của người dùng hiện tại",
+            "description": "GET /users/accounts"
+          }
+        }
+      }
+    },
+    "/users/accounts/{accountId}/orders/{startTime}/{endTime}": {
+      "get": {
+        "tags": [
+          "Lịch sử",
+          "Tài khoản"
+        ],
+        "operationId": "listAccountOrders",
+        "summary": "Lấy danh sách lệnh của tài khoản theo khoảng thời gian",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AccountId"
+          },
+          {
+            "$ref": "#/components/parameters/StartTime"
+          },
+          {
+            "$ref": "#/components/parameters/EndTime"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orders in the requested time range.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy danh sách lệnh của tài khoản theo khoảng thời gian",
+            "sidebarTitle": "Lấy danh sách lệnh của tài khoản theo khoảng thời gian",
+            "description": "GET /users/accounts/{accountId}/orders/{startTime}/{endTime}"
+          }
+        }
+      }
+    },
+    "/users/accounts/{accountId}/trades/{startTime}/{endTime}": {
+      "get": {
+        "tags": [
+          "Lịch sử",
+          "Tài khoản"
+        ],
+        "operationId": "listAccountTrades",
+        "summary": "Lấy danh sách khớp lệnh của tài khoản theo khoảng thời gian",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AccountId"
+          },
+          {
+            "$ref": "#/components/parameters/StartTime"
+          },
+          {
+            "$ref": "#/components/parameters/EndTime"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trades in the requested time range.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Trade"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy danh sách khớp lệnh của tài khoản theo khoảng thời gian",
+            "sidebarTitle": "Lấy danh sách khớp lệnh của tài khoản theo khoảng thời gian",
+            "description": "GET /users/accounts/{accountId}/trades/{startTime}/{endTime}"
+          }
+        }
+      }
+    },
+    "/users/accounts/{accountId}/transactions/{startTime}/{endTime}": {
+      "get": {
+        "tags": [
+          "Lịch sử",
+          "Tài khoản"
+        ],
+        "operationId": "listAccountTransactions",
+        "summary": "Lấy giao dịch tài khoản theo khoảng thời gian",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AccountId"
+          },
+          {
+            "$ref": "#/components/parameters/StartTime"
+          },
+          {
+            "$ref": "#/components/parameters/EndTime"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transactions in the requested time range.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy giao dịch tài khoản theo khoảng thời gian",
+            "sidebarTitle": "Lấy giao dịch tài khoản theo khoảng thời gian",
+            "description": "GET /users/accounts/{accountId}/transactions/{startTime}/{endTime}"
+          }
+        }
+      }
+    },
+    "/users/accounts/{accountId}/commissions": {
+      "get": {
+        "tags": [
+          "Lịch sử"
+        ],
+        "operationId": "listAccountCommissions",
+        "summary": "Lấy danh sách hoa hồng của tài khoản",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AccountId"
+          },
+          {
+            "$ref": "#/components/parameters/StartTimeQuery"
+          },
+          {
+            "$ref": "#/components/parameters/EndTimeQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Commissions for the account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Commission"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy danh sách hoa hồng của tài khoản",
+            "sidebarTitle": "Lấy danh sách hoa hồng của tài khoản",
+            "description": "GET /users/accounts/{accountId}/commissions"
+          }
+        }
+      }
+    },
+    "/users/accounts/{accountId}/fees": {
+      "get": {
+        "tags": [
+          "Lịch sử"
+        ],
+        "operationId": "listAccountFees",
+        "summary": "Lấy danh sách phí của tài khoản",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AccountId"
+          },
+          {
+            "$ref": "#/components/parameters/StartTimeQuery"
+          },
+          {
+            "$ref": "#/components/parameters/EndTimeQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fees for the account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Fee"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy danh sách phí của tài khoản",
+            "sidebarTitle": "Lấy danh sách phí của tài khoản",
+            "description": "GET /users/accounts/{accountId}/fees"
+          }
+        }
+      }
+    },
+    "/users/accounts/{accountId}/equity/withdraw": {
+      "post": {
+        "tags": [
+          "Tài khoản"
+        ],
+        "operationId": "withdrawEquity",
+        "summary": "Rút tiền từ tài khoản",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AccountId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawEquityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Withdrawal response payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Rút tiền từ tài khoản",
+            "sidebarTitle": "Rút tiền từ tài khoản",
+            "description": "POST /users/accounts/{accountId}/equity/withdraw"
+          }
+        }
+      }
+    },
+    "/bank-accounts": {
+      "get": {
+        "tags": [
+          "Tài khoản ngân hàng"
+        ],
+        "operationId": "listBankAccounts",
+        "summary": "Lấy danh sách tài khoản ngân hàng đã lưu",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saved bank accounts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BankAccount"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy danh sách tài khoản ngân hàng đã lưu",
+            "sidebarTitle": "Lấy danh sách tài khoản ngân hàng đã lưu",
+            "description": "GET /bank-accounts"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tài khoản ngân hàng"
+        ],
+        "operationId": "createBankAccount",
+        "summary": "Tạo tài khoản ngân hàng",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBankAccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created bank account. Some backend responses wrap it in a data field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BankAccount"
+                    },
+                    {
+                      "$ref": "#/components/schemas/BankAccountEnvelope"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Tạo tài khoản ngân hàng",
+            "sidebarTitle": "Tạo tài khoản ngân hàng",
+            "description": "POST /bank-accounts"
+          }
+        }
+      }
+    },
+    "/orders/new/{refOrderID}/{accountID}/{symbol}/{orderSide}/{price}/{qty}/{orderType}": {
+      "post": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "placeOrder",
+        "summary": "Đặt lệnh mới",
+        "description": "Ứng dụng mobile gửi toàn bộ trường đặt lệnh qua path segment và không gửi JSON body.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "refOrderID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Symbol"
+          },
+          {
+            "name": "orderSide",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/OrderSide"
+            }
+          },
+          {
+            "name": "price",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "qty",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "orderType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/OrderType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order placement result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderActionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Đặt lệnh mới",
+            "sidebarTitle": "Đặt lệnh mới",
+            "description": "POST /orders/new/{refOrderID}/{accountID}/{symbol}/{orderSide}/{price}/{qty}/{orderType}"
+          }
+        }
+      }
+    },
+    "/orders/cancel/{orderID}": {
+      "post": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "cancelOrder",
+        "summary": "Hủy lệnh",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/OrderID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order cancellation result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderActionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Hủy lệnh",
+            "sidebarTitle": "Hủy lệnh",
+            "description": "POST /orders/cancel/{orderID}"
+          }
+        }
+      }
+    },
+    "/orders/modify/{orderID}/{price}/{qty}": {
+      "post": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "modifyOrder",
+        "summary": "Sửa lệnh hiện có",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/OrderID"
+          },
+          {
+            "name": "price",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "qty",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order modification result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderActionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Sửa lệnh hiện có",
+            "sidebarTitle": "Sửa lệnh hiện có",
+            "description": "POST /orders/modify/{orderID}/{price}/{qty}"
+          }
+        }
+      }
+    },
+    "/orders/execution-reports": {
+      "get": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "listExecutionReports",
+        "summary": "Lấy báo cáo thực thi lệnh của người dùng hiện tại",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Execution reports.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy báo cáo thực thi lệnh của người dùng hiện tại",
+            "sidebarTitle": "Lấy báo cáo thực thi lệnh của người dùng hiện tại",
+            "description": "GET /orders/execution-reports"
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "listOrders",
+        "summary": "Lấy danh sách lệnh với bộ lọc tùy chọn",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "account",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orders matching the requested filters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy danh sách lệnh với bộ lọc tùy chọn",
+            "sidebarTitle": "Lấy danh sách lệnh với bộ lọc tùy chọn",
+            "description": "GET /orders"
+          }
+        }
+      }
+    },
+    "/orders/trades": {
+      "get": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "listTrades",
+        "summary": "Lấy danh sách khớp lệnh của người dùng hiện tại",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trades.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Trade"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy danh sách khớp lệnh của người dùng hiện tại",
+            "sidebarTitle": "Lấy danh sách khớp lệnh của người dùng hiện tại",
+            "description": "GET /orders/trades"
+          }
+        }
+      }
+    },
+    "/MarketData/GetWatchList/{watchListId}": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/v1",
+          "description": "Backend REST API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Dữ liệu thị trường"
+        ],
+        "operationId": "getWatchList",
+        "summary": "Lấy watchlist theo id",
+        "security": [],
+        "parameters": [
+          {
+            "name": "watchListId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "vn30"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Watchlist response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WatchListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy watchlist theo id",
+            "sidebarTitle": "Lấy watchlist theo id",
+            "description": "GET /MarketData/GetWatchList/{watchListId}"
+          }
+        }
+      }
+    },
+    "/MarketData/GetVN30Spot": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/v1",
+          "description": "Backend REST API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Dữ liệu thị trường"
+        ],
+        "operationId": "getVN30Spot",
+        "summary": "Lấy mã VN30 spot mặc định",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Symbol response wrapped in isSuccess/data envelope.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SymbolEnvelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy mã VN30 spot mặc định",
+            "sidebarTitle": "Lấy mã VN30 spot mặc định",
+            "description": "GET /MarketData/GetVN30Spot"
+          }
+        }
+      }
+    },
+    "/MarketData/GetSymbolSearch/{query}": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/v1",
+          "description": "Backend REST API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Dữ liệu thị trường"
+        ],
+        "operationId": "searchSymbols",
+        "summary": "Tìm kiếm mã giao dịch",
+        "security": [],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "VN30F"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Symbol search response wrapped in isSuccess/data envelope.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SymbolListEnvelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Tìm kiếm mã giao dịch",
+            "sidebarTitle": "Tìm kiếm mã giao dịch",
+            "description": "GET /MarketData/GetSymbolSearch/{query}"
+          }
+        }
+      }
+    },
+    "/MarketData/GetProductMaster/{symbol}": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/v1",
+          "description": "Backend REST API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Dữ liệu thị trường"
+        ],
+        "operationId": "getProductMaster",
+        "summary": "Lấy dữ liệu product master theo mã",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Symbol"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product master response wrapped in isSuccess/data envelope.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SymbolEnvelope"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy dữ liệu product master theo mã",
+            "sidebarTitle": "Lấy dữ liệu product master theo mã",
+            "description": "GET /MarketData/GetProductMaster/{symbol}"
+          }
+        }
+      }
+    },
+    "/GetOhlcvHis/{symbol}/{resolution}/{fromMs}/{toMs}": {
+      "servers": [
+        {
+          "url": "https://openapi.yixin.com.vn",
+          "description": "Market micro API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Dữ liệu thị trường"
+        ],
+        "operationId": "getOhlcvHistory",
+        "summary": "Lấy lịch sử OHLCV",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Symbol"
+          },
+          {
+            "$ref": "#/components/parameters/Resolution"
+          },
+          {
+            "$ref": "#/components/parameters/FromMs"
+          },
+          {
+            "$ref": "#/components/parameters/ToMs"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OHLCV bars.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OhlcvBar"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy lịch sử OHLCV",
+            "sidebarTitle": "Lấy lịch sử OHLCV",
+            "description": "GET /GetOhlcvHis/{symbol}/{resolution}/{fromMs}/{toMs}"
+          }
+        }
+      }
+    },
+    "/GetOhlcvHis/{symbol}/{resolution}/{fromMs}/{toMs}/{countBack}": {
+      "servers": [
+        {
+          "url": "https://openapi.yixin.com.vn",
+          "description": "Market micro API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Dữ liệu thị trường"
+        ],
+        "operationId": "getOhlcvHistoryCountBack",
+        "summary": "Lấy lịch sử OHLCV với countBack",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Symbol"
+          },
+          {
+            "$ref": "#/components/parameters/Resolution"
+          },
+          {
+            "$ref": "#/components/parameters/FromMs"
+          },
+          {
+            "$ref": "#/components/parameters/ToMs"
+          },
+          {
+            "name": "countBack",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OHLCV bars.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OhlcvBar"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy lịch sử OHLCV với countBack",
+            "sidebarTitle": "Lấy lịch sử OHLCV với countBack",
+            "description": "GET /GetOhlcvHis/{symbol}/{resolution}/{fromMs}/{toMs}/{countBack}"
+          }
+        }
+      }
+    },
+    "/diagnostics/margin-ratios/{symbol}": {
+      "get": {
+        "tags": [
+          "Chẩn đoán",
+          "Dữ liệu thị trường"
+        ],
+        "operationId": "getMarginRatio",
+        "summary": "Lấy tỷ lệ ký quỹ theo mã",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Symbol"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Margin ratio data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarginRatioDiagnostics"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy tỷ lệ ký quỹ theo mã",
+            "sidebarTitle": "Lấy tỷ lệ ký quỹ theo mã",
+            "description": "GET /diagnostics/margin-ratios/{symbol}"
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "tags": [
+          "Thông báo"
+        ],
+        "operationId": "listNotifications",
+        "summary": "Lấy danh sách thông báo của người dùng hiện tại",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notifications page.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetNotificationsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy danh sách thông báo của người dùng hiện tại",
+            "sidebarTitle": "Lấy danh sách thông báo của người dùng hiện tại",
+            "description": "GET /notifications"
+          }
+        }
+      }
+    },
+    "/notifications/{notificationId}/read": {
+      "put": {
+        "tags": [
+          "Thông báo"
+        ],
+        "operationId": "markNotificationAsRead",
+        "summary": "Đánh dấu thông báo là đã đọc",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "notificationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/GenericSuccess"
+          },
+          "204": {
+            "description": "Notification marked as read."
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Đánh dấu thông báo là đã đọc",
+            "sidebarTitle": "Đánh dấu thông báo là đã đọc",
+            "description": "PUT /notifications/{notificationId}/read"
+          }
+        }
+      }
+    },
+    "/notifications/fcm-token": {
+      "post": {
+        "tags": [
+          "Thông báo"
+        ],
+        "operationId": "registerFcmToken",
+        "summary": "Đăng ký FCM token của thiết bị",
+        "description": "Ứng dụng gửi raw FCM token, không gửi custom token được tạo cục bộ.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FcmTokenRegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/GenericSuccess"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Đăng ký FCM token của thiết bị",
+            "sidebarTitle": "Đăng ký FCM token của thiết bị",
+            "description": "POST /notifications/fcm-token"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Thông báo"
+        ],
+        "operationId": "unregisterFcmToken",
+        "summary": "Hủy đăng ký FCM token của thiết bị",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FcmTokenDeleteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/GenericSuccess"
+          },
+          "204": {
+            "description": "FCM token unregistered."
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Hủy đăng ký FCM token của thiết bị",
+            "sidebarTitle": "Hủy đăng ký FCM token của thiết bị",
+            "description": "DELETE /notifications/fcm-token"
+          }
+        }
+      }
+    },
+    "/referral/stats": {
+      "get": {
+        "tags": [
+          "Giới thiệu"
+        ],
+        "operationId": "getReferralStats",
+        "summary": "Lấy thống kê giới thiệu",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Referral statistics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommissionSummary"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy thống kê giới thiệu",
+            "sidebarTitle": "Lấy thống kê giới thiệu",
+            "description": "GET /referral/stats"
+          }
+        }
+      }
+    },
+    "/referral/refcode/{refCode}": {
+      "get": {
+        "tags": [
+          "Giới thiệu"
+        ],
+        "operationId": "getReferralCodeInfo",
+        "summary": "Lấy thông tin mã giới thiệu",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "refCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Referral code information.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommissionInfo"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy thông tin mã giới thiệu",
+            "sidebarTitle": "Lấy thông tin mã giới thiệu",
+            "description": "GET /referral/refcode/{refCode}"
+          }
+        }
+      }
+    },
+    "/referral/history": {
+      "get": {
+        "tags": [
+          "Giới thiệu"
+        ],
+        "operationId": "getReferralHistory",
+        "summary": "Lấy lịch sử giới thiệu",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Referral history entries.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CommissionHistoryItem"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy lịch sử giới thiệu",
+            "sidebarTitle": "Lấy lịch sử giới thiệu",
+            "description": "GET /referral/history"
+          }
+        }
+      }
+    },
+    "/referral/refcode": {
+      "post": {
+        "tags": [
+          "Giới thiệu"
+        ],
+        "operationId": "setReferralCode",
+        "summary": "Tạo hoặc cập nhật mã giới thiệu và tỷ lệ rebate",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetReferralCodeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated referral code information.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommissionInfo"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Tạo hoặc cập nhật mã giới thiệu và tỷ lệ rebate",
+            "sidebarTitle": "Tạo hoặc cập nhật mã giới thiệu và tỷ lệ rebate",
+            "description": "POST /referral/refcode"
+          }
+        }
+      }
+    },
+    "/health": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co",
+          "description": "Backend root server"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Chẩn đoán"
+        ],
+        "operationId": "checkHealth",
+        "summary": "Kiểm tra sức khỏe backend",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Health response. The app treats any 2xx-4xx response as reachable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Kiểm tra sức khỏe backend",
+            "sidebarTitle": "Kiểm tra sức khỏe backend",
+            "description": "GET /health"
+          }
+        }
+      }
+    },
+    "/logos/{symbol}.svg": {
+      "servers": [
+        {
+          "url": "https://static.verolabs.co",
+          "description": "Static asset server"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Tài nguyên tĩnh"
+        ],
+        "operationId": "getSymbolLogoSvg",
+        "summary": "Lấy logo SVG của mã giao dịch",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Symbol"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SVG logo.",
+            "content": {
+              "image/svg+xml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Logo not found."
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy logo SVG của mã giao dịch",
+            "sidebarTitle": "Lấy logo SVG của mã giao dịch",
+            "description": "GET /logos/{symbol}.svg"
+          }
+        }
+      }
+    },
+    "/contract_customer_yixin.pdf": {
+      "servers": [
+        {
+          "url": "https://trading.yixin.com.vn",
+          "description": "Configured website/static PDF server"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Tài nguyên tĩnh"
+        ],
+        "operationId": "getCustomerContractPdf",
+        "summary": "Tải PDF hợp đồng khách hàng",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Customer contract PDF.",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Tải PDF hợp đồng khách hàng",
+            "sidebarTitle": "Tải PDF hợp đồng khách hàng",
+            "description": "GET /contract_customer_yixin.pdf"
+          }
+        }
+      }
+    },
+    "/user_guide_yixin.pdf": {
+      "servers": [
+        {
+          "url": "https://trading.yixin.com.vn",
+          "description": "Configured website/static PDF server"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Tài nguyên tĩnh"
+        ],
+        "operationId": "getUserGuidePdf",
+        "summary": "Tải PDF hướng dẫn sử dụng",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "User guide PDF.",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Tải PDF hướng dẫn sử dụng",
+            "sidebarTitle": "Tải PDF hướng dẫn sử dụng",
+            "description": "GET /user_guide_yixin.pdf"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT returned by Ory /sessions/whoami?tokenize_as=jwt_template_1 and stored by ApiClient."
+      },
+      "sessionToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Session-Token",
+        "description": "Ory session token returned by login or recovery flows."
+      }
+    },
+    "parameters": {
+      "Flow": {
+        "name": "flow",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Ory flow id returned by the corresponding create flow endpoint."
+      },
+      "AccountId": {
+        "name": "accountId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "StartTime": {
+        "name": "startTime",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": "Unix timestamp in milliseconds."
+      },
+      "EndTime": {
+        "name": "endTime",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": "Unix timestamp in milliseconds."
+      },
+      "StartTimeQuery": {
+        "name": "start_time",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": "Unix timestamp in milliseconds."
+      },
+      "EndTimeQuery": {
+        "name": "end_time",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": "Unix timestamp in milliseconds."
+      },
+      "OrderID": {
+        "name": "orderID",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Symbol": {
+        "name": "symbol",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "VN30F1M"
+        }
+      },
+      "Resolution": {
+        "name": "resolution",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "example": 60
+        },
+        "description": "Candle resolution in seconds. The app uses 60 for 1 minute and 86400 for daily."
+      },
+      "FromMs": {
+        "name": "fromMs",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": "Start time in Unix milliseconds."
+      },
+      "ToMs": {
+        "name": "toMs",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": "End time in Unix milliseconds."
+      }
+    },
+    "responses": {
+      "GenericSuccess": {
+        "description": "Request completed successfully.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GenericObject"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Missing, expired or invalid token.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "Error": {
+        "description": "Error response. The app reads detail or message when available.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          },
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "OryFlowError": {
+        "description": "Ory flow validation error. The app reads ui.messages, ui.nodes[].messages, error.message or error.id.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/OryFlow"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "GenericObject": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "detail": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "error": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              }
+            ]
+          }
+        }
+      },
+      "OryFlow": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ui": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginFlowUpdateRequest": {
+        "type": "object",
+        "required": [
+          "method",
+          "csrf_token",
+          "password_identifier",
+          "password"
+        ],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "password"
+            ]
+          },
+          "csrf_token": {
+            "type": "string"
+          },
+          "password_identifier": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          }
+        }
+      },
+      "OryLoginResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "session_token": {
+            "type": "string"
+          },
+          "session": {
+            "$ref": "#/components/schemas/OrySession"
+          },
+          "identity": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "OrySession": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "identity": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "traits": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "tokenized": {
+            "type": "string",
+            "description": "JWT returned when tokenize_as=jwt_template_1 is requested."
+          }
+        }
+      },
+      "RegistrationFlowUpdateRequest": {
+        "type": "object",
+        "required": [
+          "method",
+          "traits",
+          "password"
+        ],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "password"
+            ]
+          },
+          "traits": {
+            "$ref": "#/components/schemas/RegistrationTraits"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "Mobile app generates a secure random password."
+          },
+          "csrf_token": {
+            "type": "string"
+          }
+        }
+      },
+      "RegistrationTraits": {
+        "type": "object",
+        "required": [
+          "email",
+          "name",
+          "documentNumber"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "object",
+            "required": [
+              "first",
+              "last"
+            ],
+            "properties": {
+              "first": {
+                "type": "string"
+              },
+              "last": {
+                "type": "string"
+              }
+            }
+          },
+          "phone": {
+            "type": "string"
+          },
+          "refer_code": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "documentNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "RecoveryCodeRequest": {
+        "type": "object",
+        "required": [
+          "method",
+          "email"
+        ],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "code"
+            ]
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        }
+      },
+      "RecoveryVerifyRequest": {
+        "type": "object",
+        "required": [
+          "method",
+          "code"
+        ],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "code"
+            ]
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "OryRecoveryResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OryFlow"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "session_token": {
+                "type": "string"
+              },
+              "continue_with": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        ]
+      },
+      "SettingsPasswordRequest": {
+        "type": "object",
+        "required": [
+          "method",
+          "password"
+        ],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "password"
+            ]
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          }
+        }
+      },
+      "Account": {
+        "type": "object",
+        "required": [
+          "id",
+          "accountId",
+          "totalEquity",
+          "credit",
+          "maintenanceMargin",
+          "tempMaintenanceMargin",
+          "totalRealizedPnl",
+          "totalUnrealizedPnl",
+          "tradingPower",
+          "crossMargin",
+          "positions",
+          "tempPositions"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "totalEquity": {
+            "type": "number"
+          },
+          "credit": {
+            "type": "number"
+          },
+          "maintenanceMargin": {
+            "type": "number"
+          },
+          "tempMaintenanceMargin": {
+            "type": "number"
+          },
+          "totalRealizedPnl": {
+            "type": "number"
+          },
+          "totalUnrealizedPnl": {
+            "type": "number"
+          },
+          "tradingPower": {
+            "type": "number"
+          },
+          "crossMargin": {
+            "type": "boolean"
+          },
+          "refCode": {
+            "type": "string"
+          },
+          "positions": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Position"
+            }
+          },
+          "tempPositions": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/TempPosition"
+            }
+          }
+        }
+      },
+      "Position": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "avgPrice": {
+            "type": "number"
+          },
+          "qty": {
+            "type": "integer",
+            "description": "Positive is long, negative is short."
+          },
+          "marketPrice": {
+            "type": "number"
+          },
+          "marketValue": {
+            "type": "number"
+          },
+          "portPercent": {
+            "type": "number"
+          },
+          "realizePnl": {
+            "type": "number"
+          },
+          "unrealizePnl": {
+            "type": "number"
+          },
+          "coveredMarginCall": {
+            "type": "number"
+          },
+          "marginRatio": {
+            "$ref": "#/components/schemas/MarginRatio"
+          },
+          "forceClosePrice": {
+            "type": "number"
+          },
+          "forceCloseStatus": {
+            "type": "string"
+          },
+          "marginCallPrice": {
+            "type": "number"
+          },
+          "marginCallStatus": {
+            "type": "string"
+          }
+        }
+      },
+      "TempPosition": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "netQty": {
+            "type": "integer"
+          },
+          "avgPrice": {
+            "type": "number"
+          },
+          "orderCount": {
+            "type": "integer"
+          },
+          "marketPrice": {
+            "type": "number"
+          }
+        }
+      },
+      "MarginRatio": {
+        "type": "object",
+        "properties": {
+          "marginRatio": {
+            "type": "number"
+          },
+          "forceCloseRate": {
+            "type": "number"
+          },
+          "marginCallRate": {
+            "type": "number"
+          },
+          "tradingFee": {
+            "type": "number"
+          },
+          "productCommission": {
+            "type": "number"
+          },
+          "tax": {
+            "type": "number"
+          },
+          "overnightFee": {
+            "type": "number"
+          }
+        }
+      },
+      "WithdrawEquityRequest": {
+        "type": "object",
+        "required": [
+          "amount",
+          "bankId"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "minimum": 0
+          },
+          "bankId": {
+            "type": "string"
+          }
+        }
+      },
+      "BankAccount": {
+        "type": "object",
+        "required": [
+          "id",
+          "userId",
+          "bankAccountName",
+          "bankAccountNumber",
+          "bankCode",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "bankAccountName": {
+            "type": "string"
+          },
+          "bankAccountNumber": {
+            "type": "string"
+          },
+          "bankCode": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "CreateBankAccountRequest": {
+        "type": "object",
+        "required": [
+          "bankAccountName",
+          "bankAccountNumber",
+          "bankCode"
+        ],
+        "properties": {
+          "bankAccountName": {
+            "type": "string"
+          },
+          "bankAccountNumber": {
+            "type": "string"
+          },
+          "bankCode": {
+            "type": "string"
+          }
+        }
+      },
+      "BankAccountEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/BankAccount"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OrderSide": {
+        "type": "string",
+        "enum": [
+          "B",
+          "S"
+        ],
+        "description": "B = Buy, S = Sell."
+      },
+      "OrderType": {
+        "type": "string",
+        "enum": [
+          "LO",
+          "MO",
+          "ATO",
+          "ATC",
+          "MTL"
+        ]
+      },
+      "Order": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "orderID": {
+            "type": "string"
+          },
+          "refOrderID": {
+            "type": "string"
+          },
+          "externalOrderID": {
+            "type": "string"
+          },
+          "externalSecondOrderID": {
+            "type": "string"
+          },
+          "accountID": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "orderSide": {
+            "$ref": "#/components/schemas/OrderSide"
+          },
+          "orderStatus": {
+            "type": "string",
+            "description": "FIX 5.0 style values used by the app: 0 New, 1 Partially Filled, 2 Filled, 4 Cancelled, 7 Stopped, 8 Rejected. Backend may also return text statuses."
+          },
+          "orderType": {
+            "$ref": "#/components/schemas/OrderType"
+          },
+          "orderEntryPrice": {
+            "type": "number"
+          },
+          "orderEntryQty": {
+            "type": "integer"
+          },
+          "orderCurrentPrice": {
+            "type": "number"
+          },
+          "orderCurrentQty": {
+            "type": "integer"
+          },
+          "filledQty": {
+            "type": "integer"
+          },
+          "avgFillPrice": {
+            "type": "number"
+          },
+          "cancelledQty": {
+            "type": "integer"
+          },
+          "orderText": {
+            "type": "string"
+          },
+          "unixUTCTimeMs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createunixUTCTimeMs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "persisState": {
+            "type": "string"
+          },
+          "algoID": {
+            "type": "string"
+          },
+          "positionID": {
+            "type": "string"
+          },
+          "parentOrderId": {
+            "type": "string"
+          }
+        }
+      },
+      "OrderActionResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer"
+          },
+          "data": {},
+          "message": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "Trade": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "persisState": {
+            "type": "string"
+          },
+          "orderID": {
+            "type": "string"
+          },
+          "refOrderID": {
+            "type": "string"
+          },
+          "externalOrderID": {
+            "type": "string"
+          },
+          "tradeID": {
+            "type": "string"
+          },
+          "accountID": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "orderSide": {
+            "$ref": "#/components/schemas/OrderSide"
+          },
+          "tradedPrice": {
+            "type": "number"
+          },
+          "tradedQty": {
+            "type": "integer"
+          },
+          "unixUTCTimeMs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "algoID": {
+            "type": "string"
+          },
+          "positionID": {
+            "type": "string"
+          }
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "transactionType": {
+            "type": "string",
+            "description": "Examples used by UI: deposit, withdraw, fee, trading_fee, overnight_fee, realized_pnl, pnl, tax, trading_tax, commission, trading_commission, referral_refund, referral_rebate."
+          },
+          "amount": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "tx": {
+            "type": "string"
+          },
+          "recvAddress": {
+            "type": "string"
+          },
+          "senderAddress": {
+            "type": "string"
+          },
+          "processedTime": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        }
+      },
+      "Commission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "orderId": {
+            "type": "string"
+          },
+          "tradeId": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "commission": {
+            "type": "number"
+          },
+          "fee": {
+            "type": "number"
+          },
+          "unixUTCTimeMs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "Fee": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "orderId": {
+            "type": "string"
+          },
+          "tradeId": {
+            "type": "string"
+          },
+          "feeType": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "unixUTCTimeMs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "CommissionSummary": {
+        "type": "object",
+        "properties": {
+          "refCode": {
+            "type": "string"
+          },
+          "referredCode": {
+            "type": "string"
+          },
+          "totalVolume": {
+            "type": "number"
+          },
+          "referralRewards": {
+            "type": "number"
+          },
+          "referredFriends": {
+            "type": "integer"
+          },
+          "friendsWhoTraded": {
+            "type": "integer"
+          },
+          "totalRebatesGiven": {
+            "type": "number"
+          }
+        }
+      },
+      "CommissionInfo": {
+        "type": "object",
+        "properties": {
+          "refCode": {
+            "type": "string"
+          },
+          "ownerAccountId": {
+            "type": "string"
+          },
+          "rebateRate": {
+            "type": "number",
+            "description": "0-1 ratio."
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "CommissionHistoryItem": {
+        "type": "object",
+        "properties": {
+          "friendAddress": {
+            "type": "string"
+          },
+          "dateJoined": {
+            "type": "string"
+          },
+          "totalVolume": {
+            "type": "number"
+          },
+          "feesPaid": {
+            "type": "number"
+          },
+          "yourRewards": {
+            "type": "number"
+          }
+        }
+      },
+      "SetReferralCodeRequest": {
+        "type": "object",
+        "required": [
+          "refCode",
+          "rebateRate"
+        ],
+        "properties": {
+          "refCode": {
+            "type": "string"
+          },
+          "rebateRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "NotificationData": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "position": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "account": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/NotificationType"
+          },
+          "topic": {
+            "type": "string"
+          },
+          "messageID": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/NotificationData"
+          },
+          "read": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "updatedAt": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": true
+      },
+      "NotificationType": {
+        "type": "string",
+        "enum": [
+          "MarginCall",
+          "ForceClose",
+          "Deposit",
+          "Withdraw"
+        ]
+      },
+      "GetNotificationsResponse": {
+        "type": "object",
+        "required": [
+          "notifications",
+          "limit",
+          "offset"
+        ],
+        "properties": {
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Notification"
+            }
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          }
+        }
+      },
+      "FcmTokenRegisterRequest": {
+        "type": "object",
+        "required": [
+          "token",
+          "device_id",
+          "platform"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Raw FCM token."
+          },
+          "device_id": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "ios",
+              "android"
+            ]
+          }
+        }
+      },
+      "FcmTokenDeleteRequest": {
+        "type": "object",
+        "required": [
+          "token",
+          "device_id"
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "device_id": {
+            "type": "string"
+          }
+        }
+      },
+      "WatchListResponse": {
+        "type": "object",
+        "required": [
+          "isSuccess",
+          "data"
+        ],
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "returnCode": {
+            "type": "number"
+          },
+          "serviceInstance": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceInstance"
+            }
+          },
+          "requestID": {
+            "type": "string"
+          },
+          "algoID": {
+            "type": "string"
+          },
+          "positionID": {
+            "type": "string"
+          },
+          "requestType": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "dataType": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/WatchListData"
+          }
+        },
+        "additionalProperties": true
+      },
+      "ServiceInstance": {
+        "type": "object",
+        "properties": {
+          "serviceType": {
+            "type": "string"
+          },
+          "instanceID": {
+            "type": "string"
+          },
+          "lastUnixTime": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": true
+      },
+      "WatchListData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "symbols": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SymbolData"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "SymbolEnvelope": {
+        "type": "object",
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SymbolData"
+          }
+        },
+        "additionalProperties": true
+      },
+      "SymbolListEnvelope": {
+        "type": "object",
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SymbolData"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "SymbolData": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "sectorLvl1": {
+            "type": "string"
+          },
+          "sectorLvl2": {
+            "type": "string"
+          },
+          "sectorLvl3": {
+            "type": "string"
+          },
+          "industryName": {
+            "type": "string"
+          },
+          "logoId": {
+            "type": "string"
+          },
+          "news": {
+            "type": "array",
+            "items": {}
+          },
+          "sentiment": {
+            "$ref": "#/components/schemas/Sentiment"
+          },
+          "info": {
+            "$ref": "#/components/schemas/SymbolInfo"
+          },
+          "stat": {
+            "$ref": "#/components/schemas/SymbolStat"
+          },
+          "depth": {
+            "$ref": "#/components/schemas/PriceDepth"
+          },
+          "trend": {
+            "$ref": "#/components/schemas/Trend"
+          }
+        },
+        "additionalProperties": true
+      },
+      "Sentiment": {
+        "type": "object",
+        "properties": {
+          "bullish": {
+            "type": "number"
+          },
+          "bullishPercent": {
+            "type": "number"
+          },
+          "bullishTime": {
+            "type": "number"
+          },
+          "bearish": {
+            "type": "number"
+          },
+          "bearishPercent": {
+            "type": "number"
+          },
+          "bearishTime": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": true
+      },
+      "SymbolInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "seq": {
+            "type": "number"
+          },
+          "time": {
+            "type": "number"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "boardID": {
+            "type": "string"
+          },
+          "nomiPrc": {
+            "type": "number"
+          },
+          "ceilPrc": {
+            "type": "number"
+          },
+          "floorPrc": {
+            "type": "number"
+          },
+          "lsPrc": {
+            "type": "number"
+          },
+          "lsVol": {
+            "type": "number"
+          },
+          "openPrc": {
+            "type": "number"
+          },
+          "closePrc": {
+            "type": "number"
+          },
+          "highPrc": {
+            "type": "number"
+          },
+          "lowPrc": {
+            "type": "number"
+          },
+          "vWAP": {
+            "type": "number"
+          },
+          "totVol": {
+            "type": "number"
+          },
+          "totVal": {
+            "type": "number"
+          },
+          "tradingSession": {
+            "type": "string"
+          },
+          "openInterest": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": true
+      },
+      "SymbolStat": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "lot": {
+            "type": "number"
+          },
+          "minQty": {
+            "type": "number"
+          },
+          "maxQty": {
+            "type": "number"
+          },
+          "prcStep": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "productGroupID": {
+            "type": "string"
+          },
+          "tickerCode": {
+            "type": "string"
+          },
+          "symbolName": {
+            "type": "string"
+          },
+          "underlyingSymbolCode": {
+            "type": "string"
+          },
+          "expirationDate": {
+            "type": "string"
+          },
+          "contractSize": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": true
+      },
+      "PriceDepth": {
+        "type": "object",
+        "properties": {
+          "seq": {
+            "type": "number"
+          },
+          "time": {
+            "type": "number"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "boardID": {
+            "type": "string"
+          },
+          "bidPriceDepth": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriceLevel"
+            }
+          },
+          "askPriceDepth": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriceLevel"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "PriceLevel": {
+        "type": "object",
+        "properties": {
+          "prc": {
+            "type": "number"
+          },
+          "vol": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": true
+      },
+      "Trend": {
+        "type": "object",
+        "properties": {
+          "buyUp": {
+            "$ref": "#/components/schemas/TrendDirection"
+          },
+          "sellDown": {
+            "$ref": "#/components/schemas/TrendDirection"
+          },
+          "buyUpPct": {
+            "type": "number"
+          },
+          "sellDownPct": {
+            "type": "number"
+          },
+          "gapValue": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": true
+      },
+      "TrendDirection": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "way": {
+            "type": "number"
+          },
+          "vwapPrice": {
+            "type": "number"
+          },
+          "totalValue": {
+            "type": "number"
+          },
+          "totalVol": {
+            "type": "number"
+          },
+          "tradeCount": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": true
+      },
+      "OhlcvBar": {
+        "type": "object",
+        "required": [
+          "unixTime",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume"
+        ],
+        "properties": {
+          "unixTime": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix timestamp in milliseconds, based on mobile app parsing."
+          },
+          "open": {
+            "type": "number"
+          },
+          "high": {
+            "type": "number"
+          },
+          "low": {
+            "type": "number"
+          },
+          "close": {
+            "type": "number"
+          },
+          "volume": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": true
+      },
+      "MarginRatioDiagnostics": {
+        "type": "object",
+        "properties": {
+          "marginRatio": {
+            "type": "number"
+          },
+          "forceCloseRate": {
+            "type": "number"
+          },
+          "marginCallRate": {
+            "type": "number"
+          },
+          "productGroup": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "x-centrifugo": {
+    "server": "wss://streaming.verolabs.co/connection/websocket",
+    "description": "Centrifugo WebSocket channels used by lib/services/streaming_service.dart. The current client connects anonymously.",
+    "channels": [
+      {
+        "name": "mkt:{dataType}:{symbol}",
+        "dataTypes": [
+          "depth",
+          "productInfo",
+          "productStat",
+          "tradeLog"
+        ],
+        "description": "Generic market data stream. Depth stream often uses mkt:depth:{symbol}-{boardId}."
+      },
+      {
+        "name": "mkt:depth:{symbol}-{boardId}",
+        "payloadSchema": {
+          "$ref": "#/components/schemas/PriceDepth"
+        }
+      },
+      {
+        "name": "mkt:OhlcvDTO:{symbol}:{time}",
+        "payloadSchema": {
+          "$ref": "#/components/schemas/OhlcvBar"
+        }
+      },
+      {
+        "name": "mkt:productInfo:{symbol}-{boardId}",
+        "payloadSchema": {
+          "$ref": "#/components/schemas/SymbolInfo"
+        }
+      },
+      {
+        "name": "order:{accountId}",
+        "payloadSchema": {
+          "$ref": "#/components/schemas/Order"
+        }
+      },
+      {
+        "name": "order:Account:{accountId}",
+        "payloadSchema": {
+          "$ref": "#/components/schemas/Account"
+        }
+      },
+      {
+        "name": "order:OrderExecutionReport:{connectionId}",
+        "payloadSchema": {
+          "$ref": "#/components/schemas/Order"
+        }
+      },
+      {
+        "name": "order:{notificationType}:{accountId}",
+        "notificationTypes": [
+          "Deposit",
+          "ForceClose",
+          "MarginCall",
+          "Withdraw"
+        ],
+        "payloadSchema": {
+          "$ref": "#/components/schemas/NotificationData"
+        }
+      }
+    ]
+  },
+  "x-source": {
+    "tenantConfig": "tenant.json",
+    "serviceFiles": [
+      "lib/services/auth_service.dart",
+      "lib/services/api_client.dart",
+      "lib/services/account_service.dart",
+      "lib/services/order_service.dart",
+      "lib/services/history_service.dart",
+      "lib/services/market_data_service.dart",
+      "lib/services/notification_service.dart",
+      "lib/services/push_notification_service.dart",
+      "lib/services/commission_service.dart",
+      "lib/services/diagnostics_service.dart",
+      "lib/services/streaming_service.dart",
+      "lib/utils/pdf_helper.dart",
+      "lib/widgets/symbol_logo_widget.dart"
+    ]
+  }
+}

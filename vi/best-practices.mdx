@@ -1,0 +1,58 @@
+---
+title: 'Thực hành tốt nhất'
+description: 'Sử dụng Vero OMS API hiệu quả và ổn định'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<div style={{ width: '100%', height: 4, marginBottom: 24, borderRadius: 2, background: 'rgba(0,0,0,0.08)' }}>
+  <div style={{ width: '87.5%', height: '100%', borderRadius: 2, background: 'linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-light) 50%, var(--accent-dark) 100%)' }} />
+</div>
+
+## Chuẩn hóa yêu cầu
+
+| Khuyến nghị | Lý do |
+|---|---|
+| Gửi request nhỏ nhất có ích | Phản hồi nhỏ hơn và dễ gỡ lỗi hơn |
+| Truyền `limit` hợp lý | Tránh lấy nhiều dữ liệu hơn cần thiết |
+| Theo đúng kiểu phân trang của endpoint | Dùng `limit`, `offset` hoặc tham số khoảng thời gian đúng như tài liệu |
+| Cache dữ liệu ít thay đổi | Cấu hình và metadata tham chiếu không cần tải lại liên tục |
+| Thử lại với backoff | Tránh gửi lại dồn dập khi có lỗi tạm thời |
+
+## Gợi ý request
+
+| Trường hợp sử dụng | Gợi ý |
+|---|---|
+| Màn hình danh sách | Chỉ request các field và page size cần cho UI |
+| Màn hình chi tiết | Fetch bằng định danh tài nguyên ổn định |
+| Đồng bộ nền | Dùng phân trang và lưu tiến độ ở phía client |
+| Lỗi tạm thời | Retry với exponential backoff và giới hạn số lần retry |
+
+## Luồng phân trang
+
+<Steps>
+  <Step title="Gửi yêu cầu đầu tiên">
+    Truyền `limit` phù hợp với giao diện hoặc kích thước lô xử lý.
+  </Step>
+  <Step title="Kiểm tra phản hồi">
+    Xác định phản hồi đã đủ dữ liệu cho màn hình hoặc lô xử lý hiện tại chưa.
+  </Step>
+  <Step title="Yêu cầu trang kế tiếp">
+    Tăng `offset` hoặc dịch khoảng thời gian theo trang tham chiếu của endpoint đó.
+  </Step>
+</Steps>
+
+## Xử lý lỗi
+
+| Status | Cách xử lý |
+|---|---|
+| `400` | Sửa tham số truy vấn hoặc định dạng thời gian |
+| `401` | Kiểm tra thông tin xác thực của tài khoản |
+| `404` | Kiểm tra ID tài nguyên hoặc đường dẫn đang yêu cầu |
+| `429` | Giảm tần suất và thử lại sau |
+| `503` | Thử lại với backoff sau một khoảng ngắn |

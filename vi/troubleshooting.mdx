@@ -1,0 +1,60 @@
+---
+title: 'Xử lý sự cố'
+description: 'Các lỗi thường gặp khi gọi Vero OMS API'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<div style={{ width: '100%', height: 4, marginBottom: 24, borderRadius: 2, background: 'rgba(0,0,0,0.08)' }}>
+  <div style={{ width: '100%', height: '100%', borderRadius: 2, background: 'linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-light) 50%, var(--accent-dark) 100%)' }} />
+</div>
+
+## Danh sách kiểm tra nhanh
+
+<Steps>
+  <Step title="Kiểm tra phương thức và đường dẫn">
+    Đối chiếu request với định nghĩa endpoint được cung cấp cho tích hợp của bạn.
+  </Step>
+  <Step title="Kiểm tra thông tin xác thực">
+    Với `401`, kiểm tra bearer JWT hoặc `X-Session-Token` endpoint yêu cầu.
+  </Step>
+  <Step title="Kiểm tra định dạng thời gian">
+    Dùng ISO 8601 UTC có hậu tố `Z` khi gửi tham số ngày giờ.
+  </Step>
+  <Step title="Kiểm tra trạng thái phản hồi">
+    Dùng mã trạng thái và body phản hồi để xác định lỗi validation.
+  </Step>
+</Steps>
+
+## Lỗi thường gặp
+
+| Triệu chứng | Nguyên nhân thường gặp | Cách xử lý |
+|---|---|---|
+| `400 Invalid query parameter` | Thiếu tham số bắt buộc hoặc sai định dạng thời gian | Kiểm tra tham số bắt buộc và dùng UTC `Z` |
+| `401 Unauthorized` | Thiếu hoặc sai thông tin xác thực | Kiểm tra bearer JWT hoặc `X-Session-Token` |
+| `404 Not found` | ID tài nguyên hoặc đường dẫn không tồn tại | Kiểm tra tài nguyên đang yêu cầu |
+| `422 Unprocessable` | Đúng định dạng nhưng giá trị không được hỗ trợ | Kiểm tra enum và ràng buộc trong tài liệu |
+| `429 Too many requests` | Vượt giới hạn yêu cầu | Giảm tần suất yêu cầu và thử lại sau |
+| `503 Unavailable` | API tạm thời không sẵn sàng | Thử lại với backoff |
+
+## Ví dụ định dạng thời gian
+
+| Hợp lệ | Không hợp lệ |
+|---|---|
+| `2026-05-15T00:00:00Z` | `2026-05-15 00:00:00` |
+| `2026-05-15T00:00:00.123Z` | `2026-05-15T07:00:00+07:00` |
+
+## Thông tin nên gửi khi cần hỗ trợ
+
+| Thông tin | Ví dụ |
+|---|---|
+| Endpoint | Method và path đang gọi |
+| Tham số truy vấn | Query string hoặc body JSON |
+| Trạng thái HTTP | `400`, `401`, `404`, `429`, `503` |
+| Nội dung phản hồi | Phản hồi JSON hoặc nội dung lỗi |
+| Thời điểm request | UTC timestamp |

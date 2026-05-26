@@ -1,0 +1,58 @@
+---
+title: 'Nhận cập nhật tài khoản'
+description: 'Nhận cập nhật tài khoản'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+order:Account:{accountId}
+```
+
+## Mô tả
+
+Cập nhật tài khoản/danh mục realtime.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Tham số channel
+
+| Tham số | Kiểu | Mô tả | Giá trị |
+|---|---|---|---|
+| `accountId` | string | ID tài khoản giao dịch. | - |
+
+## Message
+
+| Mục | Giá trị |
+|---|---|
+| Operation | `receiveAccountUpdates` |
+| Tên | `Account` |
+| Payload | `Account` |
+| Handler | `StreamingService._handleAccountUpdate` |
+
+## Payload schema
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | string | - |
+| `accountId` | string | - |
+| `totalEquity` | number | - |
+| `credit` | number | - |
+| `maintenanceMargin` | number | - |
+| `tempMaintenanceMargin` | number | - |
+| `totalRealizedPnl` | number | - |
+| `totalUnrealizedPnl` | number | - |
+| `tradingPower` | number | - |
+| `crossMargin` | boolean | - |
+| `refCode` | string | - |
+| `positions` | object | - |
+| `tempPositions` | object | - |
+
+<Info>
+Trang này được tạo từ `asyncapi.json`.
+</Info>

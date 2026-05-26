@@ -1,0 +1,82 @@
+---
+title: 'API Conventions'
+description: 'Request, response, pagination, time and error conventions'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<div style={{ width: '100%', height: 4, marginBottom: 24, borderRadius: 2, background: 'rgba(0,0,0,0.08)' }}>
+  <div style={{ width: '37.5%', height: '100%', borderRadius: 2, background: 'linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-light) 50%, var(--accent-dark) 100%)' }} />
+</div>
+
+## Base URL and authentication
+
+Use the REST base URLs from the OpenAPI spec. Account, order, notification and referral endpoints use `https://api-gw.verolabs.co/api/v1`; Ory authentication flows use `https://api-gw.verolabs.co/api/authen`.
+
+```bash
+curl --request GET \
+  --url "https://api-gw.verolabs.co/api/v1/users/accounts" \
+  --header "Authorization: Bearer $JWT"
+```
+
+Selected Ory native flow endpoints use `X-Session-Token` instead of bearer auth. Public market-data and static-asset endpoints do not require an auth header.
+
+## Response shape
+
+Response shapes are defined per endpoint in the REST API reference. List endpoints commonly return JSON arrays or objects containing list data.
+
+```json
+{
+  "data": [
+    { "id": "..." }
+  ]
+}
+```
+
+Detail endpoints return one resource object.
+
+## Pagination
+
+Pagination style is endpoint-specific. Notification and referral history endpoints use `limit` and `offset`; history endpoints use path-based time ranges.
+
+| Param | Meaning |
+|---|---|
+| `limit` | Maximum number of items returned in one request |
+| `offset` | Number of items to skip before returning the next page |
+| `startTime`, `endTime` | Path parameters that bound account history queries |
+
+## Time parameters
+
+When an endpoint accepts date-time parameters, use ISO 8601 UTC format.
+
+| Valid | Invalid |
+|---|---|
+| `2026-05-15T00:00:00Z` | `2026-05-15 00:00:00` |
+| `2026-05-15T00:00:00.123Z` | `2026-05-15T07:00:00+07:00` |
+
+## Error format
+
+Error payloads are defined per endpoint. Preserve status code, response body and request time when logging failures.
+
+```json
+{
+  "code": "invalid-request",
+  "message": "Invalid request",
+  "status": 400,
+  "details": "A required parameter is missing or invalid"
+}
+```
+
+| Status | Meaning |
+|---|---|
+| `400` | Missing or invalid request parameter |
+| `401` | Missing or invalid credential |
+| `404` | Resource not found |
+| `422` | Valid format but unsupported value |
+| `429` | Account request limit exceeded |
+| `503` | API temporarily unavailable |

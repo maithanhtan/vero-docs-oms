@@ -1,0 +1,81 @@
+---
+title: 'Nhận cập nhật thông tin sản phẩm'
+description: 'Nhận cập nhật thông tin sản phẩm'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+mkt:productInfo:{symbol}-{boardId}
+```
+
+## Mô tả
+
+Cập nhật product info/quote. boardId mặc định hiện tại của ứng dụng là G1.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Tham số channel
+
+| Tham số | Kiểu | Mô tả | Giá trị |
+|---|---|---|---|
+| `symbol` | string | Mã giao dịch, ví dụ VN30F1M. | example: VN30F1M |
+| `boardId` | string | Mã bảng giao dịch. Ứng dụng mobile mặc định dùng G1. | default: G1<br />example: G1 |
+
+## Message
+
+| Mục | Giá trị |
+|---|---|
+| Operation | `receiveProductInfo` |
+| Tên | `ProductInfo` |
+| Payload | `SymbolInfo` |
+| Handler | `StreamingService._handleMarketData` |
+
+## Payload schema
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | string | - |
+| `seq` | number | - |
+| `time` | number | - |
+| `symbol` | string | - |
+| `boardID` | string | - |
+| `currFR` | number | - |
+| `totalFR` | number | - |
+| `totBuyFR` | number | - |
+| `totSellFR` | number | - |
+| `nomiPrc` | number | - |
+| `ceilPrc` | number | - |
+| `floorPrc` | number | - |
+| `lsPrc` | number | - |
+| `lsVol` | number | - |
+| `AucEstPrc` | number | - |
+| `AucEstVol` | number | - |
+| `isAuction` | boolean | - |
+| `openPrc` | number | - |
+| `closePrc` | number | - |
+| `highPrc` | number | - |
+| `lowPrc` | number | - |
+| `vWAP` | number | - |
+| `totVol` | number | - |
+| `totVal` | number | - |
+| `totVolPT` | number | - |
+| `totValPT` | number | - |
+| `lsWay` | number | - |
+| `dynInfo` | string | - |
+| `marketMakingPossible` | string | - |
+| `halt` | string | - |
+| `liquidationTrading` | string | - |
+| `tradingSession` | string | - |
+| `boardEventID` | string | - |
+| `sessionOpenCloseCode` | string | - |
+| `openInterest` | number | - |
+
+<Info>
+Trang này được tạo từ `asyncapi.json`.
+</Info>

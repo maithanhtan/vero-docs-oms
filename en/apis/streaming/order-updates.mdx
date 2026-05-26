@@ -1,0 +1,82 @@
+---
+title: 'Receive order updates'
+description: 'Receive order updates'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+order:{accountId}
+```
+
+## Description
+
+Realtime order updates for an account.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Channel parameters
+
+| Parameter | Type | Description | Values |
+|---|---|---|---|
+| `accountId` | string | Trading account id. | - |
+
+## Message
+
+| Item | Value |
+|---|---|
+| Operation | `receiveOrderUpdates` |
+| Name | `Order` |
+| Payload | `Order` |
+| Handler | `StreamingService._handleOrderUpdate` |
+
+## Payload schema
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | string | - |
+| `orderID` | string | - |
+| `order_id` | string | Snake_case alias accepted by the mobile parser. |
+| `refOrderID` | string | - |
+| `ref_order_id` | string | Snake_case alias accepted by the mobile parser. |
+| `externalOrderID` | string | - |
+| `externalSecondOrderID` | string | - |
+| `accountID` | string | - |
+| `account_id` | string | Snake_case alias accepted by the mobile parser. |
+| `symbol` | string | - |
+| `orderSide` | OrderSide | - |
+| `order_side` | OrderSide | - |
+| `orderStatus` | OrderStatus | - |
+| `order_status` | OrderStatus | - |
+| `orderType` | OrderType | - |
+| `order_type` | OrderType | - |
+| `orderEntryPrice` | number | - |
+| `order_entry_price` | number | - |
+| `orderEntryQty` | integer | - |
+| `order_entry_qty` | integer | - |
+| `orderCurrentPrice` | number | - |
+| `order_current_price` | number | - |
+| `orderCurrentQty` | integer | - |
+| `order_current_qty` | integer | - |
+| `filledQty` | integer | - |
+| `filled_qty` | integer | - |
+| `avgFillPrice` | number | - |
+| `avg_fill_price` | number | - |
+| `cancelledQty` | integer | - |
+| `cancelled_qty` | integer | - |
+| `orderText` | string | - |
+| `unixUTCTimeMs` | integer (int64) | Unix timestamp in milliseconds. |
+| `createunixUTCTimeMs` | integer (int64) | Unix timestamp in milliseconds. |
+| `persisState` | string | - |
+| `algoID` | string | - |
+| `positionID` | string | - |
+| `parentOrderId` | string | - |
+
+<Info>
+This page is generated from `asyncapi.json`.
+</Info>

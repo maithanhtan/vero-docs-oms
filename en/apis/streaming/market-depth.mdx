@@ -1,0 +1,52 @@
+---
+title: 'Receive bid/ask depth updates'
+description: 'Receive bid/ask depth updates'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+mkt:depth:{symbol}-{boardId}
+```
+
+## Description
+
+Order-book depth updates. Current app default boardId is G1.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Channel parameters
+
+| Parameter | Type | Description | Values |
+|---|---|---|---|
+| `symbol` | string | Trading symbol, for example VN30F1M. | example: VN30F1M |
+| `boardId` | string | Trading board id. The mobile app defaults to G1. | default: G1<br />example: G1 |
+
+## Message
+
+| Item | Value |
+|---|---|
+| Operation | `receiveMarketDepth` |
+| Name | `MarketDepth` |
+| Payload | `PriceDepth` |
+| Handler | `StreamingService._handleDepthUpdate` |
+
+## Payload schema
+
+| Field | Type | Notes |
+|---|---|---|
+| `seq` | number | - |
+| `time` | number | - |
+| `symbol` | string | - |
+| `boardID` | string | - |
+| `bidPriceDepth` | array&lt;PriceLevel&gt; | - |
+| `askPriceDepth` | array&lt;PriceLevel&gt; | - |
+
+<Info>
+This page is generated from `asyncapi.json`.
+</Info>

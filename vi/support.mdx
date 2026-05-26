@@ -1,0 +1,39 @@
+---
+title: 'Hỗ trợ'
+description: 'Hỗ trợ Vero OMS API'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+## Kênh hỗ trợ
+
+Nếu yêu cầu API lỗi hoặc dữ liệu trả về không như kỳ vọng, hãy chuẩn bị thông tin yêu cầu và liên hệ kênh hỗ trợ được cấp cho tài khoản của bạn.
+
+<CardGroup cols={2}>
+  <Card title="Tích hợp API" icon="code">
+    Tham số yêu cầu, xác thực, phân trang, ánh xạ schema và mã trạng thái.
+  </Card>
+  <Card title="Câu hỏi về quy trình" icon="diagram-project">
+    Luồng nghiệp vụ, trạng thái tài nguyên, quy tắc validation và trường phản hồi.
+  </Card>
+</CardGroup>
+
+## Thông tin cần gửi
+
+| Thông tin | Ví dụ |
+|---|---|
+| Endpoint | Method và path đang gọi |
+| Tham số truy vấn | Query string hoặc body JSON |
+| Trạng thái HTTP | `200`, `400`, `401`, `404`, `429`, `503` |
+| Nội dung phản hồi | Phản hồi JSON hoặc nội dung lỗi |
+| Thời điểm request | UTC timestamp |
+| Trường hợp sử dụng | Đồng bộ backend, quy trình đặt lệnh, dashboard hoặc công cụ vận hành |
+
+<Info>
+Không gửi bearer token, session token hoặc thông tin xác thực trong tin nhắn hỗ trợ.
+</Info>

@@ -1,0 +1,53 @@
+---
+title: 'Nhận cập nhật nến OHLCV'
+description: 'Nhận cập nhật nến OHLCV'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+mkt:OhlcvDTO:{symbol}:{time}
+```
+
+## Mô tả
+
+Cập nhật nến/OHLCV. time mặc định hiện tại của ứng dụng là 60 giây.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Tham số channel
+
+| Tham số | Kiểu | Mô tả | Giá trị |
+|---|---|---|---|
+| `symbol` | string | Mã giao dịch, ví dụ VN30F1M. | example: VN30F1M |
+| `time` | integer | Độ phân giải nến tính bằng giây. Ứng dụng dùng 60 cho 1 phút và 86400 cho ngày. | default: 60<br />enum: 60, 86400 |
+
+## Message
+
+| Mục | Giá trị |
+|---|---|
+| Operation | `receiveOhlcv` |
+| Tên | `Ohlcv` |
+| Payload | `OhlcvBar` |
+| Handler | `StreamingService._handleOhlcvUpdate` |
+
+## Payload schema
+
+| Field | Type | Notes |
+|---|---|---|
+| `unixTime` | integer (int64) | Unix timestamp. The mobile handler also accepts time. |
+| `time` | integer (int64) | Alias accepted by the mobile handler. |
+| `open` | number | - |
+| `high` | number | - |
+| `low` | number | - |
+| `close` | number | - |
+| `volume` | number | - |
+
+<Info>
+Trang này được tạo từ `asyncapi.json`.
+</Info>

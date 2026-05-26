@@ -1,0 +1,45 @@
+---
+title: 'Receive generic market data updates'
+description: 'Receive generic market data updates'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+mkt:{dataType}:{symbol}
+```
+
+## Description
+
+Generic market-data subscription used by subscribeMarketData(symbol, dataType). Specific helpers below use more precise channel formats for depth, OHLCV and product info.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Channel parameters
+
+| Parameter | Type | Description | Values |
+|---|---|---|---|
+| `dataType` | string | Market data type configured in ApiConfig. | enum: depth, productInfo, productStat, tradeLog |
+| `symbol` | string | Trading symbol, for example VN30F1M. | example: VN30F1M |
+
+## Message
+
+| Item | Value |
+|---|---|
+| Operation | `receiveGenericMarketData` |
+| Name | `GenericMarketData` |
+| Payload | `GenericObject` |
+| Handler | `StreamingService._handleMarketData` |
+
+## Payload schema
+
+The payload is a flexible JSON object and may include additional fields from the live publication.
+
+<Info>
+This page is generated from `asyncapi.json`.
+</Info>

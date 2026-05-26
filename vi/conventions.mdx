@@ -1,0 +1,82 @@
+---
+title: 'Quy ước API'
+description: 'Quy ước về yêu cầu, phản hồi, phân trang, thời gian và lỗi'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<div style={{ width: '100%', height: 4, marginBottom: 24, borderRadius: 2, background: 'rgba(0,0,0,0.08)' }}>
+  <div style={{ width: '37.5%', height: '100%', borderRadius: 2, background: 'linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-light) 50%, var(--accent-dark) 100%)' }} />
+</div>
+
+## Base URL và xác thực
+
+Dùng REST base URL từ OpenAPI spec. Endpoint tài khoản, lệnh, thông báo và giới thiệu dùng `https://api-gw.verolabs.co/api/v1`; các luồng xác thực Ory dùng `https://api-gw.verolabs.co/api/authen`.
+
+```bash
+curl --request GET \
+  --url "https://api-gw.verolabs.co/api/v1/users/accounts" \
+  --header "Authorization: Bearer $JWT"
+```
+
+Một số endpoint Ory native flow dùng `X-Session-Token` thay vì bearer auth. Endpoint market-data public và static asset không cần auth header.
+
+## Cấu trúc phản hồi
+
+Cấu trúc phản hồi được định nghĩa theo từng endpoint trong REST API reference. Endpoint dạng danh sách thường trả JSON array hoặc object chứa dữ liệu danh sách.
+
+```json
+{
+  "data": [
+    { "id": "..." }
+  ]
+}
+```
+
+Endpoint chi tiết trả một đối tượng tài nguyên.
+
+## Phân trang
+
+Kiểu phân trang tùy theo endpoint. Notifications và referral history dùng `limit` và `offset`; các endpoint history dùng khoảng thời gian trên path.
+
+| Param | Ý nghĩa |
+|---|---|
+| `limit` | Số item tối đa trả về trong một yêu cầu |
+| `offset` | Số item bỏ qua trước khi trả trang tiếp theo |
+| `startTime`, `endTime` | Path parameters giới hạn truy vấn lịch sử tài khoản |
+
+## Tham số thời gian
+
+Khi endpoint nhận tham số ngày giờ, dùng định dạng ISO 8601 UTC.
+
+| Hợp lệ | Không hợp lệ |
+|---|---|
+| `2026-05-15T00:00:00Z` | `2026-05-15 00:00:00` |
+| `2026-05-15T00:00:00.123Z` | `2026-05-15T07:00:00+07:00` |
+
+## Định dạng lỗi
+
+Payload lỗi được định nghĩa theo từng endpoint. Khi ghi log lỗi, giữ lại status code, response body và thời điểm request.
+
+```json
+{
+  "code": "invalid-request",
+  "message": "Invalid request",
+  "status": 400,
+  "details": "A required parameter is missing or invalid"
+}
+```
+
+| Status | Ý nghĩa |
+|---|---|
+| `400` | Thiếu hoặc sai tham số yêu cầu |
+| `401` | Thiếu hoặc sai thông tin xác thực |
+| `404` | Tài nguyên không tồn tại |
+| `422` | Đúng định dạng nhưng giá trị không được hỗ trợ |
+| `429` | Vượt giới hạn yêu cầu của tài khoản |
+| `503` | API tạm thời không sẵn sàng |

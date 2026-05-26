@@ -1,0 +1,57 @@
+---
+title: 'Nhận sự kiện thông báo'
+description: 'Nhận sự kiện thông báo'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+order:{notificationType}:{accountId}
+```
+
+## Mô tả
+
+Thông báo giao dịch/tài khoản. Ứng dụng đăng ký Deposit, ForceClose, MarginCall và Withdraw.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Tham số channel
+
+| Tham số | Kiểu | Mô tả | Giá trị |
+|---|---|---|---|
+| `notificationType` | string | Loại topic thông báo được ứng dụng mobile hỗ trợ. | enum: Deposit, ForceClose, MarginCall, Withdraw |
+| `accountId` | string | ID tài khoản giao dịch. | - |
+
+## Message
+
+| Mục | Giá trị |
+|---|---|
+| Operation | `receiveNotifications` |
+| Tên | `Notification` |
+| Payload | `StreamingNotification` |
+| Handler | `StreamingService._handleNotification` |
+
+## Payload schema
+
+| Field | Type | Notes |
+|---|---|---|
+| `Type` | NotificationType | - |
+| `type` | NotificationType | - |
+| `accountId` | string | - |
+| `account_id` | string | - |
+| `symbol` | string | - |
+| `amount` | number \| string | - |
+| `position` | object | - |
+| `account` | object | - |
+| `MessageID` | string | - |
+| `messageID` | string | - |
+| `message_id` | string | - |
+
+<Info>
+Trang này được tạo từ `asyncapi.json`.
+</Info>

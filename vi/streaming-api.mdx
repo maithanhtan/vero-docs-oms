@@ -1,0 +1,39 @@
+---
+title: 'Streaming API'
+description: 'Kênh WebSocket được tạo từ asyncapi.json'
+mode: 'wide'
+---
+
+<div style={{ width: '100%', height: 240, marginBottom: 32, borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+  <video style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay loop muted playsInline>
+    <source src="/images/bg_video.mp4" type="video/mp4" />
+  </video>
+</div>
+
+Vero OMS Streaming API dùng Centrifugo qua WebSocket cho publication dữ liệu thị trường, lệnh, tài khoản và thông báo.
+
+<CardGroup cols={3}>
+  <Card title="Nguồn AsyncAPI" icon="file-code">
+    Tham chiếu streaming được tạo từ `asyncapi.json`; docs dùng bản mirror AsyncAPI 3.0 tương thích Mintlify.
+  </Card>
+  <Card title="WebSocket URL" icon="tower-broadcast">
+    `wss://streaming.verolabs.co/connection/websocket`
+  </Card>
+  <Card title="Độ phủ" icon="diagram-project">
+    8 channel pattern có trong phần tham chiếu Streaming API.
+  </Card>
+</CardGroup>
+
+## Luồng client
+
+<Steps>
+  <Step title="Kết nối">
+    Mở kết nối Centrifugo WebSocket tới streaming server.
+  </Step>
+  <Step title="Subscribe">
+    Subscribe vào channel pattern tương ứng với tài khoản, mã giao dịch hoặc loại thông báo cần nhận.
+  </Step>
+  <Step title="Xử lý publication">
+    Decode publication JSON UTF-8 và route theo channel cùng payload schema.
+  </Step>
+</Steps>

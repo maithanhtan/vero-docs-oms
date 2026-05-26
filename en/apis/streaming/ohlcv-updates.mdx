@@ -1,0 +1,53 @@
+---
+title: 'Receive OHLCV candle updates'
+description: 'Receive OHLCV candle updates'
+mode: 'wide'
+---
+
+## Channel
+
+```text
+mkt:OhlcvDTO:{symbol}:{time}
+```
+
+## Description
+
+Candlestick/OHLCV updates. Current app default time is 60 seconds.
+
+## WebSocket URL
+
+```text
+wss://streaming.verolabs.co/connection/websocket
+```
+
+## Channel parameters
+
+| Parameter | Type | Description | Values |
+|---|---|---|---|
+| `symbol` | string | Trading symbol, for example VN30F1M. | example: VN30F1M |
+| `time` | integer | Candle resolution in seconds. The mobile app uses 60 for 1 minute and 86400 for daily. | default: 60<br />enum: 60, 86400 |
+
+## Message
+
+| Item | Value |
+|---|---|
+| Operation | `receiveOhlcv` |
+| Name | `Ohlcv` |
+| Payload | `OhlcvBar` |
+| Handler | `StreamingService._handleOhlcvUpdate` |
+
+## Payload schema
+
+| Field | Type | Notes |
+|---|---|---|
+| `unixTime` | integer (int64) | Unix timestamp. The mobile handler also accepts time. |
+| `time` | integer (int64) | Alias accepted by the mobile handler. |
+| `open` | number | - |
+| `high` | number | - |
+| `low` | number | - |
+| `close` | number | - |
+| `volume` | number | - |
+
+<Info>
+This page is generated from `asyncapi.json`.
+</Info>
