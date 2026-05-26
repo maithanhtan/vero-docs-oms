@@ -1,7 +1,7 @@
 {
   "asyncapi": "2.6.0",
   "info": {
-    "title": "YIXIN Mobile Trade Streaming API",
+    "title": "Mobile Trade Streaming API",
     "version": "1.0.23",
     "description": "AsyncAPI spec for Centrifugo/WebSocket streams used by the Flutter mobile app. Derived from lib/services/streaming_service.dart and tenant.json. The client subscribes to channels and receives UTF-8 JSON publications."
   },

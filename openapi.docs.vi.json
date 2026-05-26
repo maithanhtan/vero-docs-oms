@@ -14,8 +14,12 @@
   "tags": [
     {
       "name": "Xác thực",
-      "description": "Luồng xác thực Ory Kratos native và đăng xuất ứng dụng",
+      "description": "Luồng xác thực và đăng xuất",
       "x-original-name": "Auth"
+    },
+    {
+      "name": "Đăng ký",
+      "description": "API hỗ trợ luồng đăng ký tài khoản"
     },
     {
       "name": "Tài khoản",
@@ -44,7 +48,7 @@
     },
     {
       "name": "Thông báo",
-      "description": "Thông báo trong ứng dụng và đăng ký FCM token",
+      "description": "Thông báo trong ứng dụng và đăng ký push token",
       "x-original-name": "Notifications"
     },
     {
@@ -56,11 +60,6 @@
       "name": "Chẩn đoán",
       "description": "Endpoint kiểm tra sức khỏe và chẩn đoán hệ thống",
       "x-original-name": "Diagnostics"
-    },
-    {
-      "name": "Tài nguyên tĩnh",
-      "description": "PDF cấu hình và logo mã giao dịch được ứng dụng tải về",
-      "x-original-name": "Static Assets"
     }
   ],
   "paths": {
@@ -68,7 +67,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Ory Kratos authentication API"
+          "description": "Authentication API"
         }
       ],
       "get": {
@@ -76,7 +75,7 @@
           "Xác thực"
         ],
         "operationId": "createLoginFlow",
-        "summary": "Tạo luồng đăng nhập native",
+        "summary": "Tạo luồng đăng nhập",
         "security": [],
         "responses": {
           "200": {
@@ -84,7 +83,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OryFlow"
+                  "$ref": "#/components/schemas/AuthFlow"
                 }
               }
             }
@@ -95,8 +94,8 @@
         },
         "x-mint": {
           "metadata": {
-            "title": "Tạo luồng đăng nhập native",
-            "sidebarTitle": "Tạo luồng đăng nhập native",
+            "title": "Tạo luồng đăng nhập",
+            "sidebarTitle": "Tạo luồng đăng nhập",
             "description": "GET /self-service/login/api"
           }
         }
@@ -106,7 +105,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Ory Kratos authentication API"
+          "description": "Authentication API"
         }
       ],
       "post": {
@@ -137,13 +136,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OryLoginResponse"
+                  "$ref": "#/components/schemas/LoginResponse"
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/OryFlowError"
+            "$ref": "#/components/responses/AuthFlowError"
           },
           "default": {
             "$ref": "#/components/responses/Error"
@@ -162,7 +161,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Ory Kratos authentication API"
+          "description": "Authentication API"
         }
       ],
       "get": {
@@ -171,7 +170,7 @@
         ],
         "operationId": "getWhoamiSession",
         "summary": "Lấy session hiện tại hoặc JWT session",
-        "description": "Ứng dụng gọi endpoint này với X-Session-Token và tokenize_as=jwt_template_1 sau khi đăng nhập, sau đó dùng Authorization: Bearer <jwt> để lấy dữ liệu identity.",
+        "description": "Trả về phiên xác thực hiện tại và dữ liệu định danh cho thông tin xác thực được cung cấp.",
         "security": [
           {
             "sessionToken": []
@@ -186,19 +185,18 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "example": "jwt_template_1"
+              "type": "string"
             },
-            "description": "When set to jwt_template_1, response should include tokenized JWT used as app bearer token."
+            "description": "When provided, the response can include a bearer token for authenticated API requests."
           }
         ],
         "responses": {
           "200": {
-            "description": "Ory session object with identity and optional tokenized JWT.",
+            "description": "Session object with identity and optional bearer token.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrySession"
+                  "$ref": "#/components/schemas/AuthSession"
                 }
               }
             }
@@ -223,7 +221,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Ory Kratos authentication API"
+          "description": "Authentication API"
         }
       ],
       "get": {
@@ -231,7 +229,7 @@
           "Xác thực"
         ],
         "operationId": "createRegistrationFlow",
-        "summary": "Tạo luồng đăng ký native",
+        "summary": "Tạo luồng đăng ký",
         "security": [],
         "responses": {
           "200": {
@@ -239,7 +237,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OryFlow"
+                  "$ref": "#/components/schemas/AuthFlow"
                 }
               }
             }
@@ -250,8 +248,8 @@
         },
         "x-mint": {
           "metadata": {
-            "title": "Tạo luồng đăng ký native",
-            "sidebarTitle": "Tạo luồng đăng ký native",
+            "title": "Tạo luồng đăng ký",
+            "sidebarTitle": "Tạo luồng đăng ký",
             "description": "GET /self-service/registration/api"
           }
         }
@@ -261,7 +259,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Ory Kratos authentication API"
+          "description": "Authentication API"
         }
       ],
       "post": {
@@ -292,13 +290,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OryFlow"
+                  "$ref": "#/components/schemas/AuthFlow"
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/OryFlowError"
+            "$ref": "#/components/responses/AuthFlowError"
           },
           "default": {
             "$ref": "#/components/responses/Error"
@@ -317,7 +315,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Ory Kratos authentication API"
+          "description": "Authentication API"
         }
       ],
       "get": {
@@ -333,7 +331,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OryFlow"
+                  "$ref": "#/components/schemas/AuthFlow"
                 }
               }
             }
@@ -355,7 +353,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Ory Kratos authentication API"
+          "description": "Authentication API"
         }
       ],
       "post": {
@@ -393,13 +391,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OryRecoveryResponse"
+                  "$ref": "#/components/schemas/RecoveryResponse"
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/OryFlowError"
+            "$ref": "#/components/responses/AuthFlowError"
           },
           "default": {
             "$ref": "#/components/responses/Error"
@@ -418,7 +416,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Ory Kratos authentication API"
+          "description": "Authentication API"
         }
       ],
       "get": {
@@ -438,7 +436,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OryFlow"
+                  "$ref": "#/components/schemas/AuthFlow"
                 }
               }
             }
@@ -463,7 +461,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Ory Kratos authentication API"
+          "description": "Authentication API"
         }
       ],
       "post": {
@@ -498,13 +496,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OryFlow"
+                  "$ref": "#/components/schemas/AuthFlow"
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/OryFlowError"
+            "$ref": "#/components/responses/AuthFlowError"
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
@@ -568,23 +566,26 @@
         ],
         "responses": {
           "200": {
-            "description": "Accounts for the current user.",
+            "description": "Returns the list accounts for current user result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Account"
-                  }
+                  "$ref": "#/components/schemas/CustomResponse"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -593,7 +594,8 @@
             "sidebarTitle": "Lấy danh sách tài khoản của người dùng hiện tại",
             "description": "GET /users/accounts"
           }
-        }
+        },
+        "description": "List accounts for current user."
       }
     },
     "/users/accounts/{accountId}/orders/{startTime}/{endTime}": {
@@ -611,34 +613,55 @@
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/AccountId"
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Trading account identifier."
           },
           {
-            "$ref": "#/components/parameters/StartTime"
+            "name": "startTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Start timestamp for the requested range."
           },
           {
-            "$ref": "#/components/parameters/EndTime"
+            "name": "endTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "End timestamp for the requested range."
           }
         ],
         "responses": {
           "200": {
-            "description": "Orders in the requested time range.",
+            "description": "Returns the get account orders in time range result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Order"
-                  }
+                  "$ref": "#/components/schemas/CustomResponse"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -647,7 +670,8 @@
             "sidebarTitle": "Lấy danh sách lệnh của tài khoản theo khoảng thời gian",
             "description": "GET /users/accounts/{accountId}/orders/{startTime}/{endTime}"
           }
-        }
+        },
+        "description": "Get account orders in time range."
       }
     },
     "/users/accounts/{accountId}/trades/{startTime}/{endTime}": {
@@ -665,34 +689,55 @@
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/AccountId"
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Trading account identifier."
           },
           {
-            "$ref": "#/components/parameters/StartTime"
+            "name": "startTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Start timestamp for the requested range."
           },
           {
-            "$ref": "#/components/parameters/EndTime"
+            "name": "endTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "End timestamp for the requested range."
           }
         ],
         "responses": {
           "200": {
-            "description": "Trades in the requested time range.",
+            "description": "Returns the get account trades in time range result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Trade"
-                  }
+                  "$ref": "#/components/schemas/CustomResponse"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -701,7 +746,8 @@
             "sidebarTitle": "Lấy danh sách khớp lệnh của tài khoản theo khoảng thời gian",
             "description": "GET /users/accounts/{accountId}/trades/{startTime}/{endTime}"
           }
-        }
+        },
+        "description": "Get account trades in time range."
       }
     },
     "/users/accounts/{accountId}/transactions/{startTime}/{endTime}": {
@@ -719,34 +765,55 @@
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/AccountId"
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Trading account identifier."
           },
           {
-            "$ref": "#/components/parameters/StartTime"
+            "name": "startTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Start timestamp for the requested range."
           },
           {
-            "$ref": "#/components/parameters/EndTime"
+            "name": "endTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "End timestamp for the requested range."
           }
         ],
         "responses": {
           "200": {
-            "description": "Transactions in the requested time range.",
+            "description": "Returns the get account transactions in time range result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Transaction"
-                  }
+                  "$ref": "#/components/schemas/CustomResponse"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -755,7 +822,8 @@
             "sidebarTitle": "Lấy giao dịch tài khoản theo khoảng thời gian",
             "description": "GET /users/accounts/{accountId}/transactions/{startTime}/{endTime}"
           }
-        }
+        },
+        "description": "Get account transactions in time range."
       }
     },
     "/users/accounts/{accountId}/commissions": {
@@ -878,7 +946,13 @@
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/AccountId"
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Trading account identifier."
           }
         ],
         "requestBody": {
@@ -889,24 +963,31 @@
                 "$ref": "#/components/schemas/WithdrawEquityRequest"
               }
             }
-          }
+          },
+          "description": "Request payload for Withdraw account equity. Field descriptions are defined in the referenced schema when available."
         },
         "responses": {
           "200": {
-            "description": "Withdrawal response payload.",
+            "description": "Creates or executes the withdraw account equity result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
+                  "$ref": "#/components/schemas/StatusResponse"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -915,7 +996,8 @@
             "sidebarTitle": "Rút tiền từ tài khoản",
             "description": "POST /users/accounts/{accountId}/equity/withdraw"
           }
-        }
+        },
+        "description": "Withdraw account equity."
       }
     },
     "/bank-accounts": {
@@ -932,7 +1014,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Saved bank accounts.",
+            "description": "Returns the list bank accounts for current user result.",
             "content": {
               "application/json": {
                 "schema": {
@@ -944,11 +1026,17 @@
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -957,7 +1045,8 @@
             "sidebarTitle": "Lấy danh sách tài khoản ngân hàng đã lưu",
             "description": "GET /bank-accounts"
           }
-        }
+        },
+        "description": "List bank accounts for current user."
       },
       "post": {
         "tags": [
@@ -978,31 +1067,31 @@
                 "$ref": "#/components/schemas/CreateBankAccountRequest"
               }
             }
-          }
+          },
+          "description": "Request payload for Create a bank account for current user. Field descriptions are defined in the referenced schema when available."
         },
         "responses": {
           "200": {
-            "description": "Created bank account. Some backend responses wrap it in a data field.",
+            "description": "Creates or executes the create a bank account for current user result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BankAccount"
-                    },
-                    {
-                      "$ref": "#/components/schemas/BankAccountEnvelope"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BankAccount"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1011,7 +1100,8 @@
             "sidebarTitle": "Tạo tài khoản ngân hàng",
             "description": "POST /bank-accounts"
           }
-        }
+        },
+        "description": "Create a bank account for current user."
       }
     },
     "/orders/new/{refOrderID}/{accountID}/{symbol}/{orderSide}/{price}/{qty}/{orderType}": {
@@ -1021,7 +1111,7 @@
         ],
         "operationId": "placeOrder",
         "summary": "Đặt lệnh mới",
-        "description": "Ứng dụng mobile gửi toàn bộ trường đặt lệnh qua path segment và không gửi JSON body.",
+        "description": "Place a legacy normal order.",
         "security": [
           {
             "bearerAuth": []
@@ -1034,7 +1124,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "ref order id parameter."
           },
           {
             "name": "accountID",
@@ -1042,62 +1133,77 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Trading account identifier."
           },
           {
-            "$ref": "#/components/parameters/Symbol"
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Trading symbol or product code."
           },
           {
             "name": "orderSide",
             "in": "path",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/OrderSide"
-            }
+              "type": "string"
+            },
+            "description": "order side parameter."
           },
           {
             "name": "price",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number",
-              "format": "double"
-            }
+              "type": "number"
+            },
+            "description": "price parameter."
           },
           {
             "name": "qty",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
+              "type": "number"
+            },
+            "description": "qty parameter."
           },
           {
             "name": "orderType",
             "in": "path",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/OrderType"
-            }
+              "type": "string"
+            },
+            "description": "order type parameter."
           }
         ],
         "responses": {
           "200": {
-            "description": "Order placement result.",
+            "description": "Creates or executes the place a legacy normal order result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderActionResponse"
+                  "$ref": "#/components/schemas/OrderResponse"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1123,25 +1229,37 @@
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/OrderID"
+            "name": "orderID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Order identifier."
           }
         ],
         "responses": {
           "200": {
-            "description": "Order cancellation result.",
+            "description": "Creates or executes the cancel an order result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderActionResponse"
+                  "$ref": "#/components/schemas/OrderResponse"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1150,7 +1268,8 @@
             "sidebarTitle": "Hủy lệnh",
             "description": "POST /orders/cancel/{orderID}"
           }
-        }
+        },
+        "description": "Cancel an order."
       }
     },
     "/orders/modify/{orderID}/{price}/{qty}": {
@@ -1167,43 +1286,55 @@
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/OrderID"
+            "name": "orderID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Order identifier."
           },
           {
             "name": "price",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number",
-              "format": "double"
-            }
+              "type": "number"
+            },
+            "description": "price parameter."
           },
           {
             "name": "qty",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
+              "type": "number"
+            },
+            "description": "qty parameter."
           }
         ],
         "responses": {
           "200": {
-            "description": "Order modification result.",
+            "description": "Creates or executes the modify price and quantity of an order result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderActionResponse"
+                  "$ref": "#/components/schemas/OrderResponse"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1212,7 +1343,8 @@
             "sidebarTitle": "Sửa lệnh hiện có",
             "description": "POST /orders/modify/{orderID}/{price}/{qty}"
           }
-        }
+        },
+        "description": "Modify price and quantity of an order."
       }
     },
     "/orders/execution-reports": {
@@ -1229,23 +1361,26 @@
         ],
         "responses": {
           "200": {
-            "description": "Execution reports.",
+            "description": "Returns the get execution reports for current user result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Order"
-                  }
+                  "$ref": "#/components/schemas/OrderResponse"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1254,7 +1389,8 @@
             "sidebarTitle": "Lấy báo cáo thực thi lệnh của người dùng hiện tại",
             "description": "GET /orders/execution-reports"
           }
-        }
+        },
+        "description": "Get execution reports for current user."
       }
     },
     "/orders": {
@@ -1276,7 +1412,8 @@
             "required": false,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Optional status filter."
           },
           {
             "name": "account",
@@ -1284,7 +1421,8 @@
             "required": false,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Optional account filter."
           },
           {
             "name": "symbol",
@@ -1292,28 +1430,32 @@
             "required": false,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Trading symbol or product code."
           }
         ],
         "responses": {
           "200": {
-            "description": "Orders matching the requested filters.",
+            "description": "Returns the get orders with optional filters result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Order"
-                  }
+                  "$ref": "#/components/schemas/OrderResponse"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1322,7 +1464,8 @@
             "sidebarTitle": "Lấy danh sách lệnh với bộ lọc tùy chọn",
             "description": "GET /orders"
           }
-        }
+        },
+        "description": "Get orders with optional filters."
       }
     },
     "/orders/trades": {
@@ -1339,23 +1482,26 @@
         ],
         "responses": {
           "200": {
-            "description": "Trades.",
+            "description": "Returns the get trades for current user result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Trade"
-                  }
+                  "$ref": "#/components/schemas/OrderResponse"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1364,7 +1510,8 @@
             "sidebarTitle": "Lấy danh sách khớp lệnh của người dùng hiện tại",
             "description": "GET /orders/trades"
           }
-        }
+        },
+        "description": "Get trades for current user."
       }
     },
     "/MarketData/GetWatchList/{watchListId}": {
@@ -1387,24 +1534,33 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "example": "vn30"
-            }
+              "type": "string"
+            },
+            "description": "id parameter."
           }
         ],
         "responses": {
           "200": {
-            "description": "Watchlist response.",
+            "description": "Returns the get market-data watchlist by id/filter result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WatchListResponse"
+                  "$ref": "#/components/schemas/MarketDataResponse"
                 }
               }
             }
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1413,7 +1569,8 @@
             "sidebarTitle": "Lấy watchlist theo id",
             "description": "GET /MarketData/GetWatchList/{watchListId}"
           }
-        }
+        },
+        "description": "Get market-data watchlist by id/filter."
       }
     },
     "/MarketData/GetVN30Spot": {
@@ -1432,17 +1589,26 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Symbol response wrapped in isSuccess/data envelope.",
+            "description": "Returns the get vn30 spot data result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SymbolEnvelope"
+                  "$ref": "#/components/schemas/MarketDataResponse"
                 }
               }
             }
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1451,7 +1617,8 @@
             "sidebarTitle": "Lấy mã VN30 spot mặc định",
             "description": "GET /MarketData/GetVN30Spot"
           }
-        }
+        },
+        "description": "Get VN30 spot data."
       }
     },
     "/MarketData/GetSymbolSearch/{query}": {
@@ -1474,24 +1641,33 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "example": "VN30F"
-            }
+              "type": "string"
+            },
+            "description": "search parameter."
           }
         ],
         "responses": {
           "200": {
-            "description": "Symbol search response wrapped in isSuccess/data envelope.",
+            "description": "Returns the search symbols result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SymbolListEnvelope"
+                  "$ref": "#/components/schemas/MarketDataResponse"
                 }
               }
             }
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1500,7 +1676,8 @@
             "sidebarTitle": "Tìm kiếm mã giao dịch",
             "description": "GET /MarketData/GetSymbolSearch/{query}"
           }
-        }
+        },
+        "description": "Search symbols."
       }
     },
     "/MarketData/GetProductMaster/{symbol}": {
@@ -1519,22 +1696,37 @@
         "security": [],
         "parameters": [
           {
-            "$ref": "#/components/parameters/Symbol"
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Trading symbol or product code."
           }
         ],
         "responses": {
           "200": {
-            "description": "Product master response wrapped in isSuccess/data envelope.",
+            "description": "Returns the get product master result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SymbolEnvelope"
+                  "$ref": "#/components/schemas/MarketDataResponse"
                 }
               }
             }
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1543,13 +1735,14 @@
             "sidebarTitle": "Lấy dữ liệu product master theo mã",
             "description": "GET /MarketData/GetProductMaster/{symbol}"
           }
-        }
+        },
+        "description": "Get product master."
       }
     },
     "/GetOhlcvHis/{symbol}/{resolution}/{fromMs}/{toMs}": {
       "servers": [
         {
-          "url": "https://openapi.yixin.com.vn",
+          "url": "https://api-gw.verolabs.co",
           "description": "Market micro API"
         }
       ],
@@ -1604,7 +1797,7 @@
     "/GetOhlcvHis/{symbol}/{resolution}/{fromMs}/{toMs}/{countBack}": {
       "servers": [
         {
-          "url": "https://openapi.yixin.com.vn",
+          "url": "https://api-gw.verolabs.co",
           "description": "Market micro API"
         }
       ],
@@ -1680,25 +1873,37 @@
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/Symbol"
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Trading symbol or product code."
           }
         ],
         "responses": {
           "200": {
-            "description": "Margin ratio data.",
+            "description": "Returns the get effective margin ratio diagnostics for a symbol result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MarginRatioDiagnostics"
+                  "$ref": "#/components/schemas/MarginRatio"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1707,7 +1912,8 @@
             "sidebarTitle": "Lấy tỷ lệ ký quỹ theo mã",
             "description": "GET /diagnostics/margin-ratios/{symbol}"
           }
-        }
+        },
+        "description": "Get effective margin ratio diagnostics for a symbol."
       }
     },
     "/notifications": {
@@ -1729,9 +1935,9 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "default": 50,
-              "minimum": 1
-            }
+              "example": 50
+            },
+            "description": "Maximum number of records to return."
           },
           {
             "name": "offset",
@@ -1739,27 +1945,33 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "default": 0,
-              "minimum": 0
-            }
+              "example": 0
+            },
+            "description": "Number of records to skip."
           }
         ],
         "responses": {
           "200": {
-            "description": "Notifications page.",
+            "description": "Returns the get notifications for current user result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetNotificationsResponse"
+                  "$ref": "#/components/schemas/NotificationsResponse"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1768,7 +1980,8 @@
             "sidebarTitle": "Lấy danh sách thông báo của người dùng hiện tại",
             "description": "GET /notifications"
           }
-        }
+        },
+        "description": "Get notifications for current user."
       }
     },
     "/notifications/{notificationId}/read": {
@@ -1790,21 +2003,32 @@
             "required": true,
             "schema": {
               "type": "integer"
-            }
+            },
+            "description": "Notification identifier."
           }
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/GenericSuccess"
+            "description": "Updates the mark notification as read result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
           },
-          "204": {
-            "description": "Notification marked as read."
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthorized"
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1813,7 +2037,8 @@
             "sidebarTitle": "Đánh dấu thông báo là đã đọc",
             "description": "PUT /notifications/{notificationId}/read"
           }
-        }
+        },
+        "description": "Mark notification as read."
       }
     },
     "/notifications/fcm-token": {
@@ -1821,9 +2046,9 @@
         "tags": [
           "Thông báo"
         ],
-        "operationId": "registerFcmToken",
-        "summary": "Đăng ký FCM token của thiết bị",
-        "description": "Ứng dụng gửi raw FCM token, không gửi custom token được tạo cục bộ.",
+        "operationId": "registerPushToken",
+        "summary": "Đăng ký push token của thiết bị",
+        "description": "Đăng ký push token của thiết bị.",
         "security": [
           {
             "bearerAuth": []
@@ -1834,27 +2059,41 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/FcmTokenRegisterRequest"
+                "$ref": "#/components/schemas/PushTokenRequest"
               }
             }
-          }
+          },
+          "description": "Payload đăng ký push token của thiết bị."
         },
         "responses": {
           "200": {
-            "$ref": "#/components/responses/GenericSuccess"
+            "description": "Push token của thiết bị đã được đăng ký.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthorized"
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
-            "title": "Đăng ký FCM token của thiết bị",
-            "sidebarTitle": "Đăng ký FCM token của thiết bị",
-            "description": "POST /notifications/fcm-token"
+            "title": "Đăng ký push token của thiết bị",
+            "sidebarTitle": "Đăng ký push token",
+            "description": "Đăng ký push token của thiết bị."
           }
         }
       },
@@ -1862,8 +2101,8 @@
         "tags": [
           "Thông báo"
         ],
-        "operationId": "unregisterFcmToken",
-        "summary": "Hủy đăng ký FCM token của thiết bị",
+        "operationId": "unregisterPushToken",
+        "summary": "Hủy đăng ký push token của thiết bị",
         "security": [
           {
             "bearerAuth": []
@@ -1874,32 +2113,44 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/FcmTokenDeleteRequest"
+                "$ref": "#/components/schemas/PushTokenRequest"
               }
             }
-          }
+          },
+          "description": "Payload hủy đăng ký push token của thiết bị."
         },
         "responses": {
           "200": {
-            "$ref": "#/components/responses/GenericSuccess"
+            "description": "Push token của thiết bị đã được hủy đăng ký.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
           },
-          "204": {
-            "description": "FCM token unregistered."
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthorized"
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
-            "title": "Hủy đăng ký FCM token của thiết bị",
-            "sidebarTitle": "Hủy đăng ký FCM token của thiết bị",
-            "description": "DELETE /notifications/fcm-token"
+            "title": "Hủy đăng ký push token của thiết bị",
+            "sidebarTitle": "Hủy đăng ký push token",
+            "description": "Hủy đăng ký push token của thiết bị."
           }
-        }
+        },
+        "description": "Hủy đăng ký push token của thiết bị."
       }
     },
     "/referral/stats": {
@@ -1916,20 +2167,26 @@
         ],
         "responses": {
           "200": {
-            "description": "Referral statistics.",
+            "description": "Returns the get referral statistics result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CommissionSummary"
+                  "$ref": "#/components/schemas/ReferralSummary"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1938,7 +2195,8 @@
             "sidebarTitle": "Lấy thống kê giới thiệu",
             "description": "GET /referral/stats"
           }
-        }
+        },
+        "description": "Get referral statistics."
       }
     },
     "/referral/refcode/{refCode}": {
@@ -1960,25 +2218,32 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Referral code."
           }
         ],
         "responses": {
           "200": {
-            "description": "Referral code information.",
+            "description": "Returns the get referral code information result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CommissionInfo"
+                  "$ref": "#/components/schemas/ReferralInfo"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -1987,7 +2252,8 @@
             "sidebarTitle": "Lấy thông tin mã giới thiệu",
             "description": "GET /referral/refcode/{refCode}"
           }
-        }
+        },
+        "description": "Get referral code information."
       }
     },
     "/referral/history": {
@@ -2009,30 +2275,36 @@
             "required": false,
             "schema": {
               "type": "integer",
-              "default": 100,
-              "minimum": 1
-            }
+              "example": 100
+            },
+            "description": "Maximum number of records to return."
           }
         ],
         "responses": {
           "200": {
-            "description": "Referral history entries.",
+            "description": "Returns the get referral history result.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CommissionHistoryItem"
+                    "$ref": "#/components/schemas/GenericObject"
                   }
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -2041,7 +2313,8 @@
             "sidebarTitle": "Lấy lịch sử giới thiệu",
             "description": "GET /referral/history"
           }
-        }
+        },
+        "description": "Get referral history."
       }
     },
     "/referral/refcode": {
@@ -2061,27 +2334,34 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SetReferralCodeRequest"
+                "$ref": "#/components/schemas/SetRefCodeRebateRateRequest"
               }
             }
-          }
+          },
+          "description": "Request payload for Set or update referral code rebate rate. Field descriptions are defined in the referenced schema when available."
         },
         "responses": {
           "200": {
-            "description": "Updated referral code information.",
+            "description": "Creates or executes the set or update referral code rebate rate result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CommissionInfo"
+                  "$ref": "#/components/schemas/ReferralInfo"
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -2090,174 +2370,8 @@
             "sidebarTitle": "Tạo hoặc cập nhật mã giới thiệu và tỷ lệ rebate",
             "description": "POST /referral/refcode"
           }
-        }
-      }
-    },
-    "/health": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co",
-          "description": "Backend root server"
-        }
-      ],
-      "get": {
-        "tags": [
-          "Chẩn đoán"
-        ],
-        "operationId": "checkHealth",
-        "summary": "Kiểm tra sức khỏe backend",
-        "security": [],
-        "responses": {
-          "200": {
-            "description": "Health response. The app treats any 2xx-4xx response as reachable.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
-                }
-              },
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "default": {
-            "$ref": "#/components/responses/Error"
-          }
         },
-        "x-mint": {
-          "metadata": {
-            "title": "Kiểm tra sức khỏe backend",
-            "sidebarTitle": "Kiểm tra sức khỏe backend",
-            "description": "GET /health"
-          }
-        }
-      }
-    },
-    "/logos/{symbol}.svg": {
-      "servers": [
-        {
-          "url": "https://static.verolabs.co",
-          "description": "Static asset server"
-        }
-      ],
-      "get": {
-        "tags": [
-          "Tài nguyên tĩnh"
-        ],
-        "operationId": "getSymbolLogoSvg",
-        "summary": "Lấy logo SVG của mã giao dịch",
-        "security": [],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Symbol"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "SVG logo.",
-            "content": {
-              "image/svg+xml": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Logo not found."
-          },
-          "default": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "x-mint": {
-          "metadata": {
-            "title": "Lấy logo SVG của mã giao dịch",
-            "sidebarTitle": "Lấy logo SVG của mã giao dịch",
-            "description": "GET /logos/{symbol}.svg"
-          }
-        }
-      }
-    },
-    "/contract_customer_yixin.pdf": {
-      "servers": [
-        {
-          "url": "https://trading.yixin.com.vn",
-          "description": "Configured website/static PDF server"
-        }
-      ],
-      "get": {
-        "tags": [
-          "Tài nguyên tĩnh"
-        ],
-        "operationId": "getCustomerContractPdf",
-        "summary": "Tải PDF hợp đồng khách hàng",
-        "security": [],
-        "responses": {
-          "200": {
-            "description": "Customer contract PDF.",
-            "content": {
-              "application/pdf": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          },
-          "default": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "x-mint": {
-          "metadata": {
-            "title": "Tải PDF hợp đồng khách hàng",
-            "sidebarTitle": "Tải PDF hợp đồng khách hàng",
-            "description": "GET /contract_customer_yixin.pdf"
-          }
-        }
-      }
-    },
-    "/user_guide_yixin.pdf": {
-      "servers": [
-        {
-          "url": "https://trading.yixin.com.vn",
-          "description": "Configured website/static PDF server"
-        }
-      ],
-      "get": {
-        "tags": [
-          "Tài nguyên tĩnh"
-        ],
-        "operationId": "getUserGuidePdf",
-        "summary": "Tải PDF hướng dẫn sử dụng",
-        "security": [],
-        "responses": {
-          "200": {
-            "description": "User guide PDF.",
-            "content": {
-              "application/pdf": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          },
-          "default": {
-            "$ref": "#/components/responses/Error"
-          }
-        },
-        "x-mint": {
-          "metadata": {
-            "title": "Tải PDF hướng dẫn sử dụng",
-            "sidebarTitle": "Tải PDF hướng dẫn sử dụng",
-            "description": "GET /user_guide_yixin.pdf"
-          }
-        }
+        "description": "Set or update referral code rebate rate."
       }
     },
     "/bank-accounts/{bankId}": {
@@ -2267,7 +2381,7 @@
         ],
         "operationId": "getBankAccount",
         "summary": "Lấy tài khoản ngân hàng theo ID",
-        "description": "Lấy thông tin chi tiết của một tài khoản ngân hàng đã lưu.",
+        "description": "Get bank account by ID.",
         "security": [
           {
             "bearerAuth": []
@@ -2281,12 +2395,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "ID tài khoản ngân hàng."
+            "description": "bank id parameter."
           }
         ],
         "responses": {
           "200": {
-            "description": "Thông tin tài khoản ngân hàng.",
+            "description": "Returns the get bank account by id result.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2295,11 +2409,17 @@
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -2318,7 +2438,7 @@
         ],
         "operationId": "listUserRightSubscriptions",
         "summary": "Lấy danh sách yêu cầu đăng ký quyền mua",
-        "description": "Lấy các yêu cầu đăng ký quyền mua của người dùng hiện tại.",
+        "description": "List current user right subscription requests.",
         "security": [
           {
             "bearerAuth": []
@@ -2326,7 +2446,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Danh sách yêu cầu đăng ký quyền mua.",
+            "description": "Returns the list current user right subscription requests result.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2338,11 +2458,17 @@
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -2359,7 +2485,7 @@
         ],
         "operationId": "subscribeRight",
         "summary": "Đăng ký quyền mua",
-        "description": "Gửi yêu cầu đăng ký quyền mua cho một mã.",
+        "description": "Subscribe to a right offering.",
         "security": [
           {
             "bearerAuth": []
@@ -2373,11 +2499,12 @@
                 "$ref": "#/components/schemas/SubscribeRightRequest"
               }
             }
-          }
+          },
+          "description": "Request payload for Subscribe to a right offering. Field descriptions are defined in the referenced schema when available."
         },
         "responses": {
           "200": {
-            "description": "Trạng thái xử lý yêu cầu đăng ký quyền mua.",
+            "description": "Creates or executes the subscribe to a right offering result.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2386,11 +2513,17 @@
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -2409,7 +2542,7 @@
         ],
         "operationId": "adjustCoveredMargin",
         "summary": "Điều chỉnh số tiền covered margin call",
-        "description": "Điều chỉnh số tiền covered margin call của tài khoản cho một mã.",
+        "description": "Adjust covered margin call amount.",
         "security": [
           {
             "bearerAuth": []
@@ -2423,11 +2556,12 @@
                 "$ref": "#/components/schemas/AdjustCoveredMarginRequest"
               }
             }
-          }
+          },
+          "description": "Request payload for Adjust covered margin call amount. Field descriptions are defined in the referenced schema when available."
         },
         "responses": {
           "200": {
-            "description": "Trạng thái xử lý yêu cầu điều chỉnh covered margin call.",
+            "description": "Partially updates the adjust covered margin call amount result.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2436,11 +2570,17 @@
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
           },
-          "default": {
-            "$ref": "#/components/responses/Error"
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
@@ -2448,6 +2588,195 @@
             "title": "Điều chỉnh số tiền covered margin call",
             "sidebarTitle": "Điều chỉnh số tiền covered margin call",
             "description": "PATCH /users/covered-margin-call"
+          }
+        }
+      }
+    },
+    "/api/id-card": {
+      "post": {
+        "tags": [
+          "Đăng ký"
+        ],
+        "summary": "Trích xuất thông tin CCCD khi đăng ký",
+        "operationId": "parseSignupIdCard",
+        "description": "Phân tích ảnh mặt trước CCCD/CMND và các ảnh mặt sau hoặc chân dung nếu có trong bước đăng ký. Gửi nội dung ảnh dạng base64 trong JSON, không gửi tiền tố data URL.",
+        "requestBody": {
+          "required": true,
+          "description": "Ảnh CCCD/CMND dạng base64 trong luồng đăng ký. `frontImage` là bắt buộc; `backImage` và `portraitImage` là tùy chọn.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdCardParseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Dữ liệu định danh đã trích xuất và URL ảnh đã xử lý nếu có.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdCardParseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "security": [],
+        "servers": [
+          {
+            "url": "https://api-gw.verolabs.co/api/v2/chat",
+            "description": "Signup API"
+          }
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Trích xuất thông tin CCCD khi đăng ký",
+            "sidebarTitle": "Trích xuất thông tin CCCD",
+            "description": "POST /api/id-card"
+          }
+        }
+      }
+    },
+    "/MarketData/GetProductTradeLog/{symbol}/{startUnixTime}/{endUnixTime}": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/v1",
+          "description": "Backend REST API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Dữ liệu thị trường"
+        ],
+        "operationId": "getProductTradeLog",
+        "summary": "Lấy trade log của mã theo khoảng thời gian",
+        "description": "Lấy trade log của một mã giao dịch trong khoảng thời gian Unix milliseconds.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Mã giao dịch hoặc mã sản phẩm."
+          },
+          {
+            "name": "startUnixTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Thời điểm bắt đầu theo Unix milliseconds."
+          },
+          {
+            "name": "endUnixTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Thời điểm kết thúc theo Unix milliseconds."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trade log của mã trong khoảng thời gian được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketDataResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy trade log của mã theo khoảng thời gian",
+            "sidebarTitle": "Lấy trade log của mã theo khoảng thời gian",
+            "description": "GET /MarketData/GetProductTradeLog/{symbol}/{startUnixTime}/{endUnixTime}"
+          }
+        }
+      }
+    },
+    "/MarketData/GetVNIndex/{index}": {
+      "servers": [
+        {
+          "url": "https://api-gw.verolabs.co/api/v1",
+          "description": "Backend REST API"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Dữ liệu thị trường"
+        ],
+        "operationId": "getVNIndex",
+        "summary": "Lấy dữ liệu VN index",
+        "description": "Lấy dữ liệu của một chỉ số thị trường Việt Nam.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Mã định danh chỉ số thị trường."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dữ liệu chỉ số thị trường được yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketDataResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy dữ liệu VN index",
+            "sidebarTitle": "Lấy dữ liệu VN index",
+            "description": "GET /MarketData/GetVNIndex/{index}"
           }
         }
       }
@@ -2459,13 +2788,13 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "JWT returned by Ory /sessions/whoami?tokenize_as=jwt_template_1 and stored by ApiClient."
+        "description": "Bearer JWT used for protected REST API requests."
       },
       "sessionToken": {
         "type": "apiKey",
         "in": "header",
         "name": "X-Session-Token",
-        "description": "Ory session token returned by login or recovery flows."
+        "description": "Session token returned by authentication flows."
       }
     },
     "parameters": {
@@ -2476,7 +2805,7 @@
         "schema": {
           "type": "string"
         },
-        "description": "Ory flow id returned by the corresponding create flow endpoint."
+        "description": "Authentication flow id returned by the corresponding create flow endpoint."
       },
       "AccountId": {
         "name": "accountId",
@@ -2610,12 +2939,22 @@
           }
         }
       },
-      "OryFlowError": {
-        "description": "Ory flow validation error. The app reads ui.messages, ui.nodes[].messages, error.message or error.id.",
+      "AuthFlowError": {
+        "description": "Authentication flow validation error.",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/OryFlow"
+              "$ref": "#/components/schemas/AuthFlow"
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "description": "Error response. Frontend extracts error, message, detail, or plain text.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
             }
           }
         }
@@ -2624,32 +2963,37 @@
     "schemas": {
       "GenericObject": {
         "type": "object",
-        "additionalProperties": true
+        "properties": {},
+        "additionalProperties": true,
+        "description": "Untyped JSON object for dynamic response fields."
       },
       "ErrorResponse": {
         "type": "object",
-        "additionalProperties": true,
         "properties": {
-          "detail": {
-            "type": "string"
+          "error": {
+            "type": "string",
+            "description": "Machine-readable error code or short error string."
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "Human-readable error message."
           },
-          "error": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "object",
-                "additionalProperties": true
-              }
-            ]
+          "detail": {
+            "type": "string",
+            "description": "Detailed error text returned by the backend when available."
+          },
+          "details": {
+            "description": "Additional structured error details, if provided by the backend."
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code associated with the error."
           }
-        }
+        },
+        "additionalProperties": true,
+        "description": "Standard error payload returned by the API."
       },
-      "OryFlow": {
+      "AuthFlow": {
         "type": "object",
         "additionalProperties": true,
         "properties": {
@@ -2704,7 +3048,7 @@
           }
         }
       },
-      "OryLoginResponse": {
+      "LoginResponse": {
         "type": "object",
         "additionalProperties": true,
         "properties": {
@@ -2712,7 +3056,7 @@
             "type": "string"
           },
           "session": {
-            "$ref": "#/components/schemas/OrySession"
+            "$ref": "#/components/schemas/AuthSession"
           },
           "identity": {
             "type": "object",
@@ -2720,7 +3064,7 @@
           }
         }
       },
-      "OrySession": {
+      "AuthSession": {
         "type": "object",
         "additionalProperties": true,
         "properties": {
@@ -2745,7 +3089,7 @@
           },
           "tokenized": {
             "type": "string",
-            "description": "JWT returned when tokenize_as=jwt_template_1 is requested."
+            "description": "Bearer JWT returned when a tokenized session is requested."
           }
         }
       },
@@ -2854,10 +3198,10 @@
           }
         }
       },
-      "OryRecoveryResponse": {
+      "RecoveryResponse": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/OryFlow"
+            "$ref": "#/components/schemas/AuthFlow"
           },
           {
             "type": "object",
@@ -3037,94 +3381,114 @@
         "type": "object",
         "properties": {
           "marginRatio": {
-            "type": "number"
-          },
-          "forceCloseRate": {
-            "type": "number"
+            "type": "number",
+            "description": "Margin ratio requirement."
           },
           "marginCallRate": {
-            "type": "number"
+            "type": "number",
+            "description": "Margin-call threshold rate."
+          },
+          "forceCloseRate": {
+            "type": "number",
+            "description": "Force-close threshold rate."
           },
           "tradingFee": {
-            "type": "number"
+            "type": "number",
+            "description": "Trading fee rate."
           },
           "productCommission": {
-            "type": "number"
+            "type": "number",
+            "description": "Product commission rate."
           },
           "tax": {
-            "type": "number"
+            "type": "number",
+            "description": "Tax rate."
           },
           "overnightFee": {
-            "type": "number"
+            "type": "number",
+            "description": "Overnight holding fee rate."
+          },
+          "shortSellFee": {
+            "type": "number",
+            "description": "Short-sell fee rate."
           }
-        }
+        },
+        "additionalProperties": true,
+        "description": "Margin, fee, tax, and risk-ratio configuration."
       },
       "WithdrawEquityRequest": {
         "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Withdrawal amount. Must be greater than zero."
+          },
+          "bankId": {
+            "type": "string",
+            "description": "Registered bank account identifier to receive the withdrawal."
+          }
+        },
         "required": [
           "amount",
           "bankId"
         ],
-        "properties": {
-          "amount": {
-            "type": "number",
-            "minimum": 0
-          },
-          "bankId": {
-            "type": "string"
-          }
-        }
+        "additionalProperties": true,
+        "description": "Payload for withdrawing equity to a registered bank account."
       },
       "BankAccount": {
         "type": "object",
-        "required": [
-          "id",
-          "userId",
-          "bankAccountName",
-          "bankAccountNumber",
-          "bankCode",
-          "createdAt"
-        ],
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Bank account identifier."
           },
           "userId": {
-            "type": "string"
+            "type": "string",
+            "description": "Owner user identifier."
           },
           "bankAccountName": {
-            "type": "string"
+            "type": "string",
+            "description": "Beneficiary name on the bank account."
           },
           "bankAccountNumber": {
-            "type": "string"
+            "type": "string",
+            "description": "Bank account number."
           },
           "bankCode": {
-            "type": "string"
+            "type": "string",
+            "description": "Bank code selected by the user."
           },
           "createdAt": {
             "type": "integer",
-            "format": "int64"
+            "description": "Creation timestamp."
           }
-        }
+        },
+        "additionalProperties": true,
+        "description": "Bank account saved by the current user for withdrawals."
       },
       "CreateBankAccountRequest": {
         "type": "object",
+        "properties": {
+          "bankAccountName": {
+            "type": "string",
+            "description": "Beneficiary name on the bank account."
+          },
+          "bankAccountNumber": {
+            "type": "string",
+            "description": "Bank account number."
+          },
+          "bankCode": {
+            "type": "string",
+            "description": "Bank code."
+          }
+        },
         "required": [
           "bankAccountName",
           "bankAccountNumber",
           "bankCode"
         ],
-        "properties": {
-          "bankAccountName": {
-            "type": "string"
-          },
-          "bankAccountNumber": {
-            "type": "string"
-          },
-          "bankCode": {
-            "type": "string"
-          }
-        }
+        "additionalProperties": true,
+        "description": "Payload for creating a bank account."
       },
       "BankAccountEnvelope": {
         "type": "object",
@@ -3517,39 +3881,57 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Notification identifier."
           },
           "userId": {
-            "type": "string"
+            "type": "string",
+            "description": "User that owns the notification."
           },
           "accountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Account related to the notification."
           },
           "type": {
-            "$ref": "#/components/schemas/NotificationType"
+            "type": "string",
+            "enum": [
+              "MarginCall",
+              "ForceClose",
+              "Deposit",
+              "Withdraw"
+            ],
+            "example": "MarginCall",
+            "description": "Notification business type."
           },
           "topic": {
-            "type": "string"
+            "type": "string",
+            "description": "Notification topic/channel."
           },
           "messageID": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique backend message identifier."
           },
           "data": {
-            "$ref": "#/components/schemas/NotificationData"
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true,
+            "description": "Notification payload with account, symbol, amount, or position details."
           },
           "read": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the user has marked the notification as read."
           },
           "createdAt": {
             "type": "integer",
-            "format": "int64"
+            "description": "Creation timestamp in Unix milliseconds."
           },
           "updatedAt": {
             "type": "integer",
-            "format": "int64"
+            "description": "Last update timestamp in Unix milliseconds."
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "description": "Notification record stored by the backend."
       },
       "NotificationType": {
         "type": "string",
@@ -3579,45 +3961,6 @@
           },
           "offset": {
             "type": "integer"
-          }
-        }
-      },
-      "FcmTokenRegisterRequest": {
-        "type": "object",
-        "required": [
-          "token",
-          "device_id",
-          "platform"
-        ],
-        "properties": {
-          "token": {
-            "type": "string",
-            "description": "Raw FCM token."
-          },
-          "device_id": {
-            "type": "string"
-          },
-          "platform": {
-            "type": "string",
-            "enum": [
-              "ios",
-              "android"
-            ]
-          }
-        }
-      },
-      "FcmTokenDeleteRequest": {
-        "type": "object",
-        "required": [
-          "token",
-          "device_id"
-        ],
-        "properties": {
-          "token": {
-            "type": "string"
-          },
-          "device_id": {
-            "type": "string"
           }
         }
       },
@@ -4049,194 +4392,501 @@
       },
       "RightSubscription": {
         "type": "object",
-        "description": "Thông tin đăng ký quyền mua hoặc cấu hình quyền mua.",
-        "additionalProperties": true,
         "properties": {
           "id": {
             "type": "integer",
-            "description": "ID bản ghi."
+            "description": "Unique record identifier."
           },
           "symbol": {
             "type": "string",
-            "description": "Mã giao dịch hoặc mã sản phẩm."
+            "description": "Trading symbol or product code."
           },
           "ratio": {
             "type": "string",
             "example": "100:20",
-            "description": "Tỷ lệ đăng ký, ví dụ 100:20."
+            "description": "Subscription ratio, for example 100:20."
           },
           "price": {
             "type": "number",
-            "description": "Giá đăng ký trên mỗi cổ phiếu."
+            "description": "Subscription price per share."
           },
           "startDate": {
             "type": "string",
-            "description": "Ngày bắt đầu giai đoạn đăng ký."
+            "description": "Subscription period start date."
           },
           "endDate": {
             "type": "string",
-            "description": "Ngày kết thúc giai đoạn đăng ký."
+            "description": "Subscription period end date."
           },
           "status": {
             "type": "string",
-            "description": "Trạng thái hiện tại."
+            "description": "Current status value."
           },
           "note": {
             "type": "string",
-            "description": "Ghi chú tùy chọn."
+            "description": "Optional free-form note."
           },
           "createdAt": {
             "type": "string",
-            "description": "Thời điểm tạo bản ghi."
+            "description": "Record creation timestamp."
           },
           "updatedAt": {
             "type": "string",
-            "description": "Thời điểm cập nhật bản ghi."
+            "description": "Record last update timestamp."
           }
-        }
+        },
+        "additionalProperties": true,
+        "description": "Right subscription rule or user subscription item."
       },
       "SubscribeRightRequest": {
         "type": "object",
-        "description": "Payload để đăng ký quyền mua.",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Trading symbol or product code."
+          },
+          "shares": {
+            "type": "number",
+            "description": "Number of new shares the user wants to subscribe for."
+          }
+        },
         "required": [
           "symbol",
           "shares"
         ],
         "additionalProperties": true,
-        "properties": {
-          "symbol": {
-            "type": "string",
-            "description": "Mã giao dịch hoặc mã sản phẩm."
-          },
-          "shares": {
-            "type": "number",
-            "description": "Số lượng cổ phiếu muốn đăng ký mua."
-          }
-        }
+        "description": "Payload for user subscription to a right offering."
       },
       "StatusResponse": {
         "type": "object",
-        "description": "Response trạng thái dùng cho các endpoint thay đổi dữ liệu.",
-        "additionalProperties": true,
         "properties": {
           "status": {
             "type": "string",
             "example": "success",
-            "description": "Chuỗi trạng thái backend trả về."
+            "description": "Status string returned by the backend."
           },
           "message": {
             "type": "string",
             "example": "Success",
-            "description": "Thông báo trạng thái dễ đọc."
+            "description": "Human-readable status message."
           }
-        }
+        },
+        "additionalProperties": true,
+        "description": "Generic status response for mutation endpoints."
       },
       "AdjustCoveredMarginRequest": {
         "type": "object",
-        "description": "Payload để điều chỉnh số tiền covered margin call cho một mã.",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Account whose covered margin value should be changed."
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Symbol whose covered margin amount should be changed."
+          },
+          "amount": {
+            "type": "number",
+            "description": "New covered margin amount. Must be zero or greater."
+          }
+        },
         "required": [
           "accountId",
           "symbol",
           "amount"
         ],
         "additionalProperties": true,
+        "description": "Payload for adjusting covered margin call amount for a symbol."
+      },
+      "CustomResponse": {
+        "type": "object",
         "properties": {
-          "accountId": {
+          "status": {
+            "type": "integer",
+            "example": 200,
+            "description": "HTTP status code returned with the response."
+          },
+          "data": {
+            "description": "Wrapped response payload, or null when the request failed."
+          },
+          "message": {
             "type": "string",
-            "description": "Tài khoản cần điều chỉnh covered margin."
+            "example": "Success",
+            "description": "Success or error message returned with the response."
+          }
+        },
+        "additionalProperties": true,
+        "description": "Response wrapper containing status, data and message."
+      },
+      "OrderResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "HTTP-like status code returned with the order response."
+          },
+          "data": {
+            "description": "Order response payload, or null on failure."
+          },
+          "message": {
+            "type": "string",
+            "description": "Order success or error message."
+          }
+        },
+        "additionalProperties": true,
+        "description": "Order response wrapper."
+      },
+      "MarketDataResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "HTTP status from the market-data request."
           },
           "symbol": {
             "type": "string",
-            "description": "Mã cần điều chỉnh covered margin."
+            "description": "Symbol associated with the response when applicable."
           },
-          "amount": {
+          "data": {
+            "description": "Market-data payload returned by the backend."
+          }
+        },
+        "additionalProperties": true,
+        "description": "Common wrapper for market-data responses."
+      },
+      "NotificationsResponse": {
+        "type": "object",
+        "properties": {
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Notification"
+            },
+            "description": "Notification records in this page."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of records returned."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Offset used for pagination."
+          }
+        },
+        "additionalProperties": true,
+        "description": "Paged notification list response."
+      },
+      "MessageResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Success",
+            "description": "Human-readable success or status message."
+          },
+          "status": {
+            "type": "string",
+            "example": "success",
+            "description": "Status string returned by the backend, usually success."
+          }
+        },
+        "additionalProperties": true,
+        "description": "Simple success response with an optional status and message."
+      },
+      "ReferralSummary": {
+        "type": "object",
+        "properties": {
+          "refCode": {
+            "type": "string",
+            "description": "Referral code owned by the current user."
+          },
+          "referredCode": {
+            "type": "string",
+            "description": "Referral code that referred the current user."
+          },
+          "totalVolume": {
             "type": "number",
-            "description": "Số tiền covered margin mới. Phải lớn hơn hoặc bằng 0."
+            "description": "Total referred trading volume."
+          },
+          "referralRewards": {
+            "type": "number",
+            "description": "Total referral rewards earned."
+          },
+          "referredFriends": {
+            "type": "integer",
+            "description": "Number of referred users."
+          },
+          "friendsWhoTraded": {
+            "type": "integer",
+            "description": "Number of referred users with trading activity."
+          },
+          "totalRebatesGiven": {
+            "type": "number",
+            "description": "Total rebates given to referred users."
+          }
+        },
+        "additionalProperties": true,
+        "description": "Aggregated referral statistics for the current user."
+      },
+      "ReferralInfo": {
+        "type": "object",
+        "properties": {
+          "refCode": {
+            "type": "string",
+            "description": "Referral code."
+          },
+          "ownerAccountId": {
+            "type": "string",
+            "description": "Account that owns the referral code."
+          },
+          "rebateRate": {
+            "type": "number",
+            "description": "Rebate rate as a decimal between 0 and 1."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Creation timestamp."
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Last update timestamp."
+          }
+        },
+        "additionalProperties": true,
+        "description": "Referral code owner and rebate-rate information."
+      },
+      "SetRefCodeRebateRateRequest": {
+        "type": "object",
+        "properties": {
+          "refCode": {
+            "type": "string",
+            "description": "Referral code to update."
+          },
+          "rebateRate": {
+            "type": "number",
+            "description": "Rebate rate as a decimal between 0 and 1."
+          }
+        },
+        "required": [
+          "refCode",
+          "rebateRate"
+        ],
+        "additionalProperties": true,
+        "description": "Payload for setting rebate rate on a referral code."
+      },
+      "IdCardParseRequest": {
+        "type": "object",
+        "required": [
+          "frontImage"
+        ],
+        "properties": {
+          "frontImage": {
+            "type": "string",
+            "format": "byte",
+            "description": "Nội dung ảnh mặt trước CCCD/CMND ở dạng base64. Chỉ gửi phần base64, không gửi tiền tố data URL."
+          },
+          "backImage": {
+            "type": "string",
+            "format": "byte",
+            "description": "Nội dung ảnh mặt sau CCCD/CMND ở dạng base64, gửi khi có ảnh mặt sau."
+          },
+          "portraitImage": {
+            "type": "string",
+            "format": "byte",
+            "description": "Ảnh chân dung hoặc selfie ở dạng base64, gửi khi có ảnh xác minh khuôn mặt."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Payload gửi ảnh giấy tờ định danh trong luồng đăng ký."
+      },
+      "IdCardParseResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IdCardData"
+              }
+            ],
+            "description": "Các trường định danh được trích xuất từ ảnh giấy tờ đã gửi."
+          },
+          "imageUrls": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IdCardImageUrls"
+              }
+            ],
+            "description": "URL ảnh đã lưu hoặc đã chuẩn hóa, trả về khi có."
+          }
+        },
+        "additionalProperties": true,
+        "description": "Response thành công của API trích xuất thông tin CCCD/CMND."
+      },
+      "IdCardData": {
+        "type": "object",
+        "required": [
+          "idNumber",
+          "fullName",
+          "dateOfBirth",
+          "sex",
+          "nationality",
+          "placeOfOrigin",
+          "placeOfResidence",
+          "dateOfExpiry"
+        ],
+        "properties": {
+          "idNumber": {
+            "type": "string",
+            "description": "Số CCCD/CMND được trích xuất từ mặt trước giấy tờ."
+          },
+          "fullName": {
+            "type": "string",
+            "description": "Họ tên đầy đủ được trích xuất từ giấy tờ."
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "example": "31/12/1990",
+            "description": "Ngày sinh được trích xuất từ giấy tờ, thường theo định dạng dd/MM/yyyy."
+          },
+          "sex": {
+            "type": "string",
+            "example": "Nam",
+            "description": "Giới tính được trích xuất từ giấy tờ."
+          },
+          "nationality": {
+            "type": "string",
+            "example": "Việt Nam",
+            "description": "Quốc tịch được trích xuất từ giấy tờ."
+          },
+          "placeOfOrigin": {
+            "type": "string",
+            "description": "Quê quán hoặc nơi sinh được trích xuất từ giấy tờ."
+          },
+          "placeOfResidence": {
+            "type": "string",
+            "description": "Nơi thường trú được trích xuất từ giấy tờ."
+          },
+          "dateOfExpiry": {
+            "type": "string",
+            "example": "31/12/2030",
+            "description": "Ngày hết hạn của giấy tờ, thường theo định dạng dd/MM/yyyy."
+          },
+          "dateOfIssue": {
+            "type": "string",
+            "example": "01/01/2020",
+            "description": "Ngày cấp giấy tờ, nếu trích xuất được."
+          },
+          "issuedBy": {
+            "type": "string",
+            "description": "Cơ quan cấp giấy tờ, nếu trích xuất được."
+          },
+          "address": {
+            "type": "string",
+            "description": "Địa chỉ đã parse, nếu backend trả về."
+          }
+        },
+        "additionalProperties": true,
+        "description": "Thông tin định danh được trích xuất từ CCCD/CMND."
+      },
+      "IdCardImageUrls": {
+        "type": "object",
+        "required": [
+          "front",
+          "back",
+          "portrait"
+        ],
+        "properties": {
+          "front": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL ảnh mặt trước đã lưu hoặc đã xử lý."
+          },
+          "back": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL ảnh mặt sau đã lưu hoặc đã xử lý."
+          },
+          "portrait": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL ảnh chân dung hoặc selfie đã lưu hoặc đã xử lý."
+          }
+        },
+        "additionalProperties": true,
+        "description": "Các URL ảnh được trả về sau khi xử lý ảnh đăng ký."
+      },
+      "PushTokenRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Token push notification của thiết bị."
+          },
+          "device_id": {
+            "type": "string",
+            "description": "Stable device/browser identifier used to update rotating tokens."
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "web",
+              "android",
+              "ios"
+            ],
+            "example": "web",
+            "description": "Client platform for this token."
+          }
+        },
+        "required": [
+          "token",
+          "device_id"
+        ],
+        "additionalProperties": true,
+        "description": "Payload dùng để đăng ký hoặc hủy đăng ký push token của thiết bị."
+      },
+      "PushTokenRegisterRequest": {
+        "type": "object",
+        "required": [
+          "token",
+          "device_id",
+          "platform"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Token push notification của thiết bị."
+          },
+          "device_id": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "ios",
+              "android"
+            ]
+          }
+        }
+      },
+      "PushTokenDeleteRequest": {
+        "type": "object",
+        "required": [
+          "token",
+          "device_id"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Token push notification của thiết bị."
+          },
+          "device_id": {
+            "type": "string"
           }
         }
       }
     }
-  },
-  "x-centrifugo": {
-    "server": "wss://streaming.verolabs.co/connection/websocket",
-    "description": "Centrifugo WebSocket channels used by lib/services/streaming_service.dart. The current client connects anonymously.",
-    "channels": [
-      {
-        "name": "mkt:{dataType}:{symbol}",
-        "dataTypes": [
-          "depth",
-          "productInfo",
-          "productStat",
-          "tradeLog"
-        ],
-        "description": "Generic market data stream. Depth stream often uses mkt:depth:{symbol}-{boardId}."
-      },
-      {
-        "name": "mkt:depth:{symbol}-{boardId}",
-        "payloadSchema": {
-          "$ref": "#/components/schemas/PriceDepth"
-        }
-      },
-      {
-        "name": "mkt:OhlcvDTO:{symbol}:{time}",
-        "payloadSchema": {
-          "$ref": "#/components/schemas/OhlcvBar"
-        }
-      },
-      {
-        "name": "mkt:productInfo:{symbol}-{boardId}",
-        "payloadSchema": {
-          "$ref": "#/components/schemas/SymbolInfo"
-        }
-      },
-      {
-        "name": "order:{accountId}",
-        "payloadSchema": {
-          "$ref": "#/components/schemas/Order"
-        }
-      },
-      {
-        "name": "order:Account:{accountId}",
-        "payloadSchema": {
-          "$ref": "#/components/schemas/Account"
-        }
-      },
-      {
-        "name": "order:OrderExecutionReport:{connectionId}",
-        "payloadSchema": {
-          "$ref": "#/components/schemas/Order"
-        }
-      },
-      {
-        "name": "order:{notificationType}:{accountId}",
-        "notificationTypes": [
-          "Deposit",
-          "ForceClose",
-          "MarginCall",
-          "Withdraw"
-        ],
-        "payloadSchema": {
-          "$ref": "#/components/schemas/NotificationData"
-        }
-      }
-    ]
-  },
-  "x-source": {
-    "tenantConfig": "tenant.json",
-    "serviceFiles": [
-      "lib/services/auth_service.dart",
-      "lib/services/api_client.dart",
-      "lib/services/account_service.dart",
-      "lib/services/order_service.dart",
-      "lib/services/history_service.dart",
-      "lib/services/market_data_service.dart",
-      "lib/services/notification_service.dart",
-      "lib/services/push_notification_service.dart",
-      "lib/services/commission_service.dart",
-      "lib/services/diagnostics_service.dart",
-      "lib/services/streaming_service.dart",
-      "lib/utils/pdf_helper.dart",
-      "lib/widgets/symbol_logo_widget.dart"
-    ]
   }
 }

@@ -64,6 +64,7 @@
                   "en/apis/rest/auth/get-whoami-session",
                   "en/apis/rest/auth/create-registration-flow",
                   "en/apis/rest/auth/submit-registration-flow",
+                  "en/apis/rest/auth/parse-id-card",
                   "en/apis/rest/auth/create-recovery-flow",
                   "en/apis/rest/auth/update-recovery-flow",
                   "en/apis/rest/auth/create-settings-flow",
@@ -125,8 +126,10 @@
                 "pages": [
                   "en/apis/rest/market-data/get-watch-list",
                   "en/apis/rest/market-data/get-vn30-spot",
+                  "en/apis/rest/market-data/get-vn-index",
                   "en/apis/rest/market-data/search-symbols",
                   "en/apis/rest/market-data/get-product-master",
+                  "en/apis/rest/market-data/get-product-trade-log",
                   "en/apis/rest/market-data/get-ohlcv-history",
                   "en/apis/rest/market-data/get-ohlcv-history-count-back"
                 ]
@@ -138,8 +141,8 @@
                 "pages": [
                   "en/apis/rest/notifications/list-notifications",
                   "en/apis/rest/notifications/mark-notification-as-read",
-                  "en/apis/rest/notifications/register-fcm-token",
-                  "en/apis/rest/notifications/unregister-fcm-token"
+                  "en/apis/rest/notifications/register-push-token",
+                  "en/apis/rest/notifications/unregister-push-token"
                 ]
               },
               {
@@ -158,18 +161,7 @@
                 "icon": "stethoscope",
                 "expanded": false,
                 "pages": [
-                  "en/apis/rest/diagnostics/get-margin-ratio",
-                  "en/apis/rest/diagnostics/check-health"
-                ]
-              },
-              {
-                "group": "Static Assets",
-                "icon": "file",
-                "expanded": false,
-                "pages": [
-                  "en/apis/rest/static-assets/get-symbol-logo-svg",
-                  "en/apis/rest/static-assets/get-customer-contract-pdf",
-                  "en/apis/rest/static-assets/get-user-guide-pdf"
+                  "en/apis/rest/diagnostics/get-margin-ratio"
                 ]
               }
             ]
@@ -234,6 +226,7 @@
                   "vi/apis/rest/auth/get-whoami-session",
                   "vi/apis/rest/auth/create-registration-flow",
                   "vi/apis/rest/auth/submit-registration-flow",
+                  "vi/apis/rest/auth/parse-id-card",
                   "vi/apis/rest/auth/create-recovery-flow",
                   "vi/apis/rest/auth/update-recovery-flow",
                   "vi/apis/rest/auth/create-settings-flow",
@@ -295,8 +288,10 @@
                 "pages": [
                   "vi/apis/rest/market-data/get-watch-list",
                   "vi/apis/rest/market-data/get-vn30-spot",
+                  "vi/apis/rest/market-data/get-vn-index",
                   "vi/apis/rest/market-data/search-symbols",
                   "vi/apis/rest/market-data/get-product-master",
+                  "vi/apis/rest/market-data/get-product-trade-log",
                   "vi/apis/rest/market-data/get-ohlcv-history",
                   "vi/apis/rest/market-data/get-ohlcv-history-count-back"
                 ]
@@ -308,8 +303,8 @@
                 "pages": [
                   "vi/apis/rest/notifications/list-notifications",
                   "vi/apis/rest/notifications/mark-notification-as-read",
-                  "vi/apis/rest/notifications/register-fcm-token",
-                  "vi/apis/rest/notifications/unregister-fcm-token"
+                  "vi/apis/rest/notifications/register-push-token",
+                  "vi/apis/rest/notifications/unregister-push-token"
                 ]
               },
               {
@@ -328,18 +323,7 @@
                 "icon": "stethoscope",
                 "expanded": false,
                 "pages": [
-                  "vi/apis/rest/diagnostics/get-margin-ratio",
-                  "vi/apis/rest/diagnostics/check-health"
-                ]
-              },
-              {
-                "group": "Tài nguyên tĩnh",
-                "icon": "file",
-                "expanded": false,
-                "pages": [
-                  "vi/apis/rest/static-assets/get-symbol-logo-svg",
-                  "vi/apis/rest/static-assets/get-customer-contract-pdf",
-                  "vi/apis/rest/static-assets/get-user-guide-pdf"
+                  "vi/apis/rest/diagnostics/get-margin-ratio"
                 ]
               }
             ]
@@ -403,7 +387,9 @@
       "languages": [
         "curl",
         "javascript",
-        "python"
+        "python",
+        "go",
+        "csharp"
       ],
       "autogenerate": true,
       "prefill": true
