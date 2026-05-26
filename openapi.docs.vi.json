@@ -2259,6 +2259,198 @@
           }
         }
       }
+    },
+    "/bank-accounts/{bankId}": {
+      "get": {
+        "tags": [
+          "Tài khoản ngân hàng"
+        ],
+        "operationId": "getBankAccount",
+        "summary": "Lấy tài khoản ngân hàng theo ID",
+        "description": "Lấy thông tin chi tiết của một tài khoản ngân hàng đã lưu.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "bankId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID tài khoản ngân hàng."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thông tin tài khoản ngân hàng.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy tài khoản ngân hàng theo ID",
+            "sidebarTitle": "Lấy tài khoản ngân hàng theo ID",
+            "description": "GET /bank-accounts/{bankId}"
+          }
+        }
+      }
+    },
+    "/users/right-subscriptions": {
+      "get": {
+        "tags": [
+          "Tài khoản"
+        ],
+        "operationId": "listUserRightSubscriptions",
+        "summary": "Lấy danh sách yêu cầu đăng ký quyền mua",
+        "description": "Lấy các yêu cầu đăng ký quyền mua của người dùng hiện tại.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Danh sách yêu cầu đăng ký quyền mua.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RightSubscription"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy danh sách yêu cầu đăng ký quyền mua",
+            "sidebarTitle": "Lấy danh sách yêu cầu đăng ký quyền mua",
+            "description": "GET /users/right-subscriptions"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tài khoản"
+        ],
+        "operationId": "subscribeRight",
+        "summary": "Đăng ký quyền mua",
+        "description": "Gửi yêu cầu đăng ký quyền mua cho một mã.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscribeRightRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Trạng thái xử lý yêu cầu đăng ký quyền mua.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Đăng ký quyền mua",
+            "sidebarTitle": "Đăng ký quyền mua",
+            "description": "POST /users/right-subscriptions"
+          }
+        }
+      }
+    },
+    "/users/covered-margin-call": {
+      "patch": {
+        "tags": [
+          "Tài khoản"
+        ],
+        "operationId": "adjustCoveredMargin",
+        "summary": "Điều chỉnh số tiền covered margin call",
+        "description": "Điều chỉnh số tiền covered margin call của tài khoản cho một mã.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdjustCoveredMarginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Trạng thái xử lý yêu cầu điều chỉnh covered margin call.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Điều chỉnh số tiền covered margin call",
+            "sidebarTitle": "Điều chỉnh số tiền covered margin call",
+            "description": "PATCH /users/covered-margin-call"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3854,6 +4046,114 @@
           }
         },
         "additionalProperties": true
+      },
+      "RightSubscription": {
+        "type": "object",
+        "description": "Thông tin đăng ký quyền mua hoặc cấu hình quyền mua.",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID bản ghi."
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Mã giao dịch hoặc mã sản phẩm."
+          },
+          "ratio": {
+            "type": "string",
+            "example": "100:20",
+            "description": "Tỷ lệ đăng ký, ví dụ 100:20."
+          },
+          "price": {
+            "type": "number",
+            "description": "Giá đăng ký trên mỗi cổ phiếu."
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Ngày bắt đầu giai đoạn đăng ký."
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Ngày kết thúc giai đoạn đăng ký."
+          },
+          "status": {
+            "type": "string",
+            "description": "Trạng thái hiện tại."
+          },
+          "note": {
+            "type": "string",
+            "description": "Ghi chú tùy chọn."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Thời điểm tạo bản ghi."
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Thời điểm cập nhật bản ghi."
+          }
+        }
+      },
+      "SubscribeRightRequest": {
+        "type": "object",
+        "description": "Payload để đăng ký quyền mua.",
+        "required": [
+          "symbol",
+          "shares"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Mã giao dịch hoặc mã sản phẩm."
+          },
+          "shares": {
+            "type": "number",
+            "description": "Số lượng cổ phiếu muốn đăng ký mua."
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "description": "Response trạng thái dùng cho các endpoint thay đổi dữ liệu.",
+        "additionalProperties": true,
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success",
+            "description": "Chuỗi trạng thái backend trả về."
+          },
+          "message": {
+            "type": "string",
+            "example": "Success",
+            "description": "Thông báo trạng thái dễ đọc."
+          }
+        }
+      },
+      "AdjustCoveredMarginRequest": {
+        "type": "object",
+        "description": "Payload để điều chỉnh số tiền covered margin call cho một mã.",
+        "required": [
+          "accountId",
+          "symbol",
+          "amount"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Tài khoản cần điều chỉnh covered margin."
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Mã cần điều chỉnh covered margin."
+          },
+          "amount": {
+            "type": "number",
+            "description": "Số tiền covered margin mới. Phải lớn hơn hoặc bằng 0."
+          }
+        }
       }
     }
   },

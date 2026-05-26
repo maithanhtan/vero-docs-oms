@@ -1941,6 +1941,198 @@
           }
         }
       }
+    },
+    "/bank-accounts/{bankId}": {
+      "get": {
+        "tags": [
+          "Bank Accounts"
+        ],
+        "operationId": "getBankAccount",
+        "summary": "Get bank account by ID",
+        "description": "Get details for a saved bank account.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "bankId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bank account ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saved bank account details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Get bank account by ID",
+            "sidebarTitle": "Get bank account by ID",
+            "description": "GET /bank-accounts/{bankId}"
+          }
+        }
+      }
+    },
+    "/users/right-subscriptions": {
+      "get": {
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "listUserRightSubscriptions",
+        "summary": "List current user right subscription requests",
+        "description": "List right subscription requests for the current user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Right subscription requests for the current user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RightSubscription"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "List current user right subscription requests",
+            "sidebarTitle": "List current user right subscription requests",
+            "description": "GET /users/right-subscriptions"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "subscribeRight",
+        "summary": "Subscribe to a right offering",
+        "description": "Submit a right subscription request for a symbol.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscribeRightRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Right subscription request status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Subscribe to a right offering",
+            "sidebarTitle": "Subscribe to a right offering",
+            "description": "POST /users/right-subscriptions"
+          }
+        }
+      }
+    },
+    "/users/covered-margin-call": {
+      "patch": {
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "adjustCoveredMargin",
+        "summary": "Adjust covered margin call amount",
+        "description": "Adjust the covered margin call amount for an account and symbol.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdjustCoveredMarginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Covered margin call adjustment status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Adjust covered margin call amount",
+            "sidebarTitle": "Adjust covered margin call amount",
+            "description": "PATCH /users/covered-margin-call"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3536,6 +3728,114 @@
           }
         },
         "additionalProperties": true
+      },
+      "RightSubscription": {
+        "type": "object",
+        "description": "Right subscription rule or user subscription item.",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique record identifier."
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Trading symbol or product code."
+          },
+          "ratio": {
+            "type": "string",
+            "example": "100:20",
+            "description": "Subscription ratio, for example 100:20."
+          },
+          "price": {
+            "type": "number",
+            "description": "Subscription price per share."
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Subscription period start date."
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Subscription period end date."
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status value."
+          },
+          "note": {
+            "type": "string",
+            "description": "Optional free-form note."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Record creation timestamp."
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Record last update timestamp."
+          }
+        }
+      },
+      "SubscribeRightRequest": {
+        "type": "object",
+        "description": "Payload for user subscription to a right offering.",
+        "required": [
+          "symbol",
+          "shares"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Trading symbol or product code."
+          },
+          "shares": {
+            "type": "number",
+            "description": "Number of new shares the user wants to subscribe for."
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "description": "Generic status response for mutation endpoints.",
+        "additionalProperties": true,
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success",
+            "description": "Status string returned by the backend."
+          },
+          "message": {
+            "type": "string",
+            "example": "Success",
+            "description": "Human-readable status message."
+          }
+        }
+      },
+      "AdjustCoveredMarginRequest": {
+        "type": "object",
+        "description": "Payload for adjusting covered margin call amount for a symbol.",
+        "required": [
+          "accountId",
+          "symbol",
+          "amount"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Account whose covered margin value should be changed."
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Symbol whose covered margin amount should be changed."
+          },
+          "amount": {
+            "type": "number",
+            "description": "New covered margin amount. Must be zero or greater."
+          }
+        }
       }
     }
   },

@@ -48,15 +48,7 @@
           {
             "group": "Overview",
             "pages": [
-              "en/overview",
-              "en/quickstart",
-              "en/conventions"
-            ]
-          },
-          {
-            "group": "API Guides",
-            "pages": [
-              "en/rest-api"
+              "en/overview"
             ]
           },
           {
@@ -85,7 +77,10 @@
                 "expanded": false,
                 "pages": [
                   "en/apis/rest/accounts/list-accounts",
-                  "en/apis/rest/accounts/withdraw-equity"
+                  "en/apis/rest/accounts/adjust-covered-margin",
+                  "en/apis/rest/accounts/withdraw-equity",
+                  "en/apis/rest/accounts/list-right-subscriptions",
+                  "en/apis/rest/accounts/subscribe-right"
                 ]
               },
               {
@@ -94,6 +89,7 @@
                 "expanded": false,
                 "pages": [
                   "en/apis/rest/bank-accounts/list-bank-accounts",
+                  "en/apis/rest/bank-accounts/get-bank-account",
                   "en/apis/rest/bank-accounts/create-bank-account"
                 ]
               },
@@ -222,15 +218,7 @@
           {
             "group": "Tổng quan",
             "pages": [
-              "vi/overview",
-              "vi/quickstart",
-              "vi/conventions"
-            ]
-          },
-          {
-            "group": "Hướng dẫn API",
-            "pages": [
-              "vi/rest-api"
+              "vi/overview"
             ]
           },
           {
@@ -259,7 +247,10 @@
                 "expanded": false,
                 "pages": [
                   "vi/apis/rest/accounts/list-accounts",
-                  "vi/apis/rest/accounts/withdraw-equity"
+                  "vi/apis/rest/accounts/adjust-covered-margin",
+                  "vi/apis/rest/accounts/withdraw-equity",
+                  "vi/apis/rest/accounts/list-right-subscriptions",
+                  "vi/apis/rest/accounts/subscribe-right"
                 ]
               },
               {
@@ -268,6 +259,7 @@
                 "expanded": false,
                 "pages": [
                   "vi/apis/rest/bank-accounts/list-bank-accounts",
+                  "vi/apis/rest/bank-accounts/get-bank-account",
                   "vi/apis/rest/bank-accounts/create-bank-account"
                 ]
               },
