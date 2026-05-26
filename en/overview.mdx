@@ -14,7 +14,7 @@ mode: 'wide'
   <div style={{ width: '12.5%', height: '100%', borderRadius: 2, background: 'linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-light) 50%, var(--accent-dark) 100%)' }} />
 </div>
 
-Vero OMS API helps applications integrate with Vero order management workflows through REST/JSON and Centrifugo WebSocket streams. The REST reference is generated from `openapi.json`; the streaming reference is generated from `asyncapi.json`.
+Vero OMS API helps applications integrate with Vero order management workflows through REST/JSON endpoints and Centrifugo WebSocket streams.
 
 <CardGroup cols={4}>
   <Card title="Authentication" icon="key">
@@ -33,12 +33,12 @@ Vero OMS API helps applications integrate with Vero order management workflows t
 
 ## API coverage
 
-| Section | Source |
+| Section | Coverage |
 |---|---|
-| REST API | `openapi.json`, 44 HTTP operations |
-| Streaming API | `asyncapi.json`, 8 WebSocket channel patterns |
-| English reference | Generated from localized EN docs specs |
-| Vietnamese reference | Generated from localized VI docs specs |
+| REST API | 44 HTTP operations |
+| Streaming API | 8 WebSocket channel patterns |
+| Authentication | Native login, registration, recovery, settings and session flows |
+| Trading workflow | Accounts, orders, executions, history, withdrawals and bank accounts |
 
 ## How to use these docs
 
@@ -47,10 +47,10 @@ Vero OMS API helps applications integrate with Vero order management workflows t
     Learn the REST base URL, authentication headers and WebSocket endpoint.
   </Step>
   <Step title="Open REST API">
-    Use the generated REST pages for request parameters, schemas and examples.
+    Use the REST reference for request parameters, schemas and examples.
   </Step>
   <Step title="Open Streaming API">
-    Use the generated streaming pages for channel names, parameters and messages.
+    Use the Streaming API reference for channel names, parameters and messages.
   </Step>
   <Step title="Validate integration">
     Use the support checklist to share request details when debugging.

@@ -423,10 +423,6 @@
     "openapi": [
       "openapi.docs.en.json",
       "openapi.docs.vi.json"
-    ],
-    "asyncapi": [
-      "asyncapi.docs.en.json",
-      "asyncapi.docs.vi.json"
     ]
   }
 }

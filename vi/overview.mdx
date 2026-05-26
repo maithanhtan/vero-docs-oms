@@ -14,7 +14,7 @@ mode: 'wide'
   <div style={{ width: '12.5%', height: '100%', borderRadius: 2, background: 'linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-light) 50%, var(--accent-dark) 100%)' }} />
 </div>
 
-Vero OMS API giúp ứng dụng tích hợp với các quy trình quản lý lệnh của Vero qua REST/JSON và Centrifugo WebSocket streams. Tham chiếu REST được tạo từ `openapi.json`; tham chiếu streaming được tạo từ `asyncapi.json`.
+Vero OMS API giúp ứng dụng tích hợp với các quy trình quản lý lệnh của Vero qua REST/JSON endpoints và Centrifugo WebSocket streams.
 
 <CardGroup cols={4}>
   <Card title="Xác thực" icon="key">
@@ -33,12 +33,12 @@ Vero OMS API giúp ứng dụng tích hợp với các quy trình quản lý l�
 
 ## Độ phủ API
 
-| Mục | Nguồn |
+| Mục | Độ phủ |
 |---|---|
-| REST API | `openapi.json`, 44 HTTP operations |
-| Streaming API | `asyncapi.json`, 8 WebSocket channel patterns |
-| Tham chiếu tiếng Anh | Tạo từ spec docs EN đã bản địa hóa |
-| Tham chiếu tiếng Việt | Tạo từ spec docs VI đã bản địa hóa |
+| REST API | 44 HTTP operations |
+| Streaming API | 8 WebSocket channel patterns |
+| Xác thực | Login, registration, recovery, settings và session flows |
+| Quy trình giao dịch | Tài khoản, lệnh, khớp lệnh, lịch sử, rút tiền và tài khoản ngân hàng |
 
 ## Cách đọc tài liệu
 
@@ -47,10 +47,10 @@ Vero OMS API giúp ứng dụng tích hợp với các quy trình quản lý l�
     Xem REST base URL, header xác thực và WebSocket endpoint.
   </Step>
   <Step title="Mở REST API">
-    Dùng các trang REST được tạo tự động để xem tham số request, schema và ví dụ.
+    Dùng phần tham chiếu REST để xem tham số request, schema và ví dụ.
   </Step>
   <Step title="Mở Streaming API">
-    Dùng các trang streaming được tạo tự động để xem channel, tham số và message.
+    Dùng phần tham chiếu Streaming API để xem channel, tham số và message.
   </Step>
   <Step title="Kiểm tra tích hợp">
     Dùng checklist hỗ trợ để gửi đủ thông tin request khi cần gỡ lỗi.
