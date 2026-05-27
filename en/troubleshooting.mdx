@@ -21,7 +21,7 @@ mode: 'wide'
     Compare your request against the endpoint definition provided for your integration.
   </Step>
   <Step title="Check credentials">
-    For `401`, verify the bearer JWT or `X-Session-Token` expected by the endpoint.
+    For `401`, verify the bearer token or session token expected by the endpoint.
   </Step>
   <Step title="Check time format">
     Use ISO 8601 UTC timestamps with a `Z` suffix when sending date-time parameters.
@@ -36,7 +36,7 @@ mode: 'wide'
 | Symptom | Common cause | Fix |
 |---|---|---|
 | `400 Invalid query parameter` | Missing required parameter or invalid time format | Check required params and use UTC `Z` timestamps |
-| `401 Unauthorized` | Missing or invalid credential | Check bearer JWT or `X-Session-Token` |
+| `401 Unauthorized` | Missing or invalid credential | Check bearer token or session token |
 | `404 Not found` | Resource ID or path does not exist | Verify the requested resource |
 | `422 Unprocessable` | Correct format but unsupported value | Check documented enum values and constraints |
 | `429 Too many requests` | Request limit exceeded | Reduce request rate and retry later |

@@ -21,7 +21,7 @@ mode: 'wide'
     Đối chiếu request với định nghĩa endpoint được cung cấp cho tích hợp của bạn.
   </Step>
   <Step title="Kiểm tra thông tin xác thực">
-    Với `401`, kiểm tra bearer JWT hoặc `X-Session-Token` endpoint yêu cầu.
+    Với `401`, kiểm tra bearer token hoặc session token endpoint yêu cầu.
   </Step>
   <Step title="Kiểm tra định dạng thời gian">
     Dùng ISO 8601 UTC có hậu tố `Z` khi gửi tham số ngày giờ.
@@ -36,7 +36,7 @@ mode: 'wide'
 | Triệu chứng | Nguyên nhân thường gặp | Cách xử lý |
 |---|---|---|
 | `400 Invalid query parameter` | Thiếu tham số bắt buộc hoặc sai định dạng thời gian | Kiểm tra tham số bắt buộc và dùng UTC `Z` |
-| `401 Unauthorized` | Thiếu hoặc sai thông tin xác thực | Kiểm tra bearer JWT hoặc `X-Session-Token` |
+| `401 Unauthorized` | Thiếu hoặc sai thông tin xác thực | Kiểm tra bearer token hoặc session token |
 | `404 Not found` | ID tài nguyên hoặc đường dẫn không tồn tại | Kiểm tra tài nguyên đang yêu cầu |
 | `422 Unprocessable` | Đúng định dạng nhưng giá trị không được hỗ trợ | Kiểm tra enum và ràng buộc trong tài liệu |
 | `429 Too many requests` | Vượt giới hạn yêu cầu | Giảm tần suất yêu cầu và thử lại sau |

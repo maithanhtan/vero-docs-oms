@@ -101,10 +101,16 @@
                 "pages": [
                   "en/apis/rest/orders/place-order",
                   "en/apis/rest/orders/cancel-order",
-                  "en/apis/rest/orders/modify-order",
-                  "en/apis/rest/orders/list-execution-reports",
                   "en/apis/rest/orders/list-orders",
-                  "en/apis/rest/orders/list-trades"
+                  "en/apis/rest/orders/list-trades",
+                  "en/apis/rest/orders/list-execution-reports",
+                  "en/apis/rest/orders/list-stop-loss-orders",
+                  "en/apis/rest/orders/place-stop-loss-order",
+                  "en/apis/rest/orders/get-stop-loss-order",
+                  "en/apis/rest/orders/modify-stop-loss-order",
+                  "en/apis/rest/orders/list-bracket-orders",
+                  "en/apis/rest/orders/place-bracket-order",
+                  "en/apis/rest/orders/get-bracket-order"
                 ]
               },
               {
@@ -140,9 +146,7 @@
                 "expanded": false,
                 "pages": [
                   "en/apis/rest/notifications/list-notifications",
-                  "en/apis/rest/notifications/mark-notification-as-read",
-                  "en/apis/rest/notifications/register-push-token",
-                  "en/apis/rest/notifications/unregister-push-token"
+                  "en/apis/rest/notifications/mark-notification-as-read"
                 ]
               },
               {
@@ -263,10 +267,16 @@
                 "pages": [
                   "vi/apis/rest/orders/place-order",
                   "vi/apis/rest/orders/cancel-order",
-                  "vi/apis/rest/orders/modify-order",
-                  "vi/apis/rest/orders/list-execution-reports",
                   "vi/apis/rest/orders/list-orders",
-                  "vi/apis/rest/orders/list-trades"
+                  "vi/apis/rest/orders/list-trades",
+                  "vi/apis/rest/orders/list-execution-reports",
+                  "vi/apis/rest/orders/list-stop-loss-orders",
+                  "vi/apis/rest/orders/place-stop-loss-order",
+                  "vi/apis/rest/orders/get-stop-loss-order",
+                  "vi/apis/rest/orders/modify-stop-loss-order",
+                  "vi/apis/rest/orders/list-bracket-orders",
+                  "vi/apis/rest/orders/place-bracket-order",
+                  "vi/apis/rest/orders/get-bracket-order"
                 ]
               },
               {
@@ -302,9 +312,7 @@
                 "expanded": false,
                 "pages": [
                   "vi/apis/rest/notifications/list-notifications",
-                  "vi/apis/rest/notifications/mark-notification-as-read",
-                  "vi/apis/rest/notifications/register-push-token",
-                  "vi/apis/rest/notifications/unregister-push-token"
+                  "vi/apis/rest/notifications/mark-notification-as-read"
                 ]
               },
               {

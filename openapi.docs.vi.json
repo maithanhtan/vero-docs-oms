@@ -8,7 +8,7 @@
   "servers": [
     {
       "url": "https://api-gw.verolabs.co/api/v1",
-      "description": "Backend REST API"
+      "description": "REST API"
     }
   ],
   "tags": [
@@ -48,7 +48,7 @@
     },
     {
       "name": "Thông báo",
-      "description": "Thông báo trong ứng dụng và đăng ký push token",
+      "description": "Thông báo trong ứng dụng",
       "x-original-name": "Notifications"
     },
     {
@@ -169,7 +169,7 @@
           "Xác thực"
         ],
         "operationId": "getWhoamiSession",
-        "summary": "Lấy session hiện tại hoặc JWT session",
+        "summary": "Lấy phiên xác thực hiện tại",
         "description": "Trả về phiên xác thực hiện tại và dữ liệu định danh cho thông tin xác thực được cung cấp.",
         "security": [
           {
@@ -210,8 +210,8 @@
         },
         "x-mint": {
           "metadata": {
-            "title": "Lấy session hiện tại hoặc JWT session",
-            "sidebarTitle": "Lấy session hiện tại hoặc JWT session",
+            "title": "Lấy phiên xác thực hiện tại",
+            "sidebarTitle": "Lấy phiên xác thực hiện tại",
             "description": "GET /sessions/whoami"
           }
         }
@@ -1235,12 +1235,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "Order identifier."
+            "description": "Mã định danh lệnh cần hủy."
           }
         ],
         "responses": {
           "200": {
-            "description": "Creates or executes the cancel an order result.",
+            "description": "Lệnh đã được gửi yêu cầu hủy.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1269,82 +1269,7 @@
             "description": "POST /orders/cancel/{orderID}"
           }
         },
-        "description": "Cancel an order."
-      }
-    },
-    "/orders/modify/{orderID}/{price}/{qty}": {
-      "post": {
-        "tags": [
-          "Lệnh"
-        ],
-        "operationId": "modifyOrder",
-        "summary": "Sửa lệnh hiện có",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "orderID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Order identifier."
-          },
-          {
-            "name": "price",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "number"
-            },
-            "description": "price parameter."
-          },
-          {
-            "name": "qty",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "number"
-            },
-            "description": "qty parameter."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Creates or executes the modify price and quantity of an order result.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse"
-          }
-        },
-        "x-mint": {
-          "metadata": {
-            "title": "Sửa lệnh hiện có",
-            "sidebarTitle": "Sửa lệnh hiện có",
-            "description": "POST /orders/modify/{orderID}/{price}/{qty}"
-          }
-        },
-        "description": "Modify price and quantity of an order."
+        "description": "Hủy một lệnh theo mã định danh. Dùng endpoint này cho lệnh thường, lệnh stop-loss hoặc bracket order khi có mã lệnh tương ứng."
       }
     },
     "/orders/execution-reports": {
@@ -1518,7 +1443,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "Backend REST API"
+          "description": "REST API"
         }
       ],
       "get": {
@@ -1577,7 +1502,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "Backend REST API"
+          "description": "REST API"
         }
       ],
       "get": {
@@ -1625,7 +1550,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "Backend REST API"
+          "description": "REST API"
         }
       ],
       "get": {
@@ -1684,7 +1609,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "Backend REST API"
+          "description": "REST API"
         }
       ],
       "get": {
@@ -2039,118 +1964,6 @@
           }
         },
         "description": "Mark notification as read."
-      }
-    },
-    "/notifications/fcm-token": {
-      "post": {
-        "tags": [
-          "Thông báo"
-        ],
-        "operationId": "registerPushToken",
-        "summary": "Đăng ký push token của thiết bị",
-        "description": "Đăng ký push token của thiết bị.",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PushTokenRequest"
-              }
-            }
-          },
-          "description": "Payload đăng ký push token của thiết bị."
-        },
-        "responses": {
-          "200": {
-            "description": "Push token của thiết bị đã được đăng ký.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse"
-          }
-        },
-        "x-mint": {
-          "metadata": {
-            "title": "Đăng ký push token của thiết bị",
-            "sidebarTitle": "Đăng ký push token",
-            "description": "Đăng ký push token của thiết bị."
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Thông báo"
-        ],
-        "operationId": "unregisterPushToken",
-        "summary": "Hủy đăng ký push token của thiết bị",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PushTokenRequest"
-              }
-            }
-          },
-          "description": "Payload hủy đăng ký push token của thiết bị."
-        },
-        "responses": {
-          "200": {
-            "description": "Push token của thiết bị đã được hủy đăng ký.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse"
-          }
-        },
-        "x-mint": {
-          "metadata": {
-            "title": "Hủy đăng ký push token của thiết bị",
-            "sidebarTitle": "Hủy đăng ký push token",
-            "description": "Hủy đăng ký push token của thiết bị."
-          }
-        },
-        "description": "Hủy đăng ký push token của thiết bị."
       }
     },
     "/referral/stats": {
@@ -2649,7 +2462,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "Backend REST API"
+          "description": "REST API"
         }
       ],
       "get": {
@@ -2726,7 +2539,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "Backend REST API"
+          "description": "REST API"
         }
       ],
       "get": {
@@ -2780,6 +2593,448 @@
           }
         }
       }
+    },
+    "/orders/stop-order": {
+      "get": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "getStopOrders",
+        "summary": "Danh sách lệnh stop-loss",
+        "description": "Liệt kê lệnh stop-loss với các bộ lọc trạng thái, tài khoản và mã giao dịch tùy chọn.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Các lệnh stop-loss khớp bộ lọc yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Danh sách lệnh stop-loss",
+            "sidebarTitle": "Danh sách lệnh stop-loss",
+            "description": "GET /orders/stop-order"
+          }
+        },
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bộ lọc trạng thái tùy chọn."
+          },
+          {
+            "name": "account",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bộ lọc tài khoản tùy chọn."
+          },
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Mã giao dịch hoặc mã sản phẩm."
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "placeStopOrder",
+        "summary": "Đặt lệnh stop-loss",
+        "description": "Tạo lệnh stop-loss để gửi lệnh sau khi điều kiện kích hoạt được thỏa mãn.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lệnh stop-loss đã được tạo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Đặt lệnh stop-loss",
+            "sidebarTitle": "Đặt lệnh stop-loss",
+            "description": "POST /orders/stop-order"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewStopOrderRequest"
+              }
+            }
+          },
+          "description": "Payload tạo lệnh stop-loss."
+        }
+      }
+    },
+    "/orders/stop-order/{orderId}": {
+      "get": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "getStopOrder",
+        "summary": "Lấy lệnh stop-loss theo ID",
+        "description": "Lấy thông tin lệnh stop-loss theo mã định danh lệnh.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chi tiết lệnh stop-loss.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy lệnh stop-loss theo ID",
+            "sidebarTitle": "Lấy lệnh stop-loss theo ID",
+            "description": "GET /orders/stop-order/{orderId}"
+          }
+        },
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Mã định danh lệnh."
+          }
+        ]
+      }
+    },
+    "/orders/stop-order/{orderId}/modify": {
+      "put": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "modifyStopOrder",
+        "summary": "Sửa lệnh stop-loss",
+        "description": "Sửa thông tin một lệnh stop-loss hiện có.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lệnh stop-loss đã được cập nhật.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Sửa lệnh stop-loss",
+            "sidebarTitle": "Sửa lệnh stop-loss",
+            "description": "PUT /orders/stop-order/{orderId}/modify"
+          }
+        },
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Mã định danh lệnh."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModifyStopOrderRequest"
+              }
+            }
+          },
+          "description": "Payload sửa lệnh stop-loss."
+        }
+      }
+    },
+    "/orders/bracket-order": {
+      "get": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "getBracketOrders",
+        "summary": "Danh sách bracket order",
+        "description": "Liệt kê bracket order với các bộ lọc trạng thái, tài khoản và mã giao dịch tùy chọn.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Các bracket order khớp bộ lọc yêu cầu.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Danh sách bracket order",
+            "sidebarTitle": "Danh sách bracket order",
+            "description": "GET /orders/bracket-order"
+          }
+        },
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bộ lọc trạng thái tùy chọn."
+          },
+          {
+            "name": "account",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bộ lọc tài khoản tùy chọn."
+          },
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Mã giao dịch hoặc mã sản phẩm."
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "placeBracketOrder",
+        "summary": "Đặt bracket order",
+        "description": "Tạo bracket order với nhánh chốt lời và cắt lỗ tùy chọn.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bracket order đã được tạo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Đặt bracket order",
+            "sidebarTitle": "Đặt bracket order",
+            "description": "POST /orders/bracket-order"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewBracketOrderRequest"
+              }
+            }
+          },
+          "description": "Payload tạo bracket order."
+        }
+      }
+    },
+    "/orders/bracket-order/{bracketOrderId}": {
+      "get": {
+        "tags": [
+          "Lệnh"
+        ],
+        "operationId": "getBracketOrder",
+        "summary": "Lấy bracket order theo ID",
+        "description": "Lấy thông tin bracket order theo mã định danh.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chi tiết bracket order.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Lấy bracket order theo ID",
+            "sidebarTitle": "Lấy bracket order theo ID",
+            "description": "GET /orders/bracket-order/{bracketOrderId}"
+          }
+        },
+        "parameters": [
+          {
+            "name": "bracketOrderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Mã định danh bracket order."
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -2787,8 +3042,7 @@
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "bearerFormat": "JWT",
-        "description": "Bearer JWT used for protected REST API requests."
+        "description": "Bearer token used for protected REST API requests."
       },
       "sessionToken": {
         "type": "apiKey",
@@ -2950,7 +3204,7 @@
         }
       },
       "ErrorResponse": {
-        "description": "Error response. Frontend extracts error, message, detail, or plain text.",
+        "description": "Error response containing an error code, message, detail, or plain text.",
         "content": {
           "application/json": {
             "schema": {
@@ -2980,10 +3234,10 @@
           },
           "detail": {
             "type": "string",
-            "description": "Detailed error text returned by the backend when available."
+            "description": "Detailed error text returned when available."
           },
           "details": {
-            "description": "Additional structured error details, if provided by the backend."
+            "description": "Additional structured error details, if provided."
           },
           "status": {
             "type": "integer",
@@ -3089,7 +3343,7 @@
           },
           "tokenized": {
             "type": "string",
-            "description": "Bearer JWT returned when a tokenized session is requested."
+            "description": "Bearer token returned when a tokenized session is requested."
           }
         }
       },
@@ -3550,7 +3804,7 @@
           },
           "orderStatus": {
             "type": "string",
-            "description": "FIX 5.0 style values used by the app: 0 New, 1 Partially Filled, 2 Filled, 4 Cancelled, 7 Stopped, 8 Rejected. Backend may also return text statuses."
+            "description": "Order status values: 0 New, 1 Partially Filled, 2 Filled, 4 Cancelled, 7 Stopped, 8 Rejected. The API may also return text statuses."
           },
           "orderType": {
             "$ref": "#/components/schemas/OrderType"
@@ -3909,7 +4163,7 @@
           },
           "messageID": {
             "type": "string",
-            "description": "Unique backend message identifier."
+            "description": "Unique message identifier."
           },
           "data": {
             "type": "object",
@@ -3931,7 +4185,7 @@
           }
         },
         "additionalProperties": true,
-        "description": "Notification record stored by the backend."
+        "description": "Notification record."
       },
       "NotificationType": {
         "type": "string",
@@ -4349,7 +4603,7 @@
           "unixTime": {
             "type": "integer",
             "format": "int64",
-            "description": "Unix timestamp in milliseconds, based on mobile app parsing."
+            "description": "Unix timestamp in milliseconds."
           },
           "open": {
             "type": "number"
@@ -4463,7 +4717,7 @@
           "status": {
             "type": "string",
             "example": "success",
-            "description": "Status string returned by the backend."
+            "description": "Status string returned by the API."
           },
           "message": {
             "type": "string",
@@ -4523,7 +4777,7 @@
         "properties": {
           "status": {
             "type": "integer",
-            "description": "HTTP-like status code returned with the order response."
+            "description": "Status code returned with the order response."
           },
           "data": {
             "description": "Order response payload, or null on failure."
@@ -4541,14 +4795,14 @@
         "properties": {
           "status": {
             "type": "integer",
-            "description": "HTTP status from the market-data request."
+            "description": "Status code from the market-data request."
           },
           "symbol": {
             "type": "string",
             "description": "Symbol associated with the response when applicable."
           },
           "data": {
-            "description": "Market-data payload returned by the backend."
+            "description": "Market-data payload returned by the API."
           }
         },
         "additionalProperties": true,
@@ -4587,7 +4841,7 @@
           "status": {
             "type": "string",
             "example": "success",
-            "description": "Status string returned by the backend, usually success."
+            "description": "Status string returned by the API, usually success."
           }
         },
         "additionalProperties": true,
@@ -4785,7 +5039,7 @@
           },
           "address": {
             "type": "string",
-            "description": "Địa chỉ đã parse, nếu backend trả về."
+            "description": "Địa chỉ đã phân tích, nếu API trả về."
           }
         },
         "additionalProperties": true,
@@ -4818,74 +5072,193 @@
         "additionalProperties": true,
         "description": "Các URL ảnh được trả về sau khi xử lý ảnh đăng ký."
       },
-      "PushTokenRequest": {
+      "NewStopOrderRequest": {
         "type": "object",
+        "required": [
+          "symbol",
+          "side",
+          "stopPrice",
+          "stopCondition",
+          "orderType",
+          "price",
+          "quantity",
+          "account"
+        ],
         "properties": {
-          "token": {
+          "symbol": {
             "type": "string",
-            "description": "Token push notification của thiết bị."
+            "example": "FPT",
+            "description": "Mã giao dịch hoặc mã sản phẩm."
           },
-          "device_id": {
-            "type": "string",
-            "description": "Stable device/browser identifier used to update rotating tokens."
-          },
-          "platform": {
+          "side": {
             "type": "string",
             "enum": [
-              "web",
-              "android",
-              "ios"
+              "B",
+              "S"
             ],
-            "example": "web",
-            "description": "Client platform for this token."
+            "example": "B",
+            "description": "Chiều lệnh."
+          },
+          "stopPrice": {
+            "type": "number",
+            "description": "Giá kích hoạt lệnh stop-loss."
+          },
+          "stopCondition": {
+            "type": "string",
+            "enum": [
+              ">=",
+              "<="
+            ],
+            "example": ">=",
+            "description": "Điều kiện so sánh giá thị trường với stopPrice."
+          },
+          "orderType": {
+            "type": "string",
+            "enum": [
+              "LO",
+              "MTL"
+            ],
+            "example": "LO",
+            "description": "Loại lệnh gửi sau khi điều kiện kích hoạt được thỏa mãn."
+          },
+          "price": {
+            "type": "number",
+            "description": "Giá đặt lệnh sau khi điều kiện kích hoạt được thỏa mãn."
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Khối lượng đặt lệnh sau khi điều kiện kích hoạt được thỏa mãn."
+          },
+          "account": {
+            "type": "string",
+            "description": "Mã tài khoản giao dịch."
           }
         },
-        "required": [
-          "token",
-          "device_id"
-        ],
         "additionalProperties": true,
-        "description": "Payload dùng để đăng ký hoặc hủy đăng ký push token của thiết bị."
+        "description": "Payload tạo lệnh stop-loss."
       },
-      "PushTokenRegisterRequest": {
+      "ModifyStopOrderRequest": {
         "type": "object",
-        "required": [
-          "token",
-          "device_id",
-          "platform"
-        ],
         "properties": {
-          "token": {
+          "symbol": {
             "type": "string",
-            "description": "Token push notification của thiết bị."
+            "example": "FPT",
+            "description": "Mã giao dịch hoặc mã sản phẩm."
           },
-          "device_id": {
-            "type": "string"
-          },
-          "platform": {
+          "side": {
             "type": "string",
             "enum": [
-              "ios",
-              "android"
-            ]
+              "B",
+              "S"
+            ],
+            "example": "B",
+            "description": "Chiều lệnh."
+          },
+          "stopPrice": {
+            "type": "number",
+            "description": "Giá kích hoạt mới của lệnh stop-loss."
+          },
+          "stopCondition": {
+            "type": "string",
+            "enum": [
+              ">=",
+              "<="
+            ],
+            "example": ">=",
+            "description": "Điều kiện kích hoạt mới."
+          },
+          "orderType": {
+            "type": "string",
+            "enum": [
+              "LO",
+              "MTL"
+            ],
+            "example": "LO",
+            "description": "Loại lệnh gửi sau khi điều kiện kích hoạt được thỏa mãn."
+          },
+          "price": {
+            "type": "number",
+            "description": "Giá đặt lệnh mới."
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Khối lượng đặt lệnh mới."
+          },
+          "account": {
+            "type": "string",
+            "description": "Mã tài khoản giao dịch."
           }
-        }
+        },
+        "additionalProperties": true,
+        "description": "Payload sửa lệnh stop-loss hiện có."
       },
-      "PushTokenDeleteRequest": {
+      "NewBracketOrderRequest": {
         "type": "object",
         "required": [
-          "token",
-          "device_id"
+          "symbol",
+          "side",
+          "conditionPrice",
+          "conditionType",
+          "orderType",
+          "quantity",
+          "account"
         ],
         "properties": {
-          "token": {
+          "symbol": {
             "type": "string",
-            "description": "Token push notification của thiết bị."
+            "example": "FPT",
+            "description": "Mã giao dịch hoặc mã sản phẩm."
           },
-          "device_id": {
-            "type": "string"
+          "side": {
+            "type": "string",
+            "enum": [
+              "B",
+              "S"
+            ],
+            "example": "B",
+            "description": "Chiều lệnh."
+          },
+          "conditionPrice": {
+            "type": "number",
+            "description": "Giá kích hoạt bracket order."
+          },
+          "conditionType": {
+            "type": "string",
+            "enum": [
+              ">=",
+              "<="
+            ],
+            "example": ">=",
+            "description": "Điều kiện so sánh giá thị trường với conditionPrice."
+          },
+          "orderType": {
+            "type": "string",
+            "enum": [
+              "LO",
+              "MTL"
+            ],
+            "example": "LO",
+            "description": "Loại lệnh gửi sau khi điều kiện bracket được thỏa mãn."
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Khối lượng đặt lệnh."
+          },
+          "account": {
+            "type": "string",
+            "description": "Mã tài khoản giao dịch."
+          },
+          "takeProfitPrice": {
+            "type": "number",
+            "description": "Giá chốt lời tùy chọn."
+          },
+          "stopLossPrice": {
+            "type": "number",
+            "description": "Giá cắt lỗ tùy chọn."
           }
-        }
+        },
+        "additionalProperties": true,
+        "description": "Payload tạo bracket order với nhánh chốt lời và cắt lỗ tùy chọn."
       }
     }
   }

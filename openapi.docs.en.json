@@ -8,7 +8,7 @@
   "servers": [
     {
       "url": "https://api-gw.verolabs.co/api/v1",
-      "description": "Backend REST API"
+      "description": "REST API"
     }
   ],
   "tags": [
@@ -42,7 +42,7 @@
     },
     {
       "name": "Notifications",
-      "description": "In-app notifications and push token registration"
+      "description": "In-app notifications"
     },
     {
       "name": "Referral",
@@ -160,7 +160,7 @@
           "Auth"
         ],
         "operationId": "getWhoamiSession",
-        "summary": "Get current session or tokenized JWT session",
+        "summary": "Get current authenticated session",
         "description": "Returns the current authenticated session and identity data for the supplied bearer or session credential.",
         "security": [
           {
@@ -201,8 +201,8 @@
         },
         "x-mint": {
           "metadata": {
-            "title": "Get current session or tokenized JWT session",
-            "sidebarTitle": "Get current session or tokenized JWT session",
+            "title": "Get current authenticated session",
+            "sidebarTitle": "Get current authenticated session",
             "description": "GET /sessions/whoami"
           }
         }
@@ -1226,12 +1226,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "Order identifier."
+            "description": "Identifier of the order to cancel."
           }
         ],
         "responses": {
           "200": {
-            "description": "Creates or executes the cancel an order result.",
+            "description": "Order cancellation submitted.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1260,82 +1260,7 @@
             "description": "POST /orders/cancel/{orderID}"
           }
         },
-        "description": "Cancel an order."
-      }
-    },
-    "/orders/modify/{orderID}/{price}/{qty}": {
-      "post": {
-        "tags": [
-          "Orders"
-        ],
-        "operationId": "modifyOrder",
-        "summary": "Modify an existing order",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "orderID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Order identifier."
-          },
-          {
-            "name": "price",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "number"
-            },
-            "description": "price parameter."
-          },
-          {
-            "name": "qty",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "number"
-            },
-            "description": "qty parameter."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Creates or executes the modify price and quantity of an order result.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse"
-          }
-        },
-        "x-mint": {
-          "metadata": {
-            "title": "Modify an existing order",
-            "sidebarTitle": "Modify an existing order",
-            "description": "POST /orders/modify/{orderID}/{price}/{qty}"
-          }
-        },
-        "description": "Modify price and quantity of an order."
+        "description": "Cancel an order by ID. Use this endpoint for regular, stop-loss, or bracket orders when you have the corresponding order ID."
       }
     },
     "/orders/execution-reports": {
@@ -1509,7 +1434,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "Backend REST API"
+          "description": "REST API"
         }
       ],
       "get": {
@@ -1568,7 +1493,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "Backend REST API"
+          "description": "REST API"
         }
       ],
       "get": {
@@ -1616,7 +1541,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "Backend REST API"
+          "description": "REST API"
         }
       ],
       "get": {
@@ -1675,7 +1600,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "Backend REST API"
+          "description": "REST API"
         }
       ],
       "get": {
@@ -2030,118 +1955,6 @@
           }
         },
         "description": "Mark notification as read."
-      }
-    },
-    "/notifications/fcm-token": {
-      "post": {
-        "tags": [
-          "Notifications"
-        ],
-        "operationId": "registerPushToken",
-        "summary": "Register device push token",
-        "description": "Register a device push token.",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PushTokenRequest"
-              }
-            }
-          },
-          "description": "Request payload for registering a device push token."
-        },
-        "responses": {
-          "200": {
-            "description": "Device push token registered.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse"
-          }
-        },
-        "x-mint": {
-          "metadata": {
-            "title": "Register device push token",
-            "sidebarTitle": "Register push token",
-            "description": "Register device push token."
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Notifications"
-        ],
-        "operationId": "unregisterPushToken",
-        "summary": "Unregister device push token",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PushTokenRequest"
-              }
-            }
-          },
-          "description": "Request payload for unregistering a device push token."
-        },
-        "responses": {
-          "200": {
-            "description": "Device push token unregistered.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse"
-          }
-        },
-        "x-mint": {
-          "metadata": {
-            "title": "Unregister device push token",
-            "sidebarTitle": "Unregister push token",
-            "description": "Unregister device push token."
-          }
-        },
-        "description": "Unregister a device push token."
       }
     },
     "/referral/stats": {
@@ -2640,7 +2453,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "Backend REST API"
+          "description": "REST API"
         }
       ],
       "get": {
@@ -2717,7 +2530,7 @@
       "servers": [
         {
           "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "Backend REST API"
+          "description": "REST API"
         }
       ],
       "get": {
@@ -2771,6 +2584,448 @@
           }
         }
       }
+    },
+    "/orders/stop-order": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "getStopOrders",
+        "summary": "List stop-loss orders",
+        "description": "List stop-loss orders with optional status, account and symbol filters.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stop-loss orders matching the requested filters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "List stop-loss orders",
+            "sidebarTitle": "List stop-loss orders",
+            "description": "GET /orders/stop-order"
+          }
+        },
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional status filter."
+          },
+          {
+            "name": "account",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional account filter."
+          },
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Trading symbol or product code."
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "placeStopOrder",
+        "summary": "Place a stop-loss order",
+        "description": "Create a stop-loss order that submits an order after the trigger condition is met.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stop-loss order created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Place a stop-loss order",
+            "sidebarTitle": "Place a stop-loss order",
+            "description": "POST /orders/stop-order"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewStopOrderRequest"
+              }
+            }
+          },
+          "description": "Stop-loss order creation payload."
+        }
+      }
+    },
+    "/orders/stop-order/{orderId}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "getStopOrder",
+        "summary": "Get stop-loss order by ID",
+        "description": "Get a stop-loss order by order ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stop-loss order detail.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Get stop-loss order by ID",
+            "sidebarTitle": "Get stop-loss order by ID",
+            "description": "GET /orders/stop-order/{orderId}"
+          }
+        },
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Order identifier."
+          }
+        ]
+      }
+    },
+    "/orders/stop-order/{orderId}/modify": {
+      "put": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "modifyStopOrder",
+        "summary": "Modify a stop-loss order",
+        "description": "Modify an existing stop-loss order.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stop-loss order updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Modify a stop-loss order",
+            "sidebarTitle": "Modify a stop-loss order",
+            "description": "PUT /orders/stop-order/{orderId}/modify"
+          }
+        },
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Order identifier."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModifyStopOrderRequest"
+              }
+            }
+          },
+          "description": "Stop-loss order modification payload."
+        }
+      }
+    },
+    "/orders/bracket-order": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "getBracketOrders",
+        "summary": "List bracket orders",
+        "description": "List bracket orders with optional status, account and symbol filters.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bracket orders matching the requested filters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "List bracket orders",
+            "sidebarTitle": "List bracket orders",
+            "description": "GET /orders/bracket-order"
+          }
+        },
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional status filter."
+          },
+          {
+            "name": "account",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional account filter."
+          },
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Trading symbol or product code."
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "placeBracketOrder",
+        "summary": "Place a bracket order",
+        "description": "Create a bracket order with optional take-profit and stop-loss legs.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bracket order created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Place a bracket order",
+            "sidebarTitle": "Place a bracket order",
+            "description": "POST /orders/bracket-order"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewBracketOrderRequest"
+              }
+            }
+          },
+          "description": "Bracket order creation payload."
+        }
+      }
+    },
+    "/orders/bracket-order/{bracketOrderId}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "getBracketOrder",
+        "summary": "Get bracket order by ID",
+        "description": "Get a bracket order by bracket order ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bracket order detail.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Get bracket order by ID",
+            "sidebarTitle": "Get bracket order by ID",
+            "description": "GET /orders/bracket-order/{bracketOrderId}"
+          }
+        },
+        "parameters": [
+          {
+            "name": "bracketOrderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bracket order identifier."
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -2778,8 +3033,7 @@
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "bearerFormat": "JWT",
-        "description": "Bearer JWT used for protected REST API requests."
+        "description": "Bearer token used for protected REST API requests."
       },
       "sessionToken": {
         "type": "apiKey",
@@ -2941,7 +3195,7 @@
         }
       },
       "ErrorResponse": {
-        "description": "Error response. Frontend extracts error, message, detail, or plain text.",
+        "description": "Error response containing an error code, message, detail, or plain text.",
         "content": {
           "application/json": {
             "schema": {
@@ -2971,10 +3225,10 @@
           },
           "detail": {
             "type": "string",
-            "description": "Detailed error text returned by the backend when available."
+            "description": "Detailed error text returned when available."
           },
           "details": {
-            "description": "Additional structured error details, if provided by the backend."
+            "description": "Additional structured error details, if provided."
           },
           "status": {
             "type": "integer",
@@ -3080,7 +3334,7 @@
           },
           "tokenized": {
             "type": "string",
-            "description": "Bearer JWT returned when a tokenized session is requested."
+            "description": "Bearer token returned when a tokenized session is requested."
           }
         }
       },
@@ -3541,7 +3795,7 @@
           },
           "orderStatus": {
             "type": "string",
-            "description": "FIX 5.0 style values used by the app: 0 New, 1 Partially Filled, 2 Filled, 4 Cancelled, 7 Stopped, 8 Rejected. Backend may also return text statuses."
+            "description": "Order status values: 0 New, 1 Partially Filled, 2 Filled, 4 Cancelled, 7 Stopped, 8 Rejected. The API may also return text statuses."
           },
           "orderType": {
             "$ref": "#/components/schemas/OrderType"
@@ -3900,7 +4154,7 @@
           },
           "messageID": {
             "type": "string",
-            "description": "Unique backend message identifier."
+            "description": "Unique message identifier."
           },
           "data": {
             "type": "object",
@@ -3922,7 +4176,7 @@
           }
         },
         "additionalProperties": true,
-        "description": "Notification record stored by the backend."
+        "description": "Notification record."
       },
       "NotificationType": {
         "type": "string",
@@ -4340,7 +4594,7 @@
           "unixTime": {
             "type": "integer",
             "format": "int64",
-            "description": "Unix timestamp in milliseconds, based on mobile app parsing."
+            "description": "Unix timestamp in milliseconds."
           },
           "open": {
             "type": "number"
@@ -4454,7 +4708,7 @@
           "status": {
             "type": "string",
             "example": "success",
-            "description": "Status string returned by the backend."
+            "description": "Status string returned by the API."
           },
           "message": {
             "type": "string",
@@ -4514,7 +4768,7 @@
         "properties": {
           "status": {
             "type": "integer",
-            "description": "HTTP-like status code returned with the order response."
+            "description": "Status code returned with the order response."
           },
           "data": {
             "description": "Order response payload, or null on failure."
@@ -4532,14 +4786,14 @@
         "properties": {
           "status": {
             "type": "integer",
-            "description": "HTTP status from the market-data request."
+            "description": "Status code from the market-data request."
           },
           "symbol": {
             "type": "string",
             "description": "Symbol associated with the response when applicable."
           },
           "data": {
-            "description": "Market-data payload returned by the backend."
+            "description": "Market-data payload returned by the API."
           }
         },
         "additionalProperties": true,
@@ -4578,7 +4832,7 @@
           "status": {
             "type": "string",
             "example": "success",
-            "description": "Status string returned by the backend, usually success."
+            "description": "Status string returned by the API, usually success."
           }
         },
         "additionalProperties": true,
@@ -4809,74 +5063,193 @@
         "additionalProperties": true,
         "description": "Image URLs returned by the ID-card parser after processing signup images."
       },
-      "PushTokenRequest": {
+      "NewStopOrderRequest": {
         "type": "object",
+        "required": [
+          "symbol",
+          "side",
+          "stopPrice",
+          "stopCondition",
+          "orderType",
+          "price",
+          "quantity",
+          "account"
+        ],
         "properties": {
-          "token": {
+          "symbol": {
             "type": "string",
-            "description": "Device push notification token."
+            "example": "FPT",
+            "description": "Trading symbol or product code."
           },
-          "device_id": {
-            "type": "string",
-            "description": "Stable device/browser identifier used to update rotating tokens."
-          },
-          "platform": {
+          "side": {
             "type": "string",
             "enum": [
-              "web",
-              "android",
-              "ios"
+              "B",
+              "S"
             ],
-            "example": "web",
-            "description": "Client platform for this token."
+            "example": "B",
+            "description": "Order side."
+          },
+          "stopPrice": {
+            "type": "number",
+            "description": "Trigger price for the stop-loss order."
+          },
+          "stopCondition": {
+            "type": "string",
+            "enum": [
+              ">=",
+              "<="
+            ],
+            "example": ">=",
+            "description": "Trigger condition comparing the market price to stopPrice."
+          },
+          "orderType": {
+            "type": "string",
+            "enum": [
+              "LO",
+              "MTL"
+            ],
+            "example": "LO",
+            "description": "Order type submitted after the trigger condition is met."
+          },
+          "price": {
+            "type": "number",
+            "description": "Order price submitted after the trigger condition is met."
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Order quantity submitted after the trigger condition is met."
+          },
+          "account": {
+            "type": "string",
+            "description": "Trading account identifier."
           }
         },
-        "required": [
-          "token",
-          "device_id"
-        ],
         "additionalProperties": true,
-        "description": "Payload for registering or unregistering a device push token."
+        "description": "Payload for creating a stop-loss order."
       },
-      "PushTokenRegisterRequest": {
+      "ModifyStopOrderRequest": {
         "type": "object",
-        "required": [
-          "token",
-          "device_id",
-          "platform"
-        ],
         "properties": {
-          "token": {
+          "symbol": {
             "type": "string",
-            "description": "Device push notification token."
+            "example": "FPT",
+            "description": "Trading symbol or product code."
           },
-          "device_id": {
-            "type": "string"
-          },
-          "platform": {
+          "side": {
             "type": "string",
             "enum": [
-              "ios",
-              "android"
-            ]
+              "B",
+              "S"
+            ],
+            "example": "B",
+            "description": "Order side."
+          },
+          "stopPrice": {
+            "type": "number",
+            "description": "Updated trigger price for the stop-loss order."
+          },
+          "stopCondition": {
+            "type": "string",
+            "enum": [
+              ">=",
+              "<="
+            ],
+            "example": ">=",
+            "description": "Updated trigger condition."
+          },
+          "orderType": {
+            "type": "string",
+            "enum": [
+              "LO",
+              "MTL"
+            ],
+            "example": "LO",
+            "description": "Order type submitted after the trigger condition is met."
+          },
+          "price": {
+            "type": "number",
+            "description": "Updated order price."
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Updated order quantity."
+          },
+          "account": {
+            "type": "string",
+            "description": "Trading account identifier."
           }
-        }
+        },
+        "additionalProperties": true,
+        "description": "Payload for modifying an existing stop-loss order."
       },
-      "PushTokenDeleteRequest": {
+      "NewBracketOrderRequest": {
         "type": "object",
         "required": [
-          "token",
-          "device_id"
+          "symbol",
+          "side",
+          "conditionPrice",
+          "conditionType",
+          "orderType",
+          "quantity",
+          "account"
         ],
         "properties": {
-          "token": {
+          "symbol": {
             "type": "string",
-            "description": "Device push notification token."
+            "example": "FPT",
+            "description": "Trading symbol or product code."
           },
-          "device_id": {
-            "type": "string"
+          "side": {
+            "type": "string",
+            "enum": [
+              "B",
+              "S"
+            ],
+            "example": "B",
+            "description": "Order side."
+          },
+          "conditionPrice": {
+            "type": "number",
+            "description": "Price that triggers the bracket order."
+          },
+          "conditionType": {
+            "type": "string",
+            "enum": [
+              ">=",
+              "<="
+            ],
+            "example": ">=",
+            "description": "Trigger condition comparing market price to conditionPrice."
+          },
+          "orderType": {
+            "type": "string",
+            "enum": [
+              "LO",
+              "MTL"
+            ],
+            "example": "LO",
+            "description": "Order type submitted after the bracket condition is met."
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Order quantity."
+          },
+          "account": {
+            "type": "string",
+            "description": "Trading account identifier."
+          },
+          "takeProfitPrice": {
+            "type": "number",
+            "description": "Optional take-profit target price."
+          },
+          "stopLossPrice": {
+            "type": "number",
+            "description": "Optional stop-loss price."
           }
-        }
+        },
+        "additionalProperties": true,
+        "description": "Payload for creating a bracket order with optional take-profit and stop-loss legs."
       }
     }
   }
