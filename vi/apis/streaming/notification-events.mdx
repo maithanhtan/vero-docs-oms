@@ -4,6 +4,8 @@ description: 'Nhận sự kiện thông báo'
 mode: 'wide'
 ---
 
+import NotificationEventsSamples from "/snippets/streaming/notification-events-samples.mdx";
+
 ## Channel
 
 ```text
@@ -12,7 +14,7 @@ order:{notificationType}:{accountId}
 
 ## Mô tả
 
-Thông báo giao dịch/tài khoản. Ứng dụng đăng ký Deposit, ForceClose, MarginCall và Withdraw.
+Thông báo giao dịch/tài khoản. Các topic hỗ trợ gồm Deposit, ForceClose, MarginCall và Withdraw.
 
 ## WebSocket URL
 
@@ -20,11 +22,24 @@ Thông báo giao dịch/tài khoản. Ứng dụng đăng ký Deposit, ForceClos
 wss://streaming.verolabs.co/connection/websocket
 ```
 
+## Ví dụ subscribe
+
+Các ví dụ bên dưới subscribe vào:
+
+```text
+order:MarginCall:ACC123456
+```
+
+Thay `MarginCall` và `ACC123456` bằng topic thông báo và ID tài khoản cần subscribe.
+
+<NotificationEventsSamples />
+
+
 ## Tham số channel
 
 | Tham số | Kiểu | Mô tả | Giá trị |
 |---|---|---|---|
-| `notificationType` | string | Loại topic thông báo được ứng dụng mobile hỗ trợ. | enum: Deposit, ForceClose, MarginCall, Withdraw |
+| `notificationType` | string | Loại topic thông báo được stream hỗ trợ. | enum: Deposit, ForceClose, MarginCall, Withdraw |
 | `accountId` | string | ID tài khoản giao dịch. | - |
 
 ## Message
@@ -34,7 +49,6 @@ wss://streaming.verolabs.co/connection/websocket
 | Operation | `receiveNotifications` |
 | Tên | `Notification` |
 | Payload | `StreamingNotification` |
-| Handler | `StreamingService._handleNotification` |
 
 ## Payload schema
 

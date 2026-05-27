@@ -4,6 +4,8 @@ description: 'Receive OHLCV candle updates'
 mode: 'wide'
 ---
 
+import OhlcvUpdatesSamples from "/snippets/streaming/ohlcv-updates-samples.mdx";
+
 ## Channel
 
 ```text
@@ -12,13 +14,26 @@ mkt:OhlcvDTO:{symbol}:{time}
 
 ## Description
 
-Candlestick/OHLCV updates. Current app default time is 60 seconds.
+Candlestick/OHLCV updates. Default candle resolution is 60 seconds.
 
 ## WebSocket URL
 
 ```text
 wss://streaming.verolabs.co/connection/websocket
 ```
+
+## Subscribe examples
+
+The examples below subscribe to:
+
+```text
+mkt:OhlcvDTO:VN30F1M:60
+```
+
+Replace `VN30F1M` and `60` with the symbol and candle resolution you need.
+
+<OhlcvUpdatesSamples />
+
 
 ## Channel parameters
 
@@ -34,14 +49,13 @@ wss://streaming.verolabs.co/connection/websocket
 | Operation | `receiveOhlcv` |
 | Name | `Ohlcv` |
 | Payload | `OhlcvBar` |
-| Handler | `StreamingService._handleOhlcvUpdate` |
 
 ## Payload schema
 
 | Field | Type | Notes |
 |---|---|---|
-| `unixTime` | integer (int64) | Unix timestamp. The mobile handler also accepts time. |
-| `time` | integer (int64) | Alias accepted by the mobile handler. |
+| `unixTime` | integer (int64) | Unix timestamp. Also accepts `time` as an alias. |
+| `time` | integer (int64) | Alias for `unixTime`. |
 | `open` | number | - |
 | `high` | number | - |
 | `low` | number | - |

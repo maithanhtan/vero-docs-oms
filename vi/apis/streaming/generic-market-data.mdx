@@ -4,6 +4,8 @@ description: 'Nhận cập nhật dữ liệu thị trường tổng quát'
 mode: 'wide'
 ---
 
+import GenericMarketDataSamples from "/snippets/streaming/generic-market-data-samples.mdx";
+
 ## Channel
 
 ```text
@@ -12,13 +14,25 @@ mkt:{dataType}:{symbol}
 
 ## Mô tả
 
-Kênh market-data tổng quát dùng bởi subscribeMarketData(symbol, dataType). Các helper cụ thể dùng định dạng kênh chính xác hơn cho depth, OHLCV và product info.
+Dùng kênh này khi cần stream dữ liệu thị trường theo `dataType` và `symbol`. Tạo channel theo `mkt:${dataType}:${symbol}` rồi subscribe sau khi WebSocket kết nối thành công. Với depth, OHLCV và product info, ưu tiên các trang channel riêng vì các stream đó dùng định dạng channel cụ thể hơn.
 
 ## WebSocket URL
 
 ```text
 wss://streaming.verolabs.co/connection/websocket
 ```
+
+## Ví dụ subscribe
+
+Các ví dụ bên dưới subscribe vào:
+
+```text
+mkt:tradeLog:VN30F1M
+```
+
+Thay `tradeLog` hoặc `VN30F1M` bằng data type và mã giao dịch cần subscribe.
+
+<GenericMarketDataSamples />
 
 ## Tham số channel
 
@@ -34,7 +48,6 @@ wss://streaming.verolabs.co/connection/websocket
 | Operation | `receiveGenericMarketData` |
 | Tên | `GenericMarketData` |
 | Payload | `GenericObject` |
-| Handler | `StreamingService._handleMarketData` |
 
 ## Payload schema
 

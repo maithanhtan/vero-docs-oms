@@ -4,6 +4,8 @@ description: 'Receive product info updates'
 mode: 'wide'
 ---
 
+import ProductInfoSamples from "/snippets/streaming/product-info-samples.mdx";
+
 ## Channel
 
 ```text
@@ -12,13 +14,26 @@ mkt:productInfo:{symbol}-{boardId}
 
 ## Description
 
-Product info/quote updates. Current app default boardId is G1.
+Product info/quote updates. Default `boardId` is `G1`.
 
 ## WebSocket URL
 
 ```text
 wss://streaming.verolabs.co/connection/websocket
 ```
+
+## Subscribe examples
+
+The examples below subscribe to:
+
+```text
+mkt:productInfo:VN30F1M-G1
+```
+
+Replace `VN30F1M` and `G1` with the symbol and board id you need.
+
+<ProductInfoSamples />
+
 
 ## Channel parameters
 
@@ -34,7 +49,6 @@ wss://streaming.verolabs.co/connection/websocket
 | Operation | `receiveProductInfo` |
 | Name | `ProductInfo` |
 | Payload | `SymbolInfo` |
-| Handler | `StreamingService._handleMarketData` |
 
 ## Payload schema
 

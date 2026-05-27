@@ -4,6 +4,8 @@ description: 'Nhận báo cáo thực thi lệnh'
 mode: 'wide'
 ---
 
+import ExecutionReportsSamples from "/snippets/streaming/execution-reports-samples.mdx";
+
 ## Channel
 
 ```text
@@ -20,6 +22,15 @@ Báo cáo thực thi lệnh realtime cho connection_id hiện tại.
 wss://streaming.verolabs.co/connection/websocket
 ```
 
+## Ví dụ subscribe
+
+Các ví dụ bên dưới subscribe vào `order:OrderExecutionReport:{connectionId}`. Dùng connection id được trả về sau khi streaming connection sẵn sàng.
+
+Các sample đọc `connectionId` từ connect reply và tạo subscription channel sau khi connection sẵn sàng.
+
+<ExecutionReportsSamples />
+
+
 ## Tham số channel
 
 | Tham số | Kiểu | Mô tả | Giá trị |
@@ -33,7 +44,6 @@ wss://streaming.verolabs.co/connection/websocket
 | Operation | `receiveOrderExecutionReports` |
 | Tên | `Order` |
 | Payload | `Order` |
-| Handler | `StreamingService._handleOrderUpdate` |
 
 ## Payload schema
 
@@ -41,13 +51,13 @@ wss://streaming.verolabs.co/connection/websocket
 |---|---|---|
 | `id` | string | - |
 | `orderID` | string | - |
-| `order_id` | string | Snake_case alias accepted by the mobile parser. |
+| `order_id` | string | Snake_case alias. |
 | `refOrderID` | string | - |
-| `ref_order_id` | string | Snake_case alias accepted by the mobile parser. |
+| `ref_order_id` | string | Snake_case alias. |
 | `externalOrderID` | string | - |
 | `externalSecondOrderID` | string | - |
 | `accountID` | string | - |
-| `account_id` | string | Snake_case alias accepted by the mobile parser. |
+| `account_id` | string | Snake_case alias. |
 | `symbol` | string | - |
 | `orderSide` | OrderSide | - |
 | `order_side` | OrderSide | - |

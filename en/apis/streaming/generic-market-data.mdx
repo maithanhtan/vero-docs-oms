@@ -4,6 +4,8 @@ description: 'Receive generic market data updates'
 mode: 'wide'
 ---
 
+import GenericMarketDataSamples from "/snippets/streaming/generic-market-data-samples.mdx";
+
 ## Channel
 
 ```text
@@ -12,13 +14,25 @@ mkt:{dataType}:{symbol}
 
 ## Description
 
-Generic market-data subscription used by subscribeMarketData(symbol, dataType). Specific helpers below use more precise channel formats for depth, OHLCV and product info.
+Use this channel when you need a market-data stream by `dataType` and `symbol`. Build the channel as `mkt:${dataType}:${symbol}` and subscribe after the WebSocket connection is open. For depth, OHLCV and product info, prefer the dedicated channel pages because those streams use more specific channel formats.
 
 ## WebSocket URL
 
 ```text
 wss://streaming.verolabs.co/connection/websocket
 ```
+
+## Subscribe examples
+
+The examples below subscribe to:
+
+```text
+mkt:tradeLog:VN30F1M
+```
+
+Replace `tradeLog` or `VN30F1M` with the data type and symbol you need.
+
+<GenericMarketDataSamples />
 
 ## Channel parameters
 
@@ -34,7 +48,6 @@ wss://streaming.verolabs.co/connection/websocket
 | Operation | `receiveGenericMarketData` |
 | Name | `GenericMarketData` |
 | Payload | `GenericObject` |
-| Handler | `StreamingService._handleMarketData` |
 
 ## Payload schema
 

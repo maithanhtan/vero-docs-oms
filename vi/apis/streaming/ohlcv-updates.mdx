@@ -4,6 +4,8 @@ description: 'Nhận cập nhật nến OHLCV'
 mode: 'wide'
 ---
 
+import OhlcvUpdatesSamples from "/snippets/streaming/ohlcv-updates-samples.mdx";
+
 ## Channel
 
 ```text
@@ -12,7 +14,7 @@ mkt:OhlcvDTO:{symbol}:{time}
 
 ## Mô tả
 
-Cập nhật nến/OHLCV. time mặc định hiện tại của ứng dụng là 60 giây.
+Cập nhật nến/OHLCV. Độ phân giải nến mặc định là 60 giây.
 
 ## WebSocket URL
 
@@ -20,12 +22,25 @@ Cập nhật nến/OHLCV. time mặc định hiện tại của ứng dụng là
 wss://streaming.verolabs.co/connection/websocket
 ```
 
+## Ví dụ subscribe
+
+Các ví dụ bên dưới subscribe vào:
+
+```text
+mkt:OhlcvDTO:VN30F1M:60
+```
+
+Thay `VN30F1M` và `60` bằng mã giao dịch và độ phân giải nến cần subscribe.
+
+<OhlcvUpdatesSamples />
+
+
 ## Tham số channel
 
 | Tham số | Kiểu | Mô tả | Giá trị |
 |---|---|---|---|
 | `symbol` | string | Mã giao dịch, ví dụ VN30F1M. | example: VN30F1M |
-| `time` | integer | Độ phân giải nến tính bằng giây. Ứng dụng dùng 60 cho 1 phút và 86400 cho ngày. | default: 60<br />enum: 60, 86400 |
+| `time` | integer | Độ phân giải nến tính bằng giây. Dùng 60 cho 1 phút và 86400 cho ngày. | default: 60<br />enum: 60, 86400 |
 
 ## Message
 
@@ -34,14 +49,13 @@ wss://streaming.verolabs.co/connection/websocket
 | Operation | `receiveOhlcv` |
 | Tên | `Ohlcv` |
 | Payload | `OhlcvBar` |
-| Handler | `StreamingService._handleOhlcvUpdate` |
 
 ## Payload schema
 
 | Field | Type | Notes |
 |---|---|---|
-| `unixTime` | integer (int64) | Unix timestamp. The mobile handler also accepts time. |
-| `time` | integer (int64) | Alias accepted by the mobile handler. |
+| `unixTime` | integer (int64) | Unix timestamp. Cũng chấp nhận `time` như alias. |
+| `time` | integer (int64) | Alias của `unixTime`. |
 | `open` | number | - |
 | `high` | number | - |
 | `low` | number | - |

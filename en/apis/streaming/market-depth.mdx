@@ -4,6 +4,8 @@ description: 'Receive bid/ask depth updates'
 mode: 'wide'
 ---
 
+import MarketDepthSamples from "/snippets/streaming/market-depth-samples.mdx";
+
 ## Channel
 
 ```text
@@ -12,13 +14,26 @@ mkt:depth:{symbol}-{boardId}
 
 ## Description
 
-Order-book depth updates. Current app default boardId is G1.
+Order-book depth updates. Default `boardId` is `G1`.
 
 ## WebSocket URL
 
 ```text
 wss://streaming.verolabs.co/connection/websocket
 ```
+
+## Subscribe examples
+
+The examples below subscribe to:
+
+```text
+mkt:depth:VN30F1M-G1
+```
+
+Replace `VN30F1M` and `G1` with the symbol and board id you need.
+
+<MarketDepthSamples />
+
 
 ## Channel parameters
 
@@ -34,7 +49,6 @@ wss://streaming.verolabs.co/connection/websocket
 | Operation | `receiveMarketDepth` |
 | Name | `MarketDepth` |
 | Payload | `PriceDepth` |
-| Handler | `StreamingService._handleDepthUpdate` |
 
 ## Payload schema
 

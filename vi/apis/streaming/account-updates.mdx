@@ -4,6 +4,8 @@ description: 'Nhận cập nhật tài khoản'
 mode: 'wide'
 ---
 
+import AccountUpdatesSamples from "/snippets/streaming/account-updates-samples.mdx";
+
 ## Channel
 
 ```text
@@ -20,6 +22,19 @@ Cập nhật tài khoản/danh mục realtime.
 wss://streaming.verolabs.co/connection/websocket
 ```
 
+## Ví dụ subscribe
+
+Các ví dụ bên dưới subscribe vào:
+
+```text
+order:Account:ACC123456
+```
+
+Thay `ACC123456` bằng ID tài khoản giao dịch thực tế.
+
+<AccountUpdatesSamples />
+
+
 ## Tham số channel
 
 | Tham số | Kiểu | Mô tả | Giá trị |
@@ -33,7 +48,6 @@ wss://streaming.verolabs.co/connection/websocket
 | Operation | `receiveAccountUpdates` |
 | Tên | `Account` |
 | Payload | `Account` |
-| Handler | `StreamingService._handleAccountUpdate` |
 
 ## Payload schema
 

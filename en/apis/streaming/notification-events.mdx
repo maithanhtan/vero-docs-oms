@@ -4,6 +4,8 @@ description: 'Receive notification events'
 mode: 'wide'
 ---
 
+import NotificationEventsSamples from "/snippets/streaming/notification-events-samples.mdx";
+
 ## Channel
 
 ```text
@@ -12,13 +14,26 @@ order:{notificationType}:{accountId}
 
 ## Description
 
-Trading/account notifications. The app subscribes to Deposit, ForceClose, MarginCall and Withdraw.
+Trading/account notifications. Available notification topics are Deposit, ForceClose, MarginCall and Withdraw.
 
 ## WebSocket URL
 
 ```text
 wss://streaming.verolabs.co/connection/websocket
 ```
+
+## Subscribe examples
+
+The examples below subscribe to:
+
+```text
+order:MarginCall:ACC123456
+```
+
+Replace `MarginCall` and `ACC123456` with the notification topic and account id you need.
+
+<NotificationEventsSamples />
+
 
 ## Channel parameters
 
@@ -34,7 +49,6 @@ wss://streaming.verolabs.co/connection/websocket
 | Operation | `receiveNotifications` |
 | Name | `Notification` |
 | Payload | `StreamingNotification` |
-| Handler | `StreamingService._handleNotification` |
 
 ## Payload schema
 

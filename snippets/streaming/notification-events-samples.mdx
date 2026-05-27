@@ -1,0 +1,292 @@
+<CodeGroup dropdown>
+
+```javascript JavaScript
+const streamUrl = "wss://streaming.verolabs.co/connection/websocket";
+const channel = "order:MarginCall:ACC123456";
+
+const socket = new WebSocket(streamUrl);
+let requestId = 1;
+
+socket.addEventListener("open", () => {
+  send({ id: requestId++, connect: {} });
+});
+
+socket.addEventListener("message", (event) => {
+  if (typeof event.data !== "string") return;
+
+  const replies = event.data
+    .split("\n")
+    .filter(Boolean)
+    .map((item) => JSON.parse(item));
+
+  for (const reply of replies) {
+    if (Object.keys(reply).length === 0) {
+      send({});
+      continue;
+    }
+
+    if (reply.connect && !reply.error) {
+      send({ id: requestId++, subscribe: { channel } });
+      continue;
+    }
+
+    const payload = reply.push?.pub?.data;
+
+    if (reply.push?.channel === channel && payload !== undefined) {
+      console.log(payload);
+    }
+  }
+});
+
+function send(command) {
+  socket.send(JSON.stringify(command) + "\n");
+}
+```
+
+```python Python
+import asyncio
+import json
+
+import websockets
+
+STREAM_URL = "wss://streaming.verolabs.co/connection/websocket"
+channel = "order:MarginCall:ACC123456"
+
+
+async def main():
+    global channel
+
+    async with websockets.connect(STREAM_URL) as ws:
+        request_id = 1
+
+        async def send(command):
+            await ws.send(json.dumps(command) + "\n")
+
+        await send({"id": request_id, "connect": {}})
+        request_id += 1
+
+        async for message in ws:
+            for raw in filter(None, message.split("\n")):
+                reply = json.loads(raw)
+
+                if reply == {}:
+                    await send({})
+                    continue
+
+                if "connect" in reply and "error" not in reply:
+                    await send({"id": request_id, "subscribe": {"channel": channel}})
+                    request_id += 1
+                    continue
+
+                push = reply.get("push", {})
+                pub = push.get("pub", {})
+
+                if push.get("channel") == channel and "data" in pub:
+                    print(pub["data"])
+
+
+asyncio.run(main())
+```
+
+```go Go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"strings"
+
+	"github.com/gorilla/websocket"
+)
+
+func main() {
+	streamURL := "wss://streaming.verolabs.co/connection/websocket"
+	channel := "order:MarginCall:ACC123456"
+
+	conn, _, err := websocket.DefaultDialer.Dial(streamURL, nil)
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+
+	requestID := 1
+
+	send := func(command map[string]any) {
+		payload, err := json.Marshal(command)
+		if err != nil {
+			panic(err)
+		}
+
+		if err := conn.WriteMessage(websocket.TextMessage, append(payload, '\n')); err != nil {
+			panic(err)
+		}
+	}
+
+	send(map[string]any{"id": requestID, "connect": map[string]any{}})
+	requestID++
+
+	for {
+		_, data, err := conn.ReadMessage()
+		if err != nil {
+			panic(err)
+		}
+
+		for _, raw := range strings.Split(string(data), "\n") {
+			if raw == "" {
+				continue
+			}
+
+			var reply map[string]any
+			if err := json.Unmarshal([]byte(raw), &reply); err != nil {
+				panic(err)
+			}
+
+			if len(reply) == 0 {
+				send(map[string]any{})
+				continue
+			}
+
+			if _, ok := reply["connect"]; ok && reply["error"] == nil {
+				send(map[string]any{"id": requestID, "subscribe": map[string]any{"channel": channel}})
+				requestID++
+				continue
+			}
+
+			push, _ := reply["push"].(map[string]any)
+			pub, _ := push["pub"].(map[string]any)
+
+			if push["channel"] == channel {
+				if payload, ok := pub["data"]; ok {
+					fmt.Printf("%#v\n", payload)
+				}
+			}
+		}
+	}
+}
+```
+
+```csharp C#
+using System;
+using System.IO;
+using System.Linq;
+using System.Net.WebSockets;
+using System.Text;
+using System.Text.Json;
+using System.Threading;
+
+var streamUrl = new Uri("wss://streaming.verolabs.co/connection/websocket");
+var channel = "order:MarginCall:ACC123456";
+
+using var socket = new ClientWebSocket();
+await socket.ConnectAsync(streamUrl, CancellationToken.None);
+
+var requestId = 1;
+await SendAsync(new { id = requestId++, connect = new { } });
+
+while (socket.State == WebSocketState.Open)
+{
+    var message = await ReceiveStringAsync(socket);
+
+    foreach (var raw in message.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+    {
+        using var document = JsonDocument.Parse(raw);
+        var root = document.RootElement;
+
+        if (root.ValueKind == JsonValueKind.Object && !root.EnumerateObject().Any())
+        {
+            await SendAsync(new { });
+            continue;
+        }
+
+        if (root.TryGetProperty("connect", out _) && !root.TryGetProperty("error", out _))
+        {
+            await SendAsync(new { id = requestId++, subscribe = new { channel } });
+            continue;
+        }
+
+        if (root.TryGetProperty("push", out var push) &&
+            push.TryGetProperty("channel", out var pushChannel) &&
+            pushChannel.GetString() == channel &&
+            push.TryGetProperty("pub", out var pub) &&
+            pub.TryGetProperty("data", out var data))
+        {
+            Console.WriteLine(data.GetRawText());
+        }
+    }
+}
+
+async Task SendAsync(object command)
+{
+    var json = JsonSerializer.Serialize(command) + "\n";
+    var bytes = Encoding.UTF8.GetBytes(json);
+    await socket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);
+}
+
+async Task<string> ReceiveStringAsync(ClientWebSocket client)
+{
+    var buffer = new byte[64 * 1024];
+    using var message = new MemoryStream();
+    WebSocketReceiveResult result;
+
+    do
+    {
+        result = await client.ReceiveAsync(buffer, CancellationToken.None);
+        message.Write(buffer, 0, result.Count);
+    } while (!result.EndOfMessage);
+
+    return Encoding.UTF8.GetString(message.ToArray());
+}
+```
+
+```rust Rust
+use futures_util::{SinkExt, StreamExt};
+use serde_json::{json, Value};
+use tokio_tungstenite::{connect_async, tungstenite::Message};
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    let stream_url = "wss://streaming.verolabs.co/connection/websocket";
+    let channel = "order:MarginCall:ACC123456";
+
+    let (mut ws, _) = connect_async(stream_url).await?;
+    let mut request_id = 1;
+
+    ws.send(Message::Text(format!("{}\n", json!({
+        "id": request_id,
+        "connect": {}
+    })).into())).await?;
+    request_id += 1;
+
+    while let Some(message) = ws.next().await {
+        let Message::Text(text) = message? else { continue };
+
+        for raw in text.split('\n').filter(|value| !value.is_empty()) {
+            let reply: Value = serde_json::from_str(raw)?;
+
+            if reply.as_object().is_some_and(|object| object.is_empty()) {
+                ws.send(Message::Text("{}\n".into())).await?;
+                continue;
+            }
+
+            if reply.get("connect").is_some() && reply.get("error").is_none() {
+            ws.send(Message::Text(format!("{}\n", json!({
+                "id": request_id,
+                "subscribe": { "channel": channel }
+            })).into())).await?;
+                request_id += 1;
+                continue;
+            }
+
+            if reply.pointer("/push/channel").and_then(Value::as_str) == Some(channel) {
+                if let Some(payload) = reply.pointer("/push/pub/data") {
+                    println!("{payload}");
+                }
+            }
+        }
+    }
+
+    Ok(())
+}
+```
+
+</CodeGroup>

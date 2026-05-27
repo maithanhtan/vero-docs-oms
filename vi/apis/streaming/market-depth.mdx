@@ -4,6 +4,8 @@ description: 'Nhận cập nhật bid/ask depth'
 mode: 'wide'
 ---
 
+import MarketDepthSamples from "/snippets/streaming/market-depth-samples.mdx";
+
 ## Channel
 
 ```text
@@ -12,7 +14,7 @@ mkt:depth:{symbol}-{boardId}
 
 ## Mô tả
 
-Cập nhật độ sâu sổ lệnh. boardId mặc định hiện tại của ứng dụng là G1.
+Cập nhật độ sâu sổ lệnh. `boardId` mặc định là `G1`.
 
 ## WebSocket URL
 
@@ -20,12 +22,25 @@ Cập nhật độ sâu sổ lệnh. boardId mặc định hiện tại của �
 wss://streaming.verolabs.co/connection/websocket
 ```
 
+## Ví dụ subscribe
+
+Các ví dụ bên dưới subscribe vào:
+
+```text
+mkt:depth:VN30F1M-G1
+```
+
+Thay `VN30F1M` và `G1` bằng mã giao dịch và board id cần subscribe.
+
+<MarketDepthSamples />
+
+
 ## Tham số channel
 
 | Tham số | Kiểu | Mô tả | Giá trị |
 |---|---|---|---|
 | `symbol` | string | Mã giao dịch, ví dụ VN30F1M. | example: VN30F1M |
-| `boardId` | string | Mã bảng giao dịch. Ứng dụng mobile mặc định dùng G1. | default: G1<br />example: G1 |
+| `boardId` | string | Mã bảng giao dịch. Mặc định là G1. | default: G1<br />example: G1 |
 
 ## Message
 
@@ -34,7 +49,6 @@ wss://streaming.verolabs.co/connection/websocket
 | Operation | `receiveMarketDepth` |
 | Tên | `MarketDepth` |
 | Payload | `PriceDepth` |
-| Handler | `StreamingService._handleDepthUpdate` |
 
 ## Payload schema
 

@@ -4,6 +4,8 @@ description: 'Receive account updates'
 mode: 'wide'
 ---
 
+import AccountUpdatesSamples from "/snippets/streaming/account-updates-samples.mdx";
+
 ## Channel
 
 ```text
@@ -20,6 +22,19 @@ Realtime account/portfolio updates.
 wss://streaming.verolabs.co/connection/websocket
 ```
 
+## Subscribe examples
+
+The examples below subscribe to:
+
+```text
+order:Account:ACC123456
+```
+
+Replace `ACC123456` with your trading account id.
+
+<AccountUpdatesSamples />
+
+
 ## Channel parameters
 
 | Parameter | Type | Description | Values |
@@ -33,7 +48,6 @@ wss://streaming.verolabs.co/connection/websocket
 | Operation | `receiveAccountUpdates` |
 | Name | `Account` |
 | Payload | `Account` |
-| Handler | `StreamingService._handleAccountUpdate` |
 
 ## Payload schema
 
