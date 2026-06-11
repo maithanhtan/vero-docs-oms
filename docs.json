@@ -120,9 +120,7 @@
                 "pages": [
                   "en/apis/rest/history/list-account-orders",
                   "en/apis/rest/history/list-account-trades",
-                  "en/apis/rest/history/list-account-transactions",
-                  "en/apis/rest/history/list-account-commissions",
-                  "en/apis/rest/history/list-account-fees"
+                  "en/apis/rest/history/list-account-transactions"
                 ]
               },
               {
@@ -286,9 +284,7 @@
                 "pages": [
                   "vi/apis/rest/history/list-account-orders",
                   "vi/apis/rest/history/list-account-trades",
-                  "vi/apis/rest/history/list-account-transactions",
-                  "vi/apis/rest/history/list-account-commissions",
-                  "vi/apis/rest/history/list-account-fees"
+                  "vi/apis/rest/history/list-account-transactions"
                 ]
               },
               {
