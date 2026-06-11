@@ -2,13 +2,13 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Vero OMS REST API",
-    "version": "1.0.23",
-    "description": "Tài liệu REST API cho xác thực, tài khoản, lệnh, lịch sử, dữ liệu thị trường, thông báo, giới thiệu, chẩn đoán và tài nguyên tĩnh của Vero OMS."
+    "version": "1.0.24",
+    "description": "Tài liệu REST API cho Vero OMS. Path được đối chiếu với KrakenD config hiện tại trong k8s-dev-gitops/vero-algo/tools/krakend và schema response được bổ sung từ source backend/frontend."
   },
   "servers": [
     {
-      "url": "https://api-gw.verolabs.co/api/v1",
-      "description": "REST API"
+      "url": "https://api-gw.verolabs.co",
+      "description": "API gateway"
     }
   ],
   "tags": [
@@ -63,13 +63,7 @@
     }
   ],
   "paths": {
-    "/self-service/login/api": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Authentication API"
-        }
-      ],
+    "/api/authen/self-service/login/api": {
       "get": {
         "tags": [
           "Xác thực"
@@ -79,7 +73,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Login flow with UI nodes including csrf_token.",
+            "description": "Ory self-service flow object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -90,24 +84,30 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Tạo luồng đăng nhập",
             "sidebarTitle": "Tạo luồng đăng nhập",
-            "description": "GET /self-service/login/api"
+            "description": "GET /api/authen/self-service/login/api"
           }
         }
       }
     },
-    "/self-service/login": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Authentication API"
-        }
-      ],
+    "/api/authen/self-service/login": {
       "post": {
         "tags": [
           "Xác thực"
@@ -115,11 +115,6 @@
         "operationId": "submitLoginFlow",
         "summary": "Gửi thông tin đăng nhập vào luồng login",
         "security": [],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Flow"
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -128,11 +123,12 @@
                 "$ref": "#/components/schemas/LoginFlowUpdateRequest"
               }
             }
-          }
+          },
+          "description": "Payload cap nhat Ory self-service flow. Truyen ma flow tren query string va gui cac field bat buoc cua method dang dung."
         },
         "responses": {
           "200": {
-            "description": "Successful login flow response. The app reads session_token from this payload.",
+            "description": "Dang nhap thanh cong. Ung dung doc session_token trong payload nay va dung no lam token phien dang nhap.",
             "content": {
               "application/json": {
                 "schema": {
@@ -146,37 +142,42 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Gửi thông tin đăng nhập vào luồng login",
             "sidebarTitle": "Gửi thông tin đăng nhập vào luồng login",
-            "description": "POST /self-service/login"
+            "description": "POST /api/authen/self-service/login"
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Flow"
+          }
+        ]
       }
     },
-    "/sessions/whoami": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Authentication API"
-        }
-      ],
+    "/api/authen/sessions/whoami": {
       "get": {
         "tags": [
           "Xác thực"
         ],
         "operationId": "getWhoamiSession",
         "summary": "Lấy phiên xác thực hiện tại",
-        "description": "Trả về phiên xác thực hiện tại và dữ liệu định danh cho thông tin xác thực được cung cấp.",
+        "description": "Tra ve Ory session va identity hien tai cho session token truyen trong header X-Session-Token. Bearer JWT don le khong duoc Ory endpoint nay chap nhan tren dev.",
         "security": [
           {
             "sessionToken": []
-          },
-          {
-            "bearerAuth": []
           }
         ],
         "parameters": [
@@ -187,12 +188,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "When provided, the response can include a bearer token for authenticated API requests."
+            "description": "Ten/audience Ory tuy chon de yeu cau phien dang tokenized. Khi truyen gia tri nay, response co the kem bearer token da token hoa."
           }
         ],
         "responses": {
           "200": {
-            "description": "Session object with identity and optional bearer token.",
+            "description": "Current Ory session.",
             "content": {
               "application/json": {
                 "schema": {
@@ -206,24 +207,27 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Lấy phiên xác thực hiện tại",
             "sidebarTitle": "Lấy phiên xác thực hiện tại",
-            "description": "GET /sessions/whoami"
+            "description": "GET /api/authen/sessions/whoami"
           }
         }
       }
     },
-    "/self-service/registration/api": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Authentication API"
-        }
-      ],
+    "/api/authen/self-service/registration/api": {
       "get": {
         "tags": [
           "Xác thực"
@@ -233,7 +237,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Registration flow with UI nodes including csrf_token.",
+            "description": "Ory self-service flow object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -244,24 +248,30 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Tạo luồng đăng ký",
             "sidebarTitle": "Tạo luồng đăng ký",
-            "description": "GET /self-service/registration/api"
+            "description": "GET /api/authen/self-service/registration/api"
           }
         }
       }
     },
-    "/self-service/registration": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Authentication API"
-        }
-      ],
+    "/api/authen/self-service/registration": {
       "post": {
         "tags": [
           "Xác thực"
@@ -269,11 +279,6 @@
         "operationId": "submitRegistrationFlow",
         "summary": "Gửi dữ liệu đăng ký vào luồng registration",
         "security": [],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Flow"
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -282,11 +287,12 @@
                 "$ref": "#/components/schemas/RegistrationFlowUpdateRequest"
               }
             }
-          }
+          },
+          "description": "Payload cap nhat Ory self-service flow. Truyen ma flow tren query string va gui cac field bat buoc cua method dang dung."
         },
         "responses": {
           "200": {
-            "description": "Registration flow accepted.",
+            "description": "Registration flow da duoc xu ly. Response la Ory registration flow moi nhat va co the kem session field neu he thong cho phep tao session ngay.",
             "content": {
               "application/json": {
                 "schema": {
@@ -300,24 +306,32 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Gửi dữ liệu đăng ký vào luồng registration",
             "sidebarTitle": "Gửi dữ liệu đăng ký vào luồng registration",
-            "description": "POST /self-service/registration"
+            "description": "POST /api/authen/self-service/registration"
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Flow"
+          }
+        ]
       }
     },
-    "/self-service/recovery/api": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Authentication API"
-        }
-      ],
+    "/api/authen/self-service/recovery/api": {
       "get": {
         "tags": [
           "Xác thực"
@@ -327,7 +341,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Recovery flow data.",
+            "description": "Ory self-service flow object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -338,24 +352,30 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Tạo luồng khôi phục tài khoản",
             "sidebarTitle": "Tạo luồng khôi phục tài khoản",
-            "description": "GET /self-service/recovery/api"
+            "description": "GET /api/authen/self-service/recovery/api"
           }
         }
       }
     },
-    "/self-service/recovery": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Authentication API"
-        }
-      ],
+    "/api/authen/self-service/recovery": {
       "post": {
         "tags": [
           "Xác thực"
@@ -363,11 +383,6 @@
         "operationId": "updateRecoveryFlow",
         "summary": "Gửi hoặc xác thực mã khôi phục",
         "security": [],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Flow"
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -383,11 +398,12 @@
                 ]
               }
             }
-          }
+          },
+          "description": "Payload cap nhat Ory self-service flow. Truyen ma flow tren query string va gui cac field bat buoc cua method dang dung."
         },
         "responses": {
           "200": {
-            "description": "Recovery flow updated. A passed challenge returns session_token or continue_with set_ory_session_token.",
+            "description": "Recovery flow da duoc cap nhat. Khi challenge thanh cong, response co the tra session_token truc tiep hoac continue_with chua set_ory_session_token.",
             "content": {
               "application/json": {
                 "schema": {
@@ -401,24 +417,32 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Gửi hoặc xác thực mã khôi phục",
             "sidebarTitle": "Gửi hoặc xác thực mã khôi phục",
-            "description": "POST /self-service/recovery"
+            "description": "POST /api/authen/self-service/recovery"
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Flow"
+          }
+        ]
       }
     },
-    "/self-service/settings/api": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Authentication API"
-        }
-      ],
+    "/api/authen/self-service/settings/api": {
       "get": {
         "tags": [
           "Xác thực"
@@ -432,7 +456,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Settings flow data.",
+            "description": "Ory self-service flow object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -446,24 +470,27 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Tạo luồng cài đặt để đổi mật khẩu",
             "sidebarTitle": "Tạo luồng cài đặt để đổi mật khẩu",
-            "description": "GET /self-service/settings/api"
+            "description": "GET /api/authen/self-service/settings/api"
           }
         }
       }
     },
-    "/self-service/settings": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/authen",
-          "description": "Authentication API"
-        }
-      ],
+    "/api/authen/self-service/settings": {
       "post": {
         "tags": [
           "Xác thực"
@@ -475,11 +502,6 @@
             "sessionToken": []
           }
         ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Flow"
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -488,11 +510,12 @@
                 "$ref": "#/components/schemas/SettingsPasswordRequest"
               }
             }
-          }
+          },
+          "description": "Payload cap nhat Ory self-service flow. Truyen ma flow tren query string va gui cac field bat buoc cua method dang dung."
         },
         "responses": {
           "200": {
-            "description": "Password changed.",
+            "description": "Settings flow da duoc cap nhat. Doi mat khau tra ve Ory settings flow moi nhat.",
             "content": {
               "application/json": {
                 "schema": {
@@ -509,19 +532,30 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Cập nhật mật khẩu trong luồng settings",
             "sidebarTitle": "Cập nhật mật khẩu trong luồng settings",
-            "description": "POST /self-service/settings"
+            "description": "POST /api/authen/self-service/settings"
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Flow"
+          }
+        ]
       }
     },
-    "/auth/logout": {
-      "post": {
+    "/api/authen/self-service/logout/api": {
+      "delete": {
         "tags": [
           "Xác thực"
         ],
@@ -529,30 +563,47 @@
         "summary": "Đăng xuất session ứng dụng hiện tại",
         "security": [
           {
-            "bearerAuth": []
+            "sessionToken": []
           }
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/GenericSuccess"
+            "description": "Logout response from Ory/KrakenD.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Đăng xuất session ứng dụng hiện tại",
             "sidebarTitle": "Đăng xuất session ứng dụng hiện tại",
-            "description": "POST /auth/logout"
+            "description": "DELETE /api/authen/self-service/logout/api"
           }
-        }
+        },
+        "description": "Dang xuat Ory session hien tai duoc dinh danh bang header X-Session-Token. Khi test nen dung token sai hoac request sai de verify route ma khong invalidate session that."
       }
     },
-    "/users/accounts": {
+    "/api/v1/users/accounts": {
       "get": {
         "tags": [
           "Tài khoản"
@@ -566,11 +617,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the list accounts for current user result.",
+            "description": "Accounts returned by the account service.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Account"
+                  }
                 }
               }
             }
@@ -592,13 +646,13 @@
           "metadata": {
             "title": "Lấy danh sách tài khoản của người dùng hiện tại",
             "sidebarTitle": "Lấy danh sách tài khoản của người dùng hiện tại",
-            "description": "GET /users/accounts"
+            "description": "GET /api/v1/users/accounts"
           }
         },
         "description": "List accounts for current user."
       }
     },
-    "/users/accounts/{accountId}/orders/{startTime}/{endTime}": {
+    "/api/v1/users/accounts/{accountID}/orders/{start_time}/{end_time}": {
       "get": {
         "tags": [
           "Lịch sử",
@@ -613,40 +667,45 @@
         ],
         "parameters": [
           {
-            "name": "accountId",
+            "name": "accountID",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "Trading account identifier."
+            "description": "Mã tài khoản giao dịch. Người dùng đang đăng nhập phải có quyền truy cập tài khoản này."
           },
           {
-            "name": "startTime",
+            "name": "start_time",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "format": "int64"
             },
-            "description": "Start timestamp for the requested range."
+            "description": "Thời điểm bắt đầu dạng Unix timestamp milliseconds."
           },
           {
-            "name": "endTime",
+            "name": "end_time",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "format": "int64"
             },
-            "description": "End timestamp for the requested range."
+            "description": "Thời điểm kết thúc dạng Unix timestamp milliseconds."
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the get account orders in time range result.",
+            "description": "Order records matching the account and time range.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
                 }
               }
             }
@@ -668,13 +727,13 @@
           "metadata": {
             "title": "Lấy danh sách lệnh của tài khoản theo khoảng thời gian",
             "sidebarTitle": "Lấy danh sách lệnh của tài khoản theo khoảng thời gian",
-            "description": "GET /users/accounts/{accountId}/orders/{startTime}/{endTime}"
+            "description": "GET /api/v1/users/accounts/{accountID}/orders/{start_time}/{end_time}"
           }
         },
         "description": "Get account orders in time range."
       }
     },
-    "/users/accounts/{accountId}/trades/{startTime}/{endTime}": {
+    "/api/v1/users/accounts/{accountID}/trades/{start_time}/{end_time}": {
       "get": {
         "tags": [
           "Lịch sử",
@@ -689,40 +748,45 @@
         ],
         "parameters": [
           {
-            "name": "accountId",
+            "name": "accountID",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "Trading account identifier."
+            "description": "Mã tài khoản giao dịch. Người dùng đang đăng nhập phải có quyền truy cập tài khoản này."
           },
           {
-            "name": "startTime",
+            "name": "start_time",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "format": "int64"
             },
-            "description": "Start timestamp for the requested range."
+            "description": "Thời điểm bắt đầu dạng Unix timestamp milliseconds."
           },
           {
-            "name": "endTime",
+            "name": "end_time",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "format": "int64"
             },
-            "description": "End timestamp for the requested range."
+            "description": "Thời điểm kết thúc dạng Unix timestamp milliseconds."
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the get account trades in time range result.",
+            "description": "Trade records matching the account and time range.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Trade"
+                  }
                 }
               }
             }
@@ -744,13 +808,13 @@
           "metadata": {
             "title": "Lấy danh sách khớp lệnh của tài khoản theo khoảng thời gian",
             "sidebarTitle": "Lấy danh sách khớp lệnh của tài khoản theo khoảng thời gian",
-            "description": "GET /users/accounts/{accountId}/trades/{startTime}/{endTime}"
+            "description": "GET /api/v1/users/accounts/{accountID}/trades/{start_time}/{end_time}"
           }
         },
         "description": "Get account trades in time range."
       }
     },
-    "/users/accounts/{accountId}/transactions/{startTime}/{endTime}": {
+    "/api/v1/users/accounts/{accountID}/transactions/{start_time}/{end_time}": {
       "get": {
         "tags": [
           "Lịch sử",
@@ -765,40 +829,45 @@
         ],
         "parameters": [
           {
-            "name": "accountId",
+            "name": "accountID",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "Trading account identifier."
+            "description": "Mã tài khoản giao dịch. Người dùng đang đăng nhập phải có quyền truy cập tài khoản này."
           },
           {
-            "name": "startTime",
+            "name": "start_time",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "format": "int64"
             },
-            "description": "Start timestamp for the requested range."
+            "description": "Thời điểm bắt đầu dạng Unix timestamp milliseconds."
           },
           {
-            "name": "endTime",
+            "name": "end_time",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "format": "int64"
             },
-            "description": "End timestamp for the requested range."
+            "description": "Thời điểm kết thúc dạng Unix timestamp milliseconds."
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the get account transactions in time range result.",
+            "description": "Transaction records matching the account and time range.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
                 }
               }
             }
@@ -820,13 +889,13 @@
           "metadata": {
             "title": "Lấy giao dịch tài khoản theo khoảng thời gian",
             "sidebarTitle": "Lấy giao dịch tài khoản theo khoảng thời gian",
-            "description": "GET /users/accounts/{accountId}/transactions/{startTime}/{endTime}"
+            "description": "GET /api/v1/users/accounts/{accountID}/transactions/{start_time}/{end_time}"
           }
         },
         "description": "Get account transactions in time range."
       }
     },
-    "/users/accounts/{accountId}/commissions": {
+    "/api/v1/users/accounts/{accountID}/commissions": {
       "get": {
         "tags": [
           "Lịch sử"
@@ -840,18 +909,18 @@
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/AccountId"
-          },
-          {
-            "$ref": "#/components/parameters/StartTimeQuery"
-          },
-          {
-            "$ref": "#/components/parameters/EndTimeQuery"
+            "name": "accountID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Mã tài khoản giao dịch. Người dùng đang đăng nhập phải có quyền truy cập tài khoản này."
           }
         ],
         "responses": {
           "200": {
-            "description": "Commissions for the account.",
+            "description": "Legacy commission records for the account.",
             "content": {
               "application/json": {
                 "schema": {
@@ -868,18 +937,29 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Lấy danh sách hoa hồng của tài khoản",
             "sidebarTitle": "Lấy danh sách hoa hồng của tài khoản",
-            "description": "GET /users/accounts/{accountId}/commissions"
+            "description": "GET /api/v1/users/accounts/{accountID}/commissions"
           }
-        }
+        },
+        "deprecated": true,
+        "description": "Legacy/unexposed in the active KrakenD config checked for this update; prefer the account history endpoints or /api/v1/orders/execution-reports where applicable."
       }
     },
-    "/users/accounts/{accountId}/fees": {
+    "/api/v1/users/accounts/{accountID}/fees": {
       "get": {
         "tags": [
           "Lịch sử"
@@ -893,18 +973,18 @@
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/AccountId"
-          },
-          {
-            "$ref": "#/components/parameters/StartTimeQuery"
-          },
-          {
-            "$ref": "#/components/parameters/EndTimeQuery"
+            "name": "accountID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Mã tài khoản giao dịch. Người dùng đang đăng nhập phải có quyền truy cập tài khoản này."
           }
         ],
         "responses": {
           "200": {
-            "description": "Fees for the account.",
+            "description": "Legacy fee records for the account.",
             "content": {
               "application/json": {
                 "schema": {
@@ -921,18 +1001,29 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Lấy danh sách phí của tài khoản",
             "sidebarTitle": "Lấy danh sách phí của tài khoản",
-            "description": "GET /users/accounts/{accountId}/fees"
+            "description": "GET /api/v1/users/accounts/{accountID}/fees"
           }
-        }
+        },
+        "deprecated": true,
+        "description": "Legacy/unexposed in the active KrakenD config checked for this update; prefer the account history endpoints or /api/v1/orders/execution-reports where applicable."
       }
     },
-    "/users/accounts/{accountId}/equity/withdraw": {
+    "/api/v1/users/accounts/{accountID}/equity/withdraw": {
       "post": {
         "tags": [
           "Tài khoản"
@@ -946,13 +1037,13 @@
         ],
         "parameters": [
           {
-            "name": "accountId",
+            "name": "accountID",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "Trading account identifier."
+            "description": "Mã tài khoản giao dịch. Người dùng đang đăng nhập phải có quyền truy cập tài khoản này."
           }
         ],
         "requestBody": {
@@ -964,15 +1055,15 @@
               }
             }
           },
-          "description": "Request payload for Withdraw account equity. Field descriptions are defined in the referenced schema when available."
+          "description": "Withdrawal payload. amount must be greater than zero and bankId must reference a saved bank account owned by the user."
         },
         "responses": {
           "200": {
-            "description": "Creates or executes the withdraw account equity result.",
+            "description": "Withdrawal result and updated account balances.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StatusResponse"
+                  "$ref": "#/components/schemas/WithdrawEquityResponse"
                 }
               }
             }
@@ -994,13 +1085,13 @@
           "metadata": {
             "title": "Rút tiền từ tài khoản",
             "sidebarTitle": "Rút tiền từ tài khoản",
-            "description": "POST /users/accounts/{accountId}/equity/withdraw"
+            "description": "POST /api/v1/users/accounts/{accountID}/equity/withdraw"
           }
         },
         "description": "Withdraw account equity."
       }
     },
-    "/bank-accounts": {
+    "/api/v1/bank-accounts": {
       "get": {
         "tags": [
           "Tài khoản ngân hàng"
@@ -1014,7 +1105,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the list bank accounts for current user result.",
+            "description": "Saved bank accounts for the current user.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1043,7 +1134,7 @@
           "metadata": {
             "title": "Lấy danh sách tài khoản ngân hàng đã lưu",
             "sidebarTitle": "Lấy danh sách tài khoản ngân hàng đã lưu",
-            "description": "GET /bank-accounts"
+            "description": "GET /api/v1/bank-accounts"
           }
         },
         "description": "List bank accounts for current user."
@@ -1068,15 +1159,15 @@
               }
             }
           },
-          "description": "Request payload for Create a bank account for current user. Field descriptions are defined in the referenced schema when available."
+          "description": "Bank account creation payload. bankAccountName, bankAccountNumber, and bankCode are required."
         },
         "responses": {
           "200": {
-            "description": "Creates or executes the create a bank account for current user result.",
+            "description": "Created bank account wrapped in a status envelope.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BankAccount"
+                  "$ref": "#/components/schemas/BankAccountResponse"
                 }
               }
             }
@@ -1098,20 +1189,20 @@
           "metadata": {
             "title": "Tạo tài khoản ngân hàng",
             "sidebarTitle": "Tạo tài khoản ngân hàng",
-            "description": "POST /bank-accounts"
+            "description": "POST /api/v1/bank-accounts"
           }
         },
         "description": "Create a bank account for current user."
       }
     },
-    "/orders/new/{refOrderID}/{accountID}/{symbol}/{orderSide}/{price}/{qty}/{orderType}": {
+    "/api/v1/orders/new/{refOrderID}/{accountID}/{symbol}/{orderSide}/{price}/{qty}/{orderType}": {
       "post": {
         "tags": [
           "Lệnh"
         ],
         "operationId": "placeOrder",
         "summary": "Đặt lệnh mới",
-        "description": "Place a legacy normal order.",
+        "description": "Place a normal order. KrakenD forwards the authenticated user from JWT and sends all order fields as path parameters; there is no JSON request body.",
         "security": [
           {
             "bearerAuth": []
@@ -1125,7 +1216,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "ref order id parameter."
+            "description": "Client-generated order reference used for tracking and duplicate detection."
           },
           {
             "name": "accountID",
@@ -1134,7 +1225,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Trading account identifier."
+            "description": "Mã tài khoản giao dịch. Người dùng đang đăng nhập phải có quyền truy cập tài khoản này."
           },
           {
             "name": "symbol",
@@ -1143,7 +1234,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Trading symbol or product code."
+            "description": "Mã chứng khoán/sản phẩm, ví dụ FPT hoặc VN30F1M."
           },
           {
             "name": "orderSide",
@@ -1152,7 +1243,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "order side parameter."
+            "description": "Order side. Accepted values: B for buy, S for sell."
           },
           {
             "name": "price",
@@ -1161,16 +1252,17 @@
             "schema": {
               "type": "number"
             },
-            "description": "price parameter."
+            "description": "Order price. For market-style orders, backend interpretation depends on orderType."
           },
           {
             "name": "qty",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "integer",
+              "format": "int64"
             },
-            "description": "qty parameter."
+            "description": "Order quantity in shares/contracts/lots accepted by the broker."
           },
           {
             "name": "orderType",
@@ -1179,16 +1271,16 @@
             "schema": {
               "type": "string"
             },
-            "description": "order type parameter."
+            "description": "Order type. Common accepted values include LO, MTL, ATO, and ATC."
           }
         ],
         "responses": {
           "200": {
-            "description": "Creates or executes the place a legacy normal order result.",
+            "description": "Order action result returned by service.orderapi.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
+                  "$ref": "#/components/schemas/RestAPIRtn"
                 }
               }
             }
@@ -1210,12 +1302,12 @@
           "metadata": {
             "title": "Đặt lệnh mới",
             "sidebarTitle": "Đặt lệnh mới",
-            "description": "POST /orders/new/{refOrderID}/{accountID}/{symbol}/{orderSide}/{price}/{qty}/{orderType}"
+            "description": "POST /api/v1/orders/new/{refOrderID}/{accountID}/{symbol}/{orderSide}/{price}/{qty}/{orderType}"
           }
         }
       }
     },
-    "/orders/cancel/{orderID}": {
+    "/api/v1/orders/cancel/{orderID}": {
       "post": {
         "tags": [
           "Lệnh"
@@ -1235,16 +1327,16 @@
             "schema": {
               "type": "string"
             },
-            "description": "Mã định danh lệnh cần hủy."
+            "description": "Mã lệnh do hệ thống order service trả về."
           }
         ],
         "responses": {
           "200": {
-            "description": "Lệnh đã được gửi yêu cầu hủy.",
+            "description": "Cancel-order action result returned by service.orderapi.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
+                  "$ref": "#/components/schemas/RestAPIRtn"
                 }
               }
             }
@@ -1266,13 +1358,13 @@
           "metadata": {
             "title": "Hủy lệnh",
             "sidebarTitle": "Hủy lệnh",
-            "description": "POST /orders/cancel/{orderID}"
+            "description": "POST /api/v1/orders/cancel/{orderID}"
           }
         },
         "description": "Hủy một lệnh theo mã định danh. Dùng endpoint này cho lệnh thường, lệnh stop-loss hoặc bracket order khi có mã lệnh tương ứng."
       }
     },
-    "/orders/execution-reports": {
+    "/api/v1/orders/execution-reports": {
       "get": {
         "tags": [
           "Lệnh"
@@ -1286,11 +1378,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the get execution reports for current user result.",
+            "description": "Order execution reports for accounts available to the current user.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
                 }
               }
             }
@@ -1312,140 +1407,13 @@
           "metadata": {
             "title": "Lấy báo cáo thực thi lệnh của người dùng hiện tại",
             "sidebarTitle": "Lấy báo cáo thực thi lệnh của người dùng hiện tại",
-            "description": "GET /orders/execution-reports"
+            "description": "GET /api/v1/orders/execution-reports"
           }
         },
         "description": "Get execution reports for current user."
       }
     },
-    "/orders": {
-      "get": {
-        "tags": [
-          "Lệnh"
-        ],
-        "operationId": "listOrders",
-        "summary": "Lấy danh sách lệnh với bộ lọc tùy chọn",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional status filter."
-          },
-          {
-            "name": "account",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional account filter."
-          },
-          {
-            "name": "symbol",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Trading symbol or product code."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns the get orders with optional filters result.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse"
-          }
-        },
-        "x-mint": {
-          "metadata": {
-            "title": "Lấy danh sách lệnh với bộ lọc tùy chọn",
-            "sidebarTitle": "Lấy danh sách lệnh với bộ lọc tùy chọn",
-            "description": "GET /orders"
-          }
-        },
-        "description": "Get orders with optional filters."
-      }
-    },
-    "/orders/trades": {
-      "get": {
-        "tags": [
-          "Lệnh"
-        ],
-        "operationId": "listTrades",
-        "summary": "Lấy danh sách khớp lệnh của người dùng hiện tại",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns the get trades for current user result.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse"
-          }
-        },
-        "x-mint": {
-          "metadata": {
-            "title": "Lấy danh sách khớp lệnh của người dùng hiện tại",
-            "sidebarTitle": "Lấy danh sách khớp lệnh của người dùng hiện tại",
-            "description": "GET /orders/trades"
-          }
-        },
-        "description": "Get trades for current user."
-      }
-    },
-    "/MarketData/GetWatchList/{watchListId}": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "REST API"
-        }
-      ],
+    "/api/v1/MarketData/GetWatchList/{watchlist_id}": {
       "get": {
         "tags": [
           "Dữ liệu thị trường"
@@ -1455,18 +1423,18 @@
         "security": [],
         "parameters": [
           {
-            "name": "watchListId",
+            "name": "watchlist_id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "id parameter."
+            "description": "Watchlist identifier used by the market-data service."
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the get market-data watchlist by id/filter result.",
+            "description": "Market-data response. The data field is endpoint-specific and documented in referenced schemas when stable.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1492,19 +1460,13 @@
           "metadata": {
             "title": "Lấy watchlist theo id",
             "sidebarTitle": "Lấy watchlist theo id",
-            "description": "GET /MarketData/GetWatchList/{watchListId}"
+            "description": "GET /api/v1/MarketData/GetWatchList/{watchlist_id}"
           }
         },
         "description": "Get market-data watchlist by id/filter."
       }
     },
-    "/MarketData/GetVN30Spot": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "REST API"
-        }
-      ],
+    "/api/v1/MarketData/GetVN30Spot": {
       "get": {
         "tags": [
           "Dữ liệu thị trường"
@@ -1514,7 +1476,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Returns the get vn30 spot data result.",
+            "description": "Market-data response. The data field is endpoint-specific and documented in referenced schemas when stable.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1540,19 +1502,13 @@
           "metadata": {
             "title": "Lấy mã VN30 spot mặc định",
             "sidebarTitle": "Lấy mã VN30 spot mặc định",
-            "description": "GET /MarketData/GetVN30Spot"
+            "description": "GET /api/v1/MarketData/GetVN30Spot"
           }
         },
         "description": "Get VN30 spot data."
       }
     },
-    "/MarketData/GetSymbolSearch/{query}": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "REST API"
-        }
-      ],
+    "/api/v1/MarketData/GetSymbolSearch/{search}": {
       "get": {
         "tags": [
           "Dữ liệu thị trường"
@@ -1562,18 +1518,18 @@
         "security": [],
         "parameters": [
           {
-            "name": "query",
+            "name": "search",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "search parameter."
+            "description": "Search term used to match symbol, ticker, or company name."
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the search symbols result.",
+            "description": "Market-data response. The data field is endpoint-specific and documented in referenced schemas when stable.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1599,19 +1555,13 @@
           "metadata": {
             "title": "Tìm kiếm mã giao dịch",
             "sidebarTitle": "Tìm kiếm mã giao dịch",
-            "description": "GET /MarketData/GetSymbolSearch/{query}"
+            "description": "GET /api/v1/MarketData/GetSymbolSearch/{search}"
           }
         },
         "description": "Search symbols."
       }
     },
-    "/MarketData/GetProductMaster/{symbol}": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "REST API"
-        }
-      ],
+    "/api/v1/MarketData/GetProductMaster/{symbol}": {
       "get": {
         "tags": [
           "Dữ liệu thị trường"
@@ -1627,12 +1577,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "Trading symbol or product code."
+            "description": "Mã chứng khoán/sản phẩm, ví dụ FPT hoặc VN30F1M."
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the get product master result.",
+            "description": "Market-data response. The data field is endpoint-specific and documented in referenced schemas when stable.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1658,16 +1608,16 @@
           "metadata": {
             "title": "Lấy dữ liệu product master theo mã",
             "sidebarTitle": "Lấy dữ liệu product master theo mã",
-            "description": "GET /MarketData/GetProductMaster/{symbol}"
+            "description": "GET /api/v1/MarketData/GetProductMaster/{symbol}"
           }
         },
         "description": "Get product master."
       }
     },
-    "/GetOhlcvHis/{symbol}/{resolution}/{fromMs}/{toMs}": {
+    "/GetOhlcvHis/{symbol}/{resolution}/{from}/{to}": {
       "servers": [
         {
-          "url": "https://api-gw.verolabs.co",
+          "url": "https://openapi.verolabs.co",
           "description": "Market micro API"
         }
       ],
@@ -1680,21 +1630,48 @@
         "security": [],
         "parameters": [
           {
-            "$ref": "#/components/parameters/Symbol"
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Mã chứng khoán/sản phẩm, ví dụ FPT hoặc VN30F1M."
           },
           {
-            "$ref": "#/components/parameters/Resolution"
+            "name": "resolution",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Candle resolution in seconds. Native values are 60 and 86400; other values are aggregated from those bases."
           },
           {
-            "$ref": "#/components/parameters/FromMs"
+            "name": "from",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Thời điểm bắt đầu dạng Unix timestamp milliseconds."
           },
           {
-            "$ref": "#/components/parameters/ToMs"
+            "name": "to",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Thời điểm kết thúc dạng Unix timestamp milliseconds."
           }
         ],
         "responses": {
           "200": {
-            "description": "OHLCV bars.",
+            "description": "OHLCV candles sorted by unixTime ascending.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1708,21 +1685,33 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Lấy lịch sử OHLCV",
             "sidebarTitle": "Lấy lịch sử OHLCV",
-            "description": "GET /GetOhlcvHis/{symbol}/{resolution}/{fromMs}/{toMs}"
+            "description": "GET /GetOhlcvHis/{symbol}/{resolution}/{from}/{to}"
           }
         }
       }
     },
-    "/GetOhlcvHis/{symbol}/{resolution}/{fromMs}/{toMs}/{countBack}": {
+    "/GetOhlcvHis/{symbol}/{resolution}/{from}/{to}/{countBack}": {
       "servers": [
         {
-          "url": "https://api-gw.verolabs.co",
+          "url": "https://openapi.verolabs.co",
           "description": "Market micro API"
         }
       ],
@@ -1735,16 +1724,43 @@
         "security": [],
         "parameters": [
           {
-            "$ref": "#/components/parameters/Symbol"
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Mã chứng khoán/sản phẩm, ví dụ FPT hoặc VN30F1M."
           },
           {
-            "$ref": "#/components/parameters/Resolution"
+            "name": "resolution",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Candle resolution in seconds. Native values are 60 and 86400; other values are aggregated from those bases."
           },
           {
-            "$ref": "#/components/parameters/FromMs"
+            "name": "from",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Thời điểm bắt đầu dạng Unix timestamp milliseconds."
           },
           {
-            "$ref": "#/components/parameters/ToMs"
+            "name": "to",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Thời điểm kết thúc dạng Unix timestamp milliseconds."
           },
           {
             "name": "countBack",
@@ -1752,13 +1768,14 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "minimum": 1
-            }
+              "format": "int64"
+            },
+            "description": "Maximum number of candles to return counting backward from the end timestamp."
           }
         ],
         "responses": {
           "200": {
-            "description": "OHLCV bars.",
+            "description": "OHLCV candles sorted by unixTime ascending.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1772,18 +1789,30 @@
           },
           "default": {
             "$ref": "#/components/responses/Error"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErrorResponse"
           }
         },
         "x-mint": {
           "metadata": {
             "title": "Lấy lịch sử OHLCV với countBack",
             "sidebarTitle": "Lấy lịch sử OHLCV với countBack",
-            "description": "GET /GetOhlcvHis/{symbol}/{resolution}/{fromMs}/{toMs}/{countBack}"
+            "description": "GET /GetOhlcvHis/{symbol}/{resolution}/{from}/{to}/{countBack}"
           }
         }
       }
     },
-    "/diagnostics/margin-ratios/{symbol}": {
+    "/api/v1/diagnostics/margin-ratios/{symbol}": {
       "get": {
         "tags": [
           "Chẩn đoán",
@@ -1804,16 +1833,16 @@
             "schema": {
               "type": "string"
             },
-            "description": "Trading symbol or product code."
+            "description": "Mã chứng khoán/sản phẩm, ví dụ FPT hoặc VN30F1M."
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the get effective margin ratio diagnostics for a symbol result.",
+            "description": "Effective margin-ratio diagnostics for the symbol.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MarginRatio"
+                  "$ref": "#/components/schemas/MarginRatioDiagnostics"
                 }
               }
             }
@@ -1835,13 +1864,13 @@
           "metadata": {
             "title": "Lấy tỷ lệ ký quỹ theo mã",
             "sidebarTitle": "Lấy tỷ lệ ký quỹ theo mã",
-            "description": "GET /diagnostics/margin-ratios/{symbol}"
+            "description": "GET /api/v1/diagnostics/margin-ratios/{symbol}"
           }
         },
         "description": "Get effective margin ratio diagnostics for a symbol."
       }
     },
-    "/notifications": {
+    "/api/v1/notifications": {
       "get": {
         "tags": [
           "Thông báo"
@@ -1860,9 +1889,10 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "format": "int64",
               "example": 50
             },
-            "description": "Maximum number of records to return."
+            "description": "Số bản ghi tối đa cần trả về. Notifications nhận 1-100, mặc định 50."
           },
           {
             "name": "offset",
@@ -1870,14 +1900,15 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "format": "int64",
               "example": 0
             },
-            "description": "Number of records to skip."
+            "description": "Số bản ghi bỏ qua trước khi trả về trang dữ liệu. Mặc định 0."
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the get notifications for current user result.",
+            "description": "Notifications page for the current user.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1903,13 +1934,13 @@
           "metadata": {
             "title": "Lấy danh sách thông báo của người dùng hiện tại",
             "sidebarTitle": "Lấy danh sách thông báo của người dùng hiện tại",
-            "description": "GET /notifications"
+            "description": "GET /api/v1/notifications"
           }
         },
         "description": "Get notifications for current user."
       }
     },
-    "/notifications/{notificationId}/read": {
+    "/api/v1/notifications/{notify_id}/read": {
       "put": {
         "tags": [
           "Thông báo"
@@ -1923,18 +1954,19 @@
         ],
         "parameters": [
           {
-            "name": "notificationId",
+            "name": "notify_id",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "format": "int64"
             },
-            "description": "Notification identifier."
+            "description": "Notification identifier returned by the list notifications endpoint."
           }
         ],
         "responses": {
           "200": {
-            "description": "Updates the mark notification as read result.",
+            "description": "Mark-read result.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1960,13 +1992,13 @@
           "metadata": {
             "title": "Đánh dấu thông báo là đã đọc",
             "sidebarTitle": "Đánh dấu thông báo là đã đọc",
-            "description": "PUT /notifications/{notificationId}/read"
+            "description": "PUT /api/v1/notifications/{notify_id}/read"
           }
         },
         "description": "Mark notification as read."
       }
     },
-    "/referral/stats": {
+    "/api/v1/referral/stats": {
       "get": {
         "tags": [
           "Giới thiệu"
@@ -1980,7 +2012,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the get referral statistics result.",
+            "description": "Referral summary for the current account.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2006,13 +2038,13 @@
           "metadata": {
             "title": "Lấy thống kê giới thiệu",
             "sidebarTitle": "Lấy thống kê giới thiệu",
-            "description": "GET /referral/stats"
+            "description": "GET /api/v1/referral/stats"
           }
         },
         "description": "Get referral statistics."
       }
     },
-    "/referral/refcode/{refCode}": {
+    "/api/v1/referral/refcode/{ref_code}": {
       "get": {
         "tags": [
           "Giới thiệu"
@@ -2026,18 +2058,18 @@
         ],
         "parameters": [
           {
-            "name": "refCode",
+            "name": "ref_code",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "Referral code."
+            "description": "Referral code to look up."
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the get referral code information result.",
+            "description": "Referral code details.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2063,13 +2095,13 @@
           "metadata": {
             "title": "Lấy thông tin mã giới thiệu",
             "sidebarTitle": "Lấy thông tin mã giới thiệu",
-            "description": "GET /referral/refcode/{refCode}"
+            "description": "GET /api/v1/referral/refcode/{ref_code}"
           }
         },
         "description": "Get referral code information."
       }
     },
-    "/referral/history": {
+    "/api/v1/referral/history": {
       "get": {
         "tags": [
           "Giới thiệu"
@@ -2088,20 +2120,21 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "format": "int64",
               "example": 100
             },
-            "description": "Maximum number of records to return."
+            "description": "Số bản ghi tối đa cần trả về. Notifications nhận 1-100, mặc định 50."
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the get referral history result.",
+            "description": "Referral history entries.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/GenericObject"
+                    "$ref": "#/components/schemas/ReferralHistoryItem"
                   }
                 }
               }
@@ -2124,13 +2157,13 @@
           "metadata": {
             "title": "Lấy lịch sử giới thiệu",
             "sidebarTitle": "Lấy lịch sử giới thiệu",
-            "description": "GET /referral/history"
+            "description": "GET /api/v1/referral/history"
           }
         },
         "description": "Get referral history."
       }
     },
-    "/referral/refcode": {
+    "/api/v1/referral/refcode": {
       "post": {
         "tags": [
           "Giới thiệu"
@@ -2151,15 +2184,15 @@
               }
             }
           },
-          "description": "Request payload for Set or update referral code rebate rate. Field descriptions are defined in the referenced schema when available."
+          "description": "Referral code payload. refCode is required and rebateRate must be between 0 and 1."
         },
         "responses": {
           "200": {
-            "description": "Creates or executes the set or update referral code rebate rate result.",
+            "description": "Referral code update result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReferralInfo"
+                  "$ref": "#/components/schemas/SetRefCodeRebateRateResponse"
                 }
               }
             }
@@ -2181,13 +2214,13 @@
           "metadata": {
             "title": "Tạo hoặc cập nhật mã giới thiệu và tỷ lệ rebate",
             "sidebarTitle": "Tạo hoặc cập nhật mã giới thiệu và tỷ lệ rebate",
-            "description": "POST /referral/refcode"
+            "description": "POST /api/v1/referral/refcode"
           }
         },
         "description": "Set or update referral code rebate rate."
       }
     },
-    "/bank-accounts/{bankId}": {
+    "/api/v1/bank-accounts/{bankID}": {
       "get": {
         "tags": [
           "Tài khoản ngân hàng"
@@ -2202,18 +2235,18 @@
         ],
         "parameters": [
           {
-            "name": "bankId",
+            "name": "bankID",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "bank id parameter."
+            "description": "Mã tài khoản ngân hàng đã lưu."
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the get bank account by id result.",
+            "description": "Saved bank account details.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2239,12 +2272,12 @@
           "metadata": {
             "title": "Lấy tài khoản ngân hàng theo ID",
             "sidebarTitle": "Lấy tài khoản ngân hàng theo ID",
-            "description": "GET /bank-accounts/{bankId}"
+            "description": "GET /api/v1/bank-accounts/{bankID}"
           }
         }
       }
     },
-    "/users/right-subscriptions": {
+    "/api/v1/users/right-subscriptions": {
       "get": {
         "tags": [
           "Tài khoản"
@@ -2259,13 +2292,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the list current user right subscription requests result.",
+            "description": "Right subscription entitlements and requests for the current user/account.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RightSubscription"
+                    "$ref": "#/components/schemas/UserRightSubscription"
                   }
                 }
               }
@@ -2288,7 +2321,7 @@
           "metadata": {
             "title": "Lấy danh sách yêu cầu đăng ký quyền mua",
             "sidebarTitle": "Lấy danh sách yêu cầu đăng ký quyền mua",
-            "description": "GET /users/right-subscriptions"
+            "description": "GET /api/v1/users/right-subscriptions"
           }
         }
       },
@@ -2313,15 +2346,15 @@
               }
             }
           },
-          "description": "Request payload for Subscribe to a right offering. Field descriptions are defined in the referenced schema when available."
+          "description": "Right subscription request payload. symbol and shares are required."
         },
         "responses": {
           "200": {
-            "description": "Creates or executes the subscribe to a right offering result.",
+            "description": "Submitted right subscription request.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StatusResponse"
+                  "$ref": "#/components/schemas/SubscribeRightResponse"
                 }
               }
             }
@@ -2343,12 +2376,12 @@
           "metadata": {
             "title": "Đăng ký quyền mua",
             "sidebarTitle": "Đăng ký quyền mua",
-            "description": "POST /users/right-subscriptions"
+            "description": "POST /api/v1/users/right-subscriptions"
           }
         }
       }
     },
-    "/users/covered-margin-call": {
+    "/api/v1/users/covered-margin-call": {
       "patch": {
         "tags": [
           "Tài khoản"
@@ -2370,15 +2403,15 @@
               }
             }
           },
-          "description": "Request payload for Adjust covered margin call amount. Field descriptions are defined in the referenced schema when available."
+          "description": "Covered margin-call payload. accountId, symbol, and amount are required."
         },
         "responses": {
           "200": {
-            "description": "Partially updates the adjust covered margin call amount result.",
+            "description": "Covered margin-call update result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StatusResponse"
+                  "$ref": "#/components/schemas/CoveredMarginCallResponse"
                 }
               }
             }
@@ -2400,12 +2433,12 @@
           "metadata": {
             "title": "Điều chỉnh số tiền covered margin call",
             "sidebarTitle": "Điều chỉnh số tiền covered margin call",
-            "description": "PATCH /users/covered-margin-call"
+            "description": "PATCH /api/v1/users/covered-margin-call"
           }
         }
       }
     },
-    "/api/id-card": {
+    "/api/v2/chat/api/id-card": {
       "post": {
         "tags": [
           "Đăng ký"
@@ -2415,18 +2448,18 @@
         "description": "Phân tích ảnh mặt trước CCCD/CMND và các ảnh mặt sau hoặc chân dung nếu có trong bước đăng ký. Gửi nội dung ảnh dạng base64 trong JSON, không gửi tiền tố data URL.",
         "requestBody": {
           "required": true,
-          "description": "Ảnh CCCD/CMND dạng base64 trong luồng đăng ký. `frontImage` là bắt buộc; `backImage` và `portraitImage` là tùy chọn.",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/IdCardParseRequest"
               }
             }
-          }
+          },
+          "description": "Base64 image payload used by the signup ID-card scan flow."
         },
         "responses": {
           "200": {
-            "description": "Dữ liệu định danh đã trích xuất và URL ảnh đã xử lý nếu có.",
+            "description": "Parsed ID-card data and uploaded image URLs when available.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2439,6 +2472,12 @@
             "$ref": "#/components/responses/ErrorResponse"
           },
           "500": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "404": {
             "$ref": "#/components/responses/ErrorResponse"
           }
         },
@@ -2453,18 +2492,12 @@
           "metadata": {
             "title": "Trích xuất thông tin CCCD khi đăng ký",
             "sidebarTitle": "Trích xuất thông tin CCCD",
-            "description": "POST /api/id-card"
+            "description": "POST /api/v2/chat/api/id-card"
           }
         }
       }
     },
-    "/MarketData/GetProductTradeLog/{symbol}/{startUnixTime}/{endUnixTime}": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "REST API"
-        }
-      ],
+    "/api/v1/MarketData/GetProductTradeLog/{symbol}/{from}/{to}": {
       "get": {
         "tags": [
           "Dữ liệu thị trường"
@@ -2481,30 +2514,32 @@
             "schema": {
               "type": "string"
             },
-            "description": "Mã giao dịch hoặc mã sản phẩm."
+            "description": "Mã chứng khoán/sản phẩm, ví dụ FPT hoặc VN30F1M."
           },
           {
-            "name": "startUnixTime",
+            "name": "from",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "format": "int64"
             },
-            "description": "Thời điểm bắt đầu theo Unix milliseconds."
+            "description": "Thời điểm bắt đầu dạng Unix timestamp milliseconds."
           },
           {
-            "name": "endUnixTime",
+            "name": "to",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "format": "int64"
             },
-            "description": "Thời điểm kết thúc theo Unix milliseconds."
+            "description": "Thời điểm kết thúc dạng Unix timestamp milliseconds."
           }
         ],
         "responses": {
           "200": {
-            "description": "Trade log của mã trong khoảng thời gian được yêu cầu.",
+            "description": "Market-data response. The data field is endpoint-specific and documented in referenced schemas when stable.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2530,18 +2565,12 @@
           "metadata": {
             "title": "Lấy trade log của mã theo khoảng thời gian",
             "sidebarTitle": "Lấy trade log của mã theo khoảng thời gian",
-            "description": "GET /MarketData/GetProductTradeLog/{symbol}/{startUnixTime}/{endUnixTime}"
+            "description": "GET /api/v1/MarketData/GetProductTradeLog/{symbol}/{from}/{to}"
           }
         }
       }
     },
-    "/MarketData/GetVNIndex/{index}": {
-      "servers": [
-        {
-          "url": "https://api-gw.verolabs.co/api/v1",
-          "description": "REST API"
-        }
-      ],
+    "/api/v1/MarketData/GetVNIndex/{index}": {
       "get": {
         "tags": [
           "Dữ liệu thị trường"
@@ -2558,12 +2587,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "Mã định danh chỉ số thị trường."
+            "description": "Index code such as VNINDEX, VN30, HNXINDEX, or UPCOMINDEX."
           }
         ],
         "responses": {
           "200": {
-            "description": "Dữ liệu chỉ số thị trường được yêu cầu.",
+            "description": "Market-data response. The data field is endpoint-specific and documented in referenced schemas when stable.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2589,12 +2618,12 @@
           "metadata": {
             "title": "Lấy dữ liệu VN index",
             "sidebarTitle": "Lấy dữ liệu VN index",
-            "description": "GET /MarketData/GetVNIndex/{index}"
+            "description": "GET /api/v1/MarketData/GetVNIndex/{index}"
           }
         }
       }
     },
-    "/orders/stop-order": {
+    "/api/v1/orders/stop-orders": {
       "get": {
         "tags": [
           "Lệnh"
@@ -2609,11 +2638,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Các lệnh stop-loss khớp bộ lọc yêu cầu.",
+            "description": "Stop orders matching optional filters.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StopOrder"
+                  }
                 }
               }
             }
@@ -2635,7 +2667,7 @@
           "metadata": {
             "title": "Danh sách lệnh stop-loss",
             "sidebarTitle": "Danh sách lệnh stop-loss",
-            "description": "GET /orders/stop-order"
+            "description": "GET /api/v1/orders/stop-orders"
           }
         },
         "parameters": [
@@ -2646,7 +2678,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Bộ lọc trạng thái tùy chọn."
+            "description": "Optional status filter. Values are backend order statuses such as PENDING, COMPLETE, CANCELLED, 0, 1, 2, 4, 7, or 8 depending on order type."
           },
           {
             "name": "account",
@@ -2655,7 +2687,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Bộ lọc tài khoản tùy chọn."
+            "description": "Optional trading account filter."
           },
           {
             "name": "symbol",
@@ -2664,10 +2696,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "Mã giao dịch hoặc mã sản phẩm."
+            "description": "Mã chứng khoán/sản phẩm, ví dụ FPT hoặc VN30F1M."
           }
         ]
-      },
+      }
+    },
+    "/api/v1/orders/stop-order": {
       "post": {
         "tags": [
           "Lệnh"
@@ -2682,11 +2716,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Lệnh stop-loss đã được tạo.",
+            "description": "Stop-order creation result. data contains the created stop order id.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
+                  "$ref": "#/components/schemas/RestAPIRtn"
                 }
               }
             }
@@ -2708,7 +2742,7 @@
           "metadata": {
             "title": "Đặt lệnh stop-loss",
             "sidebarTitle": "Đặt lệnh stop-loss",
-            "description": "POST /orders/stop-order"
+            "description": "POST /api/v1/orders/stop-order"
           }
         },
         "requestBody": {
@@ -2720,11 +2754,11 @@
               }
             }
           },
-          "description": "Payload tạo lệnh stop-loss."
+          "description": "Stop-order creation payload. All required fields are validated by service.orderapi."
         }
       }
     },
-    "/orders/stop-order/{orderId}": {
+    "/api/v1/orders/stop-order/{orderId}": {
       "get": {
         "tags": [
           "Lệnh"
@@ -2739,11 +2773,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Chi tiết lệnh stop-loss.",
+            "description": "Stop-order details.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
+                  "$ref": "#/components/schemas/StopOrder"
                 }
               }
             }
@@ -2765,7 +2799,7 @@
           "metadata": {
             "title": "Lấy lệnh stop-loss theo ID",
             "sidebarTitle": "Lấy lệnh stop-loss theo ID",
-            "description": "GET /orders/stop-order/{orderId}"
+            "description": "GET /api/v1/orders/stop-order/{orderId}"
           }
         },
         "parameters": [
@@ -2776,12 +2810,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "Mã định danh lệnh."
+            "description": "Mã lệnh do stop-order service trả về."
           }
         ]
       }
     },
-    "/orders/stop-order/{orderId}/modify": {
+    "/api/v1/orders/modify-stop-order/{orderId}": {
       "put": {
         "tags": [
           "Lệnh"
@@ -2796,11 +2830,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Lệnh stop-loss đã được cập nhật.",
+            "description": "Stop-order modification result.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
+                  "$ref": "#/components/schemas/RestAPIRtn"
                 }
               }
             }
@@ -2822,7 +2856,7 @@
           "metadata": {
             "title": "Sửa lệnh stop-loss",
             "sidebarTitle": "Sửa lệnh stop-loss",
-            "description": "PUT /orders/stop-order/{orderId}/modify"
+            "description": "PUT /api/v1/orders/modify-stop-order/{orderId}"
           }
         },
         "parameters": [
@@ -2833,7 +2867,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Mã định danh lệnh."
+            "description": "Mã lệnh do stop-order service trả về."
           }
         ],
         "requestBody": {
@@ -2845,11 +2879,11 @@
               }
             }
           },
-          "description": "Payload sửa lệnh stop-loss."
+          "description": "Stop-order replacement payload. orderId is supplied in the path."
         }
       }
     },
-    "/orders/bracket-order": {
+    "/api/v1/orders/bracket-orders": {
       "get": {
         "tags": [
           "Lệnh"
@@ -2864,11 +2898,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Các bracket order khớp bộ lọc yêu cầu.",
+            "description": "Bracket orders matching optional filters.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BracketOrder"
+                  }
                 }
               }
             }
@@ -2890,7 +2927,7 @@
           "metadata": {
             "title": "Danh sách bracket order",
             "sidebarTitle": "Danh sách bracket order",
-            "description": "GET /orders/bracket-order"
+            "description": "GET /api/v1/orders/bracket-orders"
           }
         },
         "parameters": [
@@ -2901,7 +2938,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Bộ lọc trạng thái tùy chọn."
+            "description": "Optional status filter. Values are backend order statuses such as PENDING, COMPLETE, CANCELLED, 0, 1, 2, 4, 7, or 8 depending on order type."
           },
           {
             "name": "account",
@@ -2910,7 +2947,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Bộ lọc tài khoản tùy chọn."
+            "description": "Optional trading account filter."
           },
           {
             "name": "symbol",
@@ -2919,10 +2956,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "Mã giao dịch hoặc mã sản phẩm."
+            "description": "Mã chứng khoán/sản phẩm, ví dụ FPT hoặc VN30F1M."
           }
         ]
-      },
+      }
+    },
+    "/api/v1/orders/bracket-order": {
       "post": {
         "tags": [
           "Lệnh"
@@ -2937,11 +2976,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Bracket order đã được tạo.",
+            "description": "Bracket-order creation result. data contains the created bracket order id.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
+                  "$ref": "#/components/schemas/RestAPIRtn"
                 }
               }
             }
@@ -2963,7 +3002,7 @@
           "metadata": {
             "title": "Đặt bracket order",
             "sidebarTitle": "Đặt bracket order",
-            "description": "POST /orders/bracket-order"
+            "description": "POST /api/v1/orders/bracket-order"
           }
         },
         "requestBody": {
@@ -2975,11 +3014,11 @@
               }
             }
           },
-          "description": "Payload tạo bracket order."
+          "description": "Bracket-order creation payload. takeProfitPrice and stopLossPrice are optional but at least one should be supplied for a useful bracket order."
         }
       }
     },
-    "/orders/bracket-order/{bracketOrderId}": {
+    "/api/v1/orders/bracket-order/{bracketOrderId}": {
       "get": {
         "tags": [
           "Lệnh"
@@ -2994,11 +3033,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Chi tiết bracket order.",
+            "description": "Bracket-order details.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderResponse"
+                  "$ref": "#/components/schemas/BracketOrder"
                 }
               }
             }
@@ -3020,7 +3059,7 @@
           "metadata": {
             "title": "Lấy bracket order theo ID",
             "sidebarTitle": "Lấy bracket order theo ID",
-            "description": "GET /orders/bracket-order/{bracketOrderId}"
+            "description": "GET /api/v1/orders/bracket-order/{bracketOrderId}"
           }
         },
         "parameters": [
@@ -3031,7 +3070,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Mã định danh bracket order."
+            "description": "System bracket order identifier returned when the bracket order is created."
           }
         ]
       }
@@ -3059,7 +3098,7 @@
         "schema": {
           "type": "string"
         },
-        "description": "Authentication flow id returned by the corresponding create flow endpoint."
+        "description": "Ma flow duoc tra ve tu endpoint tao flow tuong ung. Khi submit/update flow phai truyen dung ma nay trong query flow."
       },
       "AccountId": {
         "name": "accountId",
@@ -3175,6 +3214,11 @@
             "schema": {
               "$ref": "#/components/schemas/ErrorResponse"
             }
+          },
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            }
           }
         }
       },
@@ -3210,6 +3254,11 @@
             "schema": {
               "$ref": "#/components/schemas/ErrorResponse"
             }
+          },
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            }
           }
         }
       }
@@ -3217,16 +3266,47 @@
     "schemas": {
       "GenericObject": {
         "type": "object",
-        "properties": {},
         "additionalProperties": true,
-        "description": "Untyped JSON object for dynamic response fields."
+        "description": "Payload object động. Cấu trúc có thể thay đổi theo từng endpoint backend."
       },
       "ErrorResponse": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Body loi do gateway hoac backend tra ve. Backend co the tra JSON object hoac loi dang plain text.",
         "properties": {
           "error": {
-            "type": "string",
-            "description": "Machine-readable error code or short error string."
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true,
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Ma loi Ory/gateway khi co."
+                  },
+                  "code": {
+                    "type": "integer",
+                    "description": "Ma loi tuong duong HTTP."
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "Text trang thai HTTP, vi du Unauthorized."
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Ly do chi tiet do Ory hoac gateway tra ve."
+                  },
+                  "message": {
+                    "type": "string",
+                    "description": "Thong diep loi de doc."
+                  }
+                }
+              }
+            ],
+            "description": "Chuoi ma/thong diep loi hoac object loi nested cua Ory/gateway."
           },
           "message": {
             "type": "string",
@@ -3234,45 +3314,85 @@
           },
           "detail": {
             "type": "string",
-            "description": "Detailed error text returned when available."
+            "description": "Detailed backend error message when available."
           },
           "details": {
-            "description": "Additional structured error details, if provided."
+            "description": "Additional validation or backend details."
           },
           "status": {
             "type": "integer",
-            "description": "HTTP status code associated with the error."
+            "description": "HTTP status code when included by the backend."
           }
-        },
-        "additionalProperties": true,
-        "description": "Standard error payload returned by the API."
+        }
       },
       "AuthFlow": {
         "type": "object",
         "additionalProperties": true,
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma flow. Dung gia tri nay lam query parameter flow khi submit hoac update flow."
           },
           "type": {
-            "type": "string"
+            "type": "string",
+            "description": "Loai flow do Ory tra ve, vi du browser hoac api."
           },
           "expires_at": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "Thoi diem flow het han. Can submit flow truoc thoi diem nay."
           },
           "issued_at": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "Thoi diem Ory tao flow."
           },
           "ui": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": true,
+            "description": "Payload UI cua Ory gom action URL, method, nodes, messages va CSRF node khi can."
           },
           "state": {
-            "type": "string"
+            "type": "string",
+            "description": "Trang thai hien tai cua Ory flow, vi du choose_method, sent_email, passed_challenge hoac success."
+          },
+          "request_url": {
+            "type": "string",
+            "description": "URL request goc dung de tao flow."
+          },
+          "organization_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Ma Ory organization cho flow theo organization, khi co."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Thoi diem tao flow.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "Thoi diem cap nhat flow.",
+            "format": "date-time"
+          },
+          "refresh": {
+            "type": "boolean",
+            "description": "Cho biet flow co phai refresh flow hay khong."
+          },
+          "requested_aal": {
+            "type": "string",
+            "description": "Muc dam bao xac thuc duoc yeu cau cho flow."
+          },
+          "identity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AuthSession/properties/identity"
+              }
+            ],
+            "description": "Identity gan voi settings flow khi Ory tra ve."
           }
-        }
+        },
+        "description": "Ory self-service flow object duoc tra ve boi cac endpoint tao/cap nhat login, registration, recovery va settings flow."
       },
       "LoginFlowUpdateRequest": {
         "type": "object",
@@ -3287,65 +3407,192 @@
             "type": "string",
             "enum": [
               "password"
-            ]
+            ],
+            "description": "Phuong thuc xac thuc. Client gui password khi dang nhap bang mat khau."
           },
           "csrf_token": {
-            "type": "string"
+            "type": "string",
+            "description": "CSRF token lay tu UI node cua login flow khi Ory yeu cau."
           },
           "password_identifier": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "description": "Dinh danh dang nhap cua user. Ung dung gui email tai khoan."
           },
           "password": {
             "type": "string",
-            "format": "password"
+            "format": "password",
+            "description": "Mat khau dang plain text do user nhap. Chi gui qua HTTPS."
           }
-        }
+        },
+        "description": "JSON payload dung de submit thong tin dang nhap bang mat khau vao Ory login flow."
       },
       "LoginResponse": {
         "type": "object",
         "additionalProperties": true,
         "properties": {
           "session_token": {
-            "type": "string"
+            "type": "string",
+            "description": "Bearer/session token client dung cho cac API can dang nhap."
           },
           "session": {
-            "$ref": "#/components/schemas/AuthSession"
+            "$ref": "#/components/schemas/AuthSession",
+            "description": "Ory session object cua identity da dang nhap."
           },
           "identity": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": true,
+            "description": "Ory identity object, gom identity id va traits khi Ory tra ve."
           }
-        }
+        },
+        "description": "Response tra ve sau khi API login flow thanh cong."
       },
       "AuthSession": {
         "type": "object",
         "additionalProperties": true,
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma Ory session."
           },
           "active": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Cho biet session hien co dang active hay khong."
           },
           "identity": {
             "type": "object",
             "additionalProperties": true,
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "Ma Ory identity cua user da dang nhap."
               },
               "traits": {
                 "type": "object",
-                "additionalProperties": true
+                "additionalProperties": true,
+                "description": "Thuoc tinh ho so identity luu tren Ory, vi du email va name."
+              },
+              "schema_id": {
+                "type": "string",
+                "description": "Ma Ory identity schema."
+              },
+              "schema_url": {
+                "type": "string",
+                "description": "URL cua Ory identity schema."
+              },
+              "state": {
+                "type": "string",
+                "description": "Trang thai Ory identity, vi du active."
+              },
+              "state_changed_at": {
+                "type": "string",
+                "description": "Thoi diem trang thai identity thay doi lan cuoi.",
+                "format": "date-time"
+              },
+              "recovery_addresses": {
+                "type": "array",
+                "description": "Danh sach recovery address cau hinh tren identity.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "metadata_public": {
+                "nullable": true,
+                "description": "Metadata public cua identity do Ory tra ve; co the null."
+              },
+              "created_at": {
+                "type": "string",
+                "description": "Thoi diem tao identity.",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "description": "Thoi diem cap nhat identity.",
+                "format": "date-time"
+              },
+              "organization_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Ma Ory organization neu identity thuoc organization; null neu khong co."
               }
-            }
+            },
+            "description": "Ory identity da dang nhap, gom id, schema metadata, state, traits, recovery addresses va timestamps."
           },
           "tokenized": {
             "type": "string",
-            "description": "Bearer token returned when a tokenized session is requested."
+            "description": "Bearer token tra ve khi truyen tokenize_as va Ory tra tokenized session."
+          },
+          "expires_at": {
+            "type": "string",
+            "description": "Thoi diem Ory session het han.",
+            "format": "date-time"
+          },
+          "authenticated_at": {
+            "type": "string",
+            "description": "Thoi diem user xac thuc cho session nay.",
+            "format": "date-time"
+          },
+          "authenticator_assurance_level": {
+            "type": "string",
+            "description": "Muc dam bao xac thuc cua Ory session, vi du aal1."
+          },
+          "authentication_methods": {
+            "type": "array",
+            "description": "Cac phuong thuc xac thuc da hoan tat cho session.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "method": {
+                  "type": "string",
+                  "description": "Ten phuong thuc xac thuc, vi du password."
+                },
+                "aal": {
+                  "type": "string",
+                  "description": "Muc dam bao xac thuc cua phuong thuc nay."
+                },
+                "completed_at": {
+                  "type": "string",
+                  "description": "Thoi diem phuong thuc nay hoan tat.",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "issued_at": {
+            "type": "string",
+            "description": "Thoi diem Ory phat hanh session.",
+            "format": "date-time"
+          },
+          "devices": {
+            "type": "array",
+            "description": "Metadata thiet bi/session do Ory tra ve, gom device id, IP address, user agent va location.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Ma thiet bi Ory."
+                },
+                "ip_address": {
+                  "type": "string",
+                  "description": "Dia chi IP cua session/thiet bi."
+                },
+                "user_agent": {
+                  "type": "string",
+                  "description": "User agent cua session/thiet bi."
+                },
+                "location": {
+                  "type": "string",
+                  "description": "Chuoi location do Ory tra ve khi co."
+                }
+              }
+            }
           }
-        }
+        },
+        "description": "Ory session tra ve boi whoami va login response."
       },
       "RegistrationFlowUpdateRequest": {
         "type": "object",
@@ -3359,20 +3606,24 @@
             "type": "string",
             "enum": [
               "password"
-            ]
+            ],
+            "description": "Phuong thuc dang ky. Client gui password cho dang ky dua tren mat khau."
           },
           "traits": {
-            "$ref": "#/components/schemas/RegistrationTraits"
+            "$ref": "#/components/schemas/RegistrationTraits",
+            "description": "Cac identity traits se duoc tao tren Ory identity."
           },
           "password": {
             "type": "string",
             "format": "password",
-            "description": "Mobile app generates a secure random password."
+            "description": "Mat khau gan cho identity moi. Ung dung mobile co the tu sinh mat khau an toan cho onboarding bang OTP."
           },
           "csrf_token": {
-            "type": "string"
+            "type": "string",
+            "description": "CSRF token lay tu UI node cua registration flow khi Ory yeu cau."
           }
-        }
+        },
+        "description": "JSON payload dung de submit dang ky user moi vao Ory registration flow."
       },
       "RegistrationTraits": {
         "type": "object",
@@ -3384,7 +3635,8 @@
         "properties": {
           "email": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "description": "Email cua khach hang. Gia tri nay phai unique tren Ory identity."
           },
           "name": {
             "type": "object",
@@ -3394,26 +3646,34 @@
             ],
             "properties": {
               "first": {
-                "type": "string"
+                "type": "string",
+                "description": "Ten hoac phan dau cua ho ten khach hang."
               },
               "last": {
-                "type": "string"
+                "type": "string",
+                "description": "Ho hoac phan cuoi cua ho ten khach hang."
               }
-            }
+            },
+            "description": "Ho ten hop phap cua khach hang, tach thanh first va last."
           },
           "phone": {
-            "type": "string"
+            "type": "string",
+            "description": "So dien thoai khach hang theo format ung dung thu thap."
           },
           "refer_code": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma gioi thieu tuy chon nhap luc dang ky."
           },
           "address": {
-            "type": "string"
+            "type": "string",
+            "description": "Dia chi cu tru/lien he cua khach hang."
           },
           "documentNumber": {
-            "type": "string"
+            "type": "string",
+            "description": "So giay to dinh danh do nha nuoc cap, thu thap trong onboarding."
           }
-        }
+        },
+        "description": "Identity traits thu thap trong qua trinh dang ky khach hang."
       },
       "RecoveryCodeRequest": {
         "type": "object",
@@ -3426,13 +3686,16 @@
             "type": "string",
             "enum": [
               "code"
-            ]
+            ],
+            "description": "Phuong thuc recovery. Dung code cho recovery bang ma gui qua email."
           },
           "email": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "description": "Email se nhan ma recovery."
           }
-        }
+        },
+        "description": "Payload dung de yeu cau ma recovery cho email tren Ory recovery flow."
       },
       "RecoveryVerifyRequest": {
         "type": "object",
@@ -3445,12 +3708,15 @@
             "type": "string",
             "enum": [
               "code"
-            ]
+            ],
+            "description": "Phuong thuc recovery. Dung code cho recovery bang ma gui qua email."
           },
           "code": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma recovery mot lan user nhan duoc."
           }
-        }
+        },
+        "description": "Payload dung de xac minh ma recovery tren Ory recovery flow."
       },
       "RecoveryResponse": {
         "allOf": [
@@ -3461,18 +3727,21 @@
             "type": "object",
             "properties": {
               "session_token": {
-                "type": "string"
+                "type": "string",
+                "description": "Session token tra ve sau khi xac minh recovery thanh cong, neu Ory phat truc tiep."
               },
               "continue_with": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "additionalProperties": true
-                }
+                },
+                "description": "Cac hanh dong tiep theo do Ory tra ve, vi du instruction set_ory_session_token."
               }
             }
           }
-        ]
+        ],
+        "description": "Recovery flow sau khi cap nhat. Xac minh thanh cong co the kem session_token hoac continue_with."
       },
       "SettingsPasswordRequest": {
         "type": "object",
@@ -3485,16 +3754,21 @@
             "type": "string",
             "enum": [
               "password"
-            ]
+            ],
+            "description": "Phuong thuc settings. Dung password khi doi mat khau."
           },
           "password": {
             "type": "string",
-            "format": "password"
+            "format": "password",
+            "description": "Mat khau moi se gan cho identity dang dang nhap."
           }
-        }
+        },
+        "description": "Payload dung de cap nhat mat khau cua user dang dang nhap trong Ory settings flow."
       },
       "Account": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Thông tin tài khoản giao dịch gồm equity, margin, PnL và danh mục vị thế.",
         "required": [
           "id",
           "accountId",
@@ -3511,132 +3785,182 @@
         ],
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Internal account document identifier."
           },
           "accountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Trading account identifier used by order and portfolio APIs."
+          },
+          "userId": {
+            "type": "string",
+            "description": "Owner user identity id or email propagated by the gateway."
+          },
+          "connectionType": {
+            "type": "string",
+            "description": "Account connection type such as DEMO or REAL."
           },
           "totalEquity": {
-            "type": "number"
+            "type": "number",
+            "description": "Total account equity."
           },
           "credit": {
-            "type": "number"
+            "type": "number",
+            "description": "Available credit or cash balance maintained by the account service."
           },
           "maintenanceMargin": {
-            "type": "number"
+            "type": "number",
+            "description": "Current maintenance margin requirement."
           },
           "tempMaintenanceMargin": {
-            "type": "number"
+            "type": "number",
+            "description": "Temporary maintenance margin for pending orders/positions."
           },
           "totalRealizedPnl": {
-            "type": "number"
+            "type": "number",
+            "description": "Total realized profit and loss."
           },
           "totalUnrealizedPnl": {
-            "type": "number"
+            "type": "number",
+            "description": "Total unrealized profit and loss."
           },
           "tradingPower": {
-            "type": "number"
+            "type": "number",
+            "description": "Available trading power after margin and holds."
           },
           "crossMargin": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether cross-margin mode is enabled for this account."
           },
           "refCode": {
-            "type": "string"
+            "type": "string",
+            "description": "Referral code linked to the account, if any."
+          },
+          "identityId": {
+            "type": "string",
+            "description": "Ory Kratos identity id when present."
           },
           "positions": {
             "type": "object",
             "additionalProperties": {
               "$ref": "#/components/schemas/Position"
-            }
+            },
+            "description": "Open positions keyed by symbol."
           },
           "tempPositions": {
             "type": "object",
             "additionalProperties": {
               "$ref": "#/components/schemas/TempPosition"
-            }
+            },
+            "description": "Temporary or pending positions keyed by symbol."
           }
         }
       },
       "Position": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Open portfolio position for one symbol.",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Position identifier."
           },
           "accountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Owning trading account."
           },
           "symbol": {
-            "type": "string"
+            "type": "string",
+            "description": "Position symbol."
           },
           "avgPrice": {
-            "type": "number"
+            "type": "number",
+            "description": "Average entry price."
           },
           "qty": {
-            "type": "integer",
-            "description": "Positive is long, negative is short."
+            "type": "number",
+            "description": "Net quantity. Positive is long, negative is short."
           },
           "marketPrice": {
-            "type": "number"
+            "type": "number",
+            "description": "Latest market price used for valuation."
           },
           "marketValue": {
-            "type": "number"
+            "type": "number",
+            "description": "Current market value."
           },
           "portPercent": {
-            "type": "number"
+            "type": "number",
+            "description": "Portfolio weight percentage."
           },
           "realizePnl": {
-            "type": "number"
+            "type": "number",
+            "description": "Realized PnL for the position."
           },
           "unrealizePnl": {
-            "type": "number"
+            "type": "number",
+            "description": "Unrealized PnL for the position."
           },
           "coveredMarginCall": {
-            "type": "number"
+            "type": "number",
+            "description": "Covered margin-call amount set by the user."
           },
           "marginRatio": {
             "$ref": "#/components/schemas/MarginRatio"
           },
           "forceClosePrice": {
-            "type": "number"
+            "type": "number",
+            "description": "Estimated force-close price."
           },
           "forceCloseStatus": {
-            "type": "string"
+            "type": "string",
+            "description": "Current force-close status."
           },
           "marginCallPrice": {
-            "type": "number"
+            "type": "number",
+            "description": "Estimated margin-call price."
           },
           "marginCallStatus": {
-            "type": "string"
+            "type": "string",
+            "description": "Current margin-call status."
           }
         }
       },
       "TempPosition": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Aggregated pending order position for one symbol.",
         "properties": {
           "symbol": {
-            "type": "string"
+            "type": "string",
+            "description": "Symbol."
           },
           "netQty": {
-            "type": "integer"
+            "type": "number",
+            "description": "Net pending quantity."
           },
           "avgPrice": {
-            "type": "number"
+            "type": "number",
+            "description": "Average pending price."
           },
           "orderCount": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Number of pending orders contributing to this temp position."
           },
           "marketPrice": {
-            "type": "number"
+            "type": "number",
+            "description": "Latest market price."
           }
         }
       },
       "MarginRatio": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Margin, fee, tax, and risk-ratio configuration.",
         "properties": {
           "marginRatio": {
             "type": "number",
-            "description": "Margin ratio requirement."
+            "description": "Initial/maintenance margin ratio requirement."
           },
           "marginCallRate": {
             "type": "number",
@@ -3648,7 +3972,7 @@
           },
           "tradingFee": {
             "type": "number",
-            "description": "Trading fee rate."
+            "description": "Trading fee rate, for example 0.001 for 0.1%."
           },
           "productCommission": {
             "type": "number",
@@ -3660,37 +3984,39 @@
           },
           "overnightFee": {
             "type": "number",
-            "description": "Overnight holding fee rate."
+            "description": "Overnight fee rate."
           },
           "shortSellFee": {
             "type": "number",
             "description": "Short-sell fee rate."
           }
-        },
-        "additionalProperties": true,
-        "description": "Margin, fee, tax, and risk-ratio configuration."
+        }
       },
       "WithdrawEquityRequest": {
         "type": "object",
-        "properties": {
-          "amount": {
-            "type": "number",
-            "description": "Withdrawal amount. Must be greater than zero."
-          },
-          "bankId": {
-            "type": "string",
-            "description": "Registered bank account identifier to receive the withdrawal."
-          }
-        },
+        "additionalProperties": false,
+        "description": "Payload for withdrawing account equity to a saved bank account.",
         "required": [
           "amount",
           "bankId"
         ],
-        "additionalProperties": true,
-        "description": "Payload for withdrawing equity to a registered bank account."
+        "properties": {
+          "amount": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "description": "Withdrawal amount. Must be greater than zero and not exceed tradingPower."
+          },
+          "bankId": {
+            "type": "string",
+            "description": "Saved bank account id to receive the withdrawal."
+          }
+        }
       },
       "BankAccount": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Bank account saved by the current user for withdrawals.",
         "properties": {
           "id": {
             "type": "string",
@@ -3710,39 +4036,38 @@
           },
           "bankCode": {
             "type": "string",
-            "description": "Bank code selected by the user."
+            "description": "Bank identifier code selected by the user."
           },
           "createdAt": {
             "type": "integer",
-            "description": "Creation timestamp."
+            "format": "int64",
+            "description": "Creation timestamp in Unix milliseconds."
           }
-        },
-        "additionalProperties": true,
-        "description": "Bank account saved by the current user for withdrawals."
+        }
       },
       "CreateBankAccountRequest": {
         "type": "object",
-        "properties": {
-          "bankAccountName": {
-            "type": "string",
-            "description": "Beneficiary name on the bank account."
-          },
-          "bankAccountNumber": {
-            "type": "string",
-            "description": "Bank account number."
-          },
-          "bankCode": {
-            "type": "string",
-            "description": "Bank code."
-          }
-        },
+        "additionalProperties": false,
+        "description": "Payload for creating a saved bank account.",
         "required": [
           "bankAccountName",
           "bankAccountNumber",
           "bankCode"
         ],
-        "additionalProperties": true,
-        "description": "Payload for creating a bank account."
+        "properties": {
+          "bankAccountName": {
+            "type": "string",
+            "description": "Beneficiary name exactly as registered at the bank."
+          },
+          "bankAccountNumber": {
+            "type": "string",
+            "description": "Bank account number. Backend rejects duplicate account numbers."
+          },
+          "bankCode": {
+            "type": "string",
+            "description": "Bank identifier code."
+          }
+        }
       },
       "BankAccountEnvelope": {
         "type": "object",
@@ -3777,81 +4102,115 @@
       "Order": {
         "type": "object",
         "additionalProperties": true,
+        "description": "Order execution report returned by service.orderapi.",
         "properties": {
-          "id": {
-            "type": "string"
-          },
           "orderID": {
-            "type": "string"
+            "type": "string",
+            "description": "System-generated order identifier used for internal tracking and cancel/modify operations."
           },
           "refOrderID": {
-            "type": "string"
+            "type": "string",
+            "description": "Client-provided reference order id."
           },
           "externalOrderID": {
-            "type": "string"
+            "type": "string",
+            "description": "Order id returned by the external broker or exchange gateway."
           },
           "externalSecondOrderID": {
-            "type": "string"
+            "type": "string",
+            "description": "Secondary broker order id when available."
           },
           "accountID": {
-            "type": "string"
+            "type": "string",
+            "description": "Trading account used by the order."
           },
           "symbol": {
-            "type": "string"
+            "type": "string",
+            "description": "Order symbol."
           },
           "orderSide": {
-            "$ref": "#/components/schemas/OrderSide"
+            "type": "string",
+            "enum": [
+              "B",
+              "S"
+            ],
+            "description": "B for buy, S for sell."
           },
           "orderStatus": {
             "type": "string",
-            "description": "Order status values: 0 New, 1 Partially Filled, 2 Filled, 4 Cancelled, 7 Stopped, 8 Rejected. The API may also return text statuses."
+            "description": "Order status. Broker numeric values may include 0 New, 1 Partially Filled, 2 Filled, 4 Cancelled, 7 Stopped, 8 Rejected; special order values may be PENDING, COMPLETE, CANCELLED, MODIFIED."
           },
           "orderType": {
-            "$ref": "#/components/schemas/OrderType"
+            "type": "string",
+            "description": "Order type such as LO, MTL, ATO, or ATC."
           },
           "orderEntryPrice": {
-            "type": "number"
+            "type": "number",
+            "description": "Original submitted price."
           },
           "orderEntryQty": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Original submitted quantity."
           },
           "orderCurrentPrice": {
-            "type": "number"
+            "type": "number",
+            "description": "Current active price after broker updates or modifications."
           },
           "orderCurrentQty": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Current active quantity after fills/cancellations."
           },
           "filledQty": {
-            "type": "integer"
+            "type": "number",
+            "description": "Filled quantity."
           },
           "avgFillPrice": {
-            "type": "number"
+            "type": "number",
+            "description": "Average fill price."
           },
           "cancelledQty": {
-            "type": "integer"
+            "type": "number",
+            "description": "Cancelled quantity."
           },
           "orderText": {
-            "type": "string"
+            "type": "string",
+            "description": "Broker or backend explanatory text."
           },
           "unixUTCTimeMs": {
-            "type": "integer",
-            "format": "int64"
+            "type": "number",
+            "description": "Last order event time in Unix milliseconds UTC."
           },
           "createunixUTCTimeMs": {
-            "type": "integer",
-            "format": "int64"
+            "type": "number",
+            "description": "Order creation time in Unix milliseconds UTC."
           },
           "persisState": {
-            "type": "string"
+            "type": "string",
+            "description": "Serialized persistence state used by algo/special orders."
           },
           "algoID": {
-            "type": "string"
+            "type": "string",
+            "description": "Algo identifier when order originated from an algo."
           },
           "positionID": {
-            "type": "string"
+            "type": "string",
+            "description": "Position identifier associated with the order."
+          },
+          "toHedge": {
+            "type": "boolean",
+            "description": "Whether this order is marked for hedging."
           },
           "parentOrderId": {
-            "type": "string"
+            "type": "string",
+            "description": "Parent stop or bracket order id for child orders."
+          },
+          "partnerCode": {
+            "type": "string",
+            "description": "Partner code for partner-originated orders."
+          },
+          "partnerBrokerUsed": {
+            "type": "string",
+            "description": "Underlying partner broker account used for partner orders."
           }
         }
       },
@@ -3871,91 +4230,125 @@
       "Trade": {
         "type": "object",
         "additionalProperties": true,
+        "description": "Trade execution report returned by service.orderapi or account history APIs.",
         "properties": {
           "persisState": {
-            "type": "string"
+            "type": "string",
+            "description": "Serialized persistence state associated with the trade."
           },
           "orderID": {
-            "type": "string"
+            "type": "string",
+            "description": "System order identifier."
           },
           "refOrderID": {
-            "type": "string"
+            "type": "string",
+            "description": "Client reference order identifier."
           },
           "externalOrderID": {
-            "type": "string"
+            "type": "string",
+            "description": "External broker order identifier."
           },
           "tradeID": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique trade execution identifier."
           },
           "accountID": {
-            "type": "string"
+            "type": "string",
+            "description": "Trading account identifier."
           },
           "symbol": {
-            "type": "string"
+            "type": "string",
+            "description": "Traded symbol."
           },
           "orderSide": {
-            "$ref": "#/components/schemas/OrderSide"
+            "type": "string",
+            "enum": [
+              "B",
+              "S"
+            ],
+            "description": "B for buy, S for sell."
           },
           "tradedPrice": {
-            "type": "number"
+            "type": "number",
+            "description": "Execution price."
           },
           "tradedQty": {
-            "type": "integer"
+            "type": "number",
+            "description": "Executed quantity."
           },
           "unixUTCTimeMs": {
-            "type": "integer",
-            "format": "int64"
+            "type": "number",
+            "description": "Execution timestamp in Unix milliseconds UTC."
           },
           "algoID": {
-            "type": "string"
+            "type": "string",
+            "description": "Algo identifier associated with the trade, if any."
           },
           "positionID": {
-            "type": "string"
+            "type": "string",
+            "description": "Position identifier associated with the trade, if any."
+          },
+          "toHedge": {
+            "type": "boolean",
+            "description": "Whether the trade belongs to a hedge flow."
           }
         }
       },
       "Transaction": {
         "type": "object",
         "additionalProperties": true,
+        "description": "Cash, PnL, fee, tax, dividend, deposit, withdrawal, or referral transaction record.",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique transaction identifier."
           },
           "accountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Account affected by the transaction."
           },
           "transactionType": {
             "type": "string",
-            "description": "Examples used by UI: deposit, withdraw, fee, trading_fee, overnight_fee, realized_pnl, pnl, tax, trading_tax, commission, trading_commission, referral_refund, referral_rebate."
+            "description": "Business transaction type such as credit_update, deposit, withdraw, trading_fee, referral_commission, referral_rebate, realized_pnl, or tax."
           },
           "amount": {
-            "type": "number"
+            "type": "number",
+            "description": "Transaction amount. Negative values represent debits/holds where applicable."
           },
           "status": {
-            "type": "string"
+            "type": "string",
+            "description": "Processing status such as pending, processing, or complete."
           },
           "network": {
-            "type": "string"
+            "type": "string",
+            "description": "Payment or transfer network, if applicable."
           },
           "tx": {
-            "type": "string"
+            "type": "string",
+            "description": "Transaction hash or external transaction reference."
           },
           "recvAddress": {
-            "type": "string"
+            "type": "string",
+            "description": "Receiving address for external transfer flows."
           },
           "senderAddress": {
-            "type": "string"
+            "type": "string",
+            "description": "Sender address for external transfer flows."
           },
           "processedTime": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "description": "Processing timestamp in Unix milliseconds."
           },
           "metadata": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": true,
+            "description": "Transaction-specific metadata, for example symbol, trade_id, position_id, bank account metadata, or right-subscription data."
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp."
           }
         }
       },
@@ -3963,131 +4356,174 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma ban ghi phi hoa hong."
           },
           "accountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma tai khoan phat sinh phi hoa hong."
           },
           "orderId": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma lenh lien quan, neu co."
           },
           "tradeId": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma giao dich khop lenh lien quan, neu co."
           },
           "symbol": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma chung khoan/san pham lien quan den phi hoa hong."
           },
           "commission": {
-            "type": "number"
+            "type": "number",
+            "description": "Gia tri phi hoa hong."
           },
           "fee": {
-            "type": "number"
+            "type": "number",
+            "description": "Gia tri phi khac di kem ban ghi hoa hong."
           },
           "unixUTCTimeMs": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "description": "Thoi diem phat sinh theo Unix UTC milliseconds."
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "Mo ta text do backend tra ve cho ban ghi phi hoa hong."
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "description": "Phí hoa hồng phát sinh trên giao dịch/lệnh của tài khoản."
       },
       "Fee": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma ban ghi phi."
           },
           "accountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma tai khoan phat sinh phi."
           },
           "orderId": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma lenh lien quan, neu co."
           },
           "tradeId": {
-            "type": "string"
+            "type": "string",
+            "description": "Ma giao dich khop lenh lien quan, neu co."
           },
           "feeType": {
-            "type": "string"
+            "type": "string",
+            "description": "Loai phi do backend phan loai."
           },
           "amount": {
-            "type": "number"
+            "type": "number",
+            "description": "So tien/gia tri phi."
           },
           "unixUTCTimeMs": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "description": "Thoi diem phat sinh theo Unix UTC milliseconds."
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "Mo ta text do backend tra ve cho ban ghi phi."
           }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "description": "Ban ghi phi phat sinh tren tai khoan, lenh hoac giao dich."
       },
       "CommissionSummary": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Aggregated referral statistics for the current user/account.",
         "properties": {
           "refCode": {
-            "type": "string"
+            "type": "string",
+            "description": "Referral code owned by the current account."
           },
           "referredCode": {
-            "type": "string"
+            "type": "string",
+            "description": "Referral code that referred the current account."
           },
           "totalVolume": {
-            "type": "number"
+            "type": "number",
+            "description": "Total referred trading volume."
           },
           "referralRewards": {
-            "type": "number"
+            "type": "number",
+            "description": "Total commission/rewards earned by the referrer."
           },
           "referredFriends": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Count of unique referred accounts."
           },
           "friendsWhoTraded": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Count of referred accounts with trading activity."
           },
           "totalRebatesGiven": {
-            "type": "number"
+            "type": "number",
+            "description": "Total rebates paid to referred accounts."
           }
         }
       },
       "CommissionInfo": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Referral code ownership and rebate-rate configuration.",
         "properties": {
           "refCode": {
-            "type": "string"
+            "type": "string",
+            "description": "Referral code."
           },
           "ownerAccountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Account that owns this referral code."
           },
           "rebateRate": {
             "type": "number",
-            "description": "0-1 ratio."
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Rebate rate in decimal form, for example 0.1 means 10%."
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "description": "Creation timestamp when available."
           },
           "updatedAt": {
-            "type": "string"
+            "type": "string",
+            "description": "Last update timestamp when available."
           }
         }
       },
       "CommissionHistoryItem": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Referral contribution from one referred account.",
         "properties": {
           "friendAddress": {
-            "type": "string"
+            "type": "string",
+            "description": "Referred account identifier."
           },
           "dateJoined": {
-            "type": "string"
+            "type": "string",
+            "description": "First trade/join date used by referral history."
           },
           "totalVolume": {
-            "type": "number"
+            "type": "number",
+            "description": "Total trading volume from this referred account."
           },
           "feesPaid": {
-            "type": "number"
+            "type": "number",
+            "description": "Total fees paid by this referred account."
           },
           "yourRewards": {
-            "type": "number"
+            "type": "number",
+            "description": "Commission reward earned from this referred account."
           }
         }
       },
@@ -4110,41 +4546,54 @@
       },
       "NotificationData": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Notification-specific payload. Margin/deposit/withdraw notifications usually include accountId plus optional symbol, amount, position, and account snapshots.",
         "properties": {
           "accountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Related account id."
           },
           "symbol": {
-            "type": "string"
+            "type": "string",
+            "description": "Related symbol for position/risk notifications."
           },
           "amount": {
-            "type": "number"
+            "type": "number",
+            "description": "Related cash amount for deposit/withdraw notifications."
           },
           "position": {
-            "type": "object",
-            "additionalProperties": true
+            "description": "Position snapshot for margin/force-close notifications."
           },
           "account": {
-            "type": "object",
-            "additionalProperties": true
+            "description": "Account snapshot for account-level notifications."
           }
-        },
-        "additionalProperties": true
+        }
       },
       "Notification": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Notification record stored by vero-notify-service. Raw API field names are snake_case; frontend transforms them to camelCase.",
         "properties": {
           "id": {
             "type": "integer",
+            "format": "int64",
             "description": "Notification identifier."
           },
-          "userId": {
+          "user_id": {
             "type": "string",
             "description": "User that owns the notification."
           },
+          "userId": {
+            "type": "string",
+            "description": "CamelCase frontend alias for user_id."
+          },
+          "account_id": {
+            "type": "string",
+            "description": "Related account id."
+          },
           "accountId": {
             "type": "string",
-            "description": "Account related to the notification."
+            "description": "CamelCase frontend alias for account_id."
           },
           "type": {
             "type": "string",
@@ -4154,38 +4603,48 @@
               "Deposit",
               "Withdraw"
             ],
-            "example": "MarginCall",
             "description": "Notification business type."
           },
           "topic": {
             "type": "string",
             "description": "Notification topic/channel."
           },
+          "message_id": {
+            "type": "string",
+            "description": "Unique backend message identifier."
+          },
           "messageID": {
             "type": "string",
-            "description": "Unique message identifier."
+            "description": "CamelCase frontend alias for message_id."
           },
           "data": {
-            "type": "object",
-            "properties": {},
-            "additionalProperties": true,
-            "description": "Notification payload with account, symbol, amount, or position details."
+            "$ref": "#/components/schemas/NotificationData"
           },
           "read": {
             "type": "boolean",
-            "description": "Whether the user has marked the notification as read."
+            "description": "Whether the notification has been marked as read."
+          },
+          "created_at": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Creation timestamp in Unix milliseconds."
           },
           "createdAt": {
             "type": "integer",
-            "description": "Creation timestamp in Unix milliseconds."
+            "format": "int64",
+            "description": "CamelCase frontend alias for created_at."
+          },
+          "updated_at": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Last update timestamp in Unix milliseconds."
           },
           "updatedAt": {
             "type": "integer",
-            "description": "Last update timestamp in Unix milliseconds."
+            "format": "int64",
+            "description": "CamelCase frontend alias for updated_at."
           }
-        },
-        "additionalProperties": true,
-        "description": "Notification record."
+        }
       },
       "NotificationType": {
         "type": "string",
@@ -4229,7 +4688,15 @@
             "type": "boolean"
           },
           "returnCode": {
-            "type": "number"
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Ma tra ve cua backend. Response market-data thuc te thuong tra so 0 khi thanh cong."
           },
           "serviceInstance": {
             "type": "array",
@@ -4591,125 +5058,163 @@
       },
       "OhlcvBar": {
         "type": "object",
-        "required": [
-          "unixTime",
-          "open",
-          "high",
-          "low",
-          "close",
-          "volume"
-        ],
+        "additionalProperties": true,
+        "description": "OHLCV candle returned by tick-api-go.",
         "properties": {
+          "docId": {
+            "type": "string",
+            "description": "Database document id."
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Candle symbol. Futures may be normalized to the requested future type."
+          },
           "unixTime": {
             "type": "integer",
             "format": "int64",
-            "description": "Unix timestamp in milliseconds."
+            "description": "Candle timestamp in Unix milliseconds."
           },
           "open": {
-            "type": "number"
+            "type": "number",
+            "description": "Open price."
           },
           "high": {
-            "type": "number"
+            "type": "number",
+            "description": "High price."
           },
           "low": {
-            "type": "number"
+            "type": "number",
+            "description": "Low price."
           },
           "close": {
-            "type": "number"
+            "type": "number",
+            "description": "Close price."
+          },
+          "closeAdj": {
+            "type": "number",
+            "description": "Adjusted close price."
           },
           "volume": {
-            "type": "number"
+            "type": "number",
+            "description": "Traded volume."
+          },
+          "type": {
+            "type": "integer",
+            "description": "Stored resolution/type in seconds."
+          },
+          "isSpotProduct": {
+            "type": "boolean",
+            "description": "Whether this candle belongs to a spot product."
+          },
+          "isFinished": {
+            "type": "boolean",
+            "description": "Whether the candle is finalized."
           }
-        },
-        "additionalProperties": true
+        }
       },
       "MarginRatioDiagnostics": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Effective margin-ratio diagnostics returned by account service.",
         "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Requested symbol."
+          },
           "marginRatio": {
-            "type": "number"
+            "type": "number",
+            "description": "Effective margin ratio."
           },
           "forceCloseRate": {
-            "type": "number"
+            "type": "number",
+            "description": "Effective force-close rate."
           },
           "marginCallRate": {
-            "type": "number"
+            "type": "number",
+            "description": "Effective margin-call rate."
           },
           "productGroup": {
-            "type": "string"
-          },
-          "symbol": {
-            "type": "string"
+            "type": "string",
+            "description": "Product group matched for the symbol."
           }
-        },
-        "additionalProperties": true
+        }
       },
       "RightSubscription": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Admin-created right subscription rule.",
         "properties": {
           "id": {
             "type": "integer",
-            "description": "Unique record identifier."
+            "format": "int64",
+            "description": "Rule identifier."
           },
           "symbol": {
             "type": "string",
-            "description": "Trading symbol or product code."
+            "description": "Stock symbol for the right subscription."
           },
           "ratio": {
             "type": "string",
-            "example": "100:20",
-            "description": "Subscription ratio, for example 100:20."
+            "description": "Subscription ratio in X:Y form, for example 100:20."
           },
           "price": {
             "type": "number",
-            "description": "Subscription price per share."
+            "description": "Subscription price."
           },
           "startDate": {
             "type": "string",
-            "description": "Subscription period start date."
+            "format": "date",
+            "description": "Start date in YYYY-MM-DD format."
           },
           "endDate": {
             "type": "string",
-            "description": "Subscription period end date."
+            "format": "date",
+            "description": "End date in YYYY-MM-DD format."
           },
           "status": {
             "type": "string",
-            "description": "Current status value."
+            "enum": [
+              "active",
+              "expired",
+              "cancelled"
+            ],
+            "description": "Rule status."
           },
           "note": {
             "type": "string",
-            "description": "Optional free-form note."
+            "description": "Optional admin note."
           },
           "createdAt": {
             "type": "string",
-            "description": "Record creation timestamp."
+            "format": "date-time",
+            "description": "Creation timestamp."
           },
           "updatedAt": {
             "type": "string",
-            "description": "Record last update timestamp."
+            "format": "date-time",
+            "description": "Last update timestamp."
           }
-        },
-        "additionalProperties": true,
-        "description": "Right subscription rule or user subscription item."
+        }
       },
       "SubscribeRightRequest": {
         "type": "object",
-        "properties": {
-          "symbol": {
-            "type": "string",
-            "description": "Trading symbol or product code."
-          },
-          "shares": {
-            "type": "number",
-            "description": "Number of new shares the user wants to subscribe for."
-          }
-        },
+        "additionalProperties": false,
+        "description": "Payload for submitting a right subscription request.",
         "required": [
           "symbol",
           "shares"
         ],
-        "additionalProperties": true,
-        "description": "Payload for user subscription to a right offering."
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Symbol to subscribe."
+          },
+          "shares": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of new shares to subscribe."
+          }
+        }
       },
       "StatusResponse": {
         "type": "object",
@@ -4730,133 +5235,177 @@
       },
       "AdjustCoveredMarginRequest": {
         "type": "object",
-        "properties": {
-          "accountId": {
-            "type": "string",
-            "description": "Account whose covered margin value should be changed."
-          },
-          "symbol": {
-            "type": "string",
-            "description": "Symbol whose covered margin amount should be changed."
-          },
-          "amount": {
-            "type": "number",
-            "description": "New covered margin amount. Must be zero or greater."
-          }
-        },
+        "additionalProperties": false,
+        "description": "Payload for setting covered margin call amount for an open position.",
         "required": [
           "accountId",
           "symbol",
           "amount"
         ],
-        "additionalProperties": true,
-        "description": "Payload for adjusting covered margin call amount for a symbol."
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Trading account containing the position."
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Position symbol."
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0,
+            "description": "New covered margin-call amount. Must be zero or greater."
+          }
+        }
       },
       "CustomResponse": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Frontend wrapper type kept for compatibility. API endpoints documented here describe their actual backend body in each operation response.",
         "properties": {
           "status": {
             "type": "integer",
-            "example": 200,
-            "description": "HTTP status code returned with the response."
+            "description": "HTTP-like status code added by frontend helpers."
           },
           "data": {
-            "description": "Wrapped response payload, or null when the request failed."
+            "description": "Payload returned by the API."
           },
           "message": {
             "type": "string",
-            "example": "Success",
-            "description": "Success or error message returned with the response."
+            "description": "Success or error message."
           }
-        },
-        "additionalProperties": true,
-        "description": "Response wrapper containing status, data and message."
+        }
       },
       "OrderResponse": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Frontend wrapper type kept for compatibility. API endpoints documented here describe their actual backend body in each operation response.",
         "properties": {
           "status": {
             "type": "integer",
-            "description": "Status code returned with the order response."
+            "description": "HTTP-like status code added by frontend helpers."
           },
           "data": {
-            "description": "Order response payload, or null on failure."
+            "description": "Payload returned by the API."
           },
           "message": {
             "type": "string",
-            "description": "Order success or error message."
+            "description": "Success or error message."
           }
-        },
-        "additionalProperties": true,
-        "description": "Order response wrapper."
+        }
       },
       "MarketDataResponse": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Common market-data gateway response wrapper. Some endpoints return an object with isSuccess/data fields; frontend code also accepts endpoint-specific raw payloads.",
         "properties": {
+          "isSuccess": {
+            "type": "boolean",
+            "description": "Whether the market data service returned success."
+          },
+          "returnCode": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Ma tra ve cua backend. Response market-data thuc te thuong tra so 0 khi thanh cong."
+          },
+          "serviceInstance": {
+            "description": "Market data service instance metadata."
+          },
+          "requestID": {
+            "type": "string",
+            "description": "Request identifier returned by the market data service."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Backend detail message."
+          },
+          "dataType": {
+            "type": "string",
+            "description": "Payload type."
+          },
+          "data": {
+            "description": "Endpoint-specific market-data payload."
+          },
           "status": {
             "type": "integer",
-            "description": "Status code from the market-data request."
+            "description": "Optional HTTP-like status added by client wrappers."
           },
           "symbol": {
             "type": "string",
             "description": "Symbol associated with the response when applicable."
           },
-          "data": {
-            "description": "Market-data payload returned by the API."
+          "algoID": {
+            "description": "Ma algo duoc market-data service tra lai khi co."
+          },
+          "positionID": {
+            "description": "Ma position duoc market-data service tra lai khi co."
+          },
+          "requestType": {
+            "description": "Nhan loai request do backend tra ve."
+          },
+          "executionTime": {
+            "description": "Metadata thoi gian xu ly cua backend."
+          },
+          "lastTime": {
+            "description": "Timestamp du lieu cuoi cung hoac metadata thoi gian cua service."
           }
-        },
-        "additionalProperties": true,
-        "description": "Common wrapper for market-data responses."
+        }
       },
       "NotificationsResponse": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Paginated notification list response.",
         "properties": {
           "notifications": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Notification"
             },
-            "description": "Notification records in this page."
+            "description": "Notifications in descending backend order."
           },
           "limit": {
             "type": "integer",
-            "description": "Maximum number of records returned."
+            "description": "Limit used for this request."
           },
           "offset": {
             "type": "integer",
-            "description": "Offset used for pagination."
+            "description": "Offset used for this request."
           }
-        },
-        "additionalProperties": true,
-        "description": "Paged notification list response."
+        }
       },
       "MessageResponse": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Simple success/error message response.",
         "properties": {
           "message": {
             "type": "string",
-            "example": "Success",
-            "description": "Human-readable success or status message."
+            "description": "Human-readable result message."
           },
           "status": {
             "type": "string",
-            "example": "success",
-            "description": "Status string returned by the API, usually success."
+            "description": "Optional textual status such as success or failed."
           }
-        },
-        "additionalProperties": true,
-        "description": "Simple success response with an optional status and message."
+        }
       },
       "ReferralSummary": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Aggregated referral statistics for the current user/account.",
         "properties": {
           "refCode": {
             "type": "string",
-            "description": "Referral code owned by the current user."
+            "description": "Referral code owned by the current account."
           },
           "referredCode": {
             "type": "string",
-            "description": "Referral code that referred the current user."
+            "description": "Referral code that referred the current account."
           },
           "totalVolume": {
             "type": "number",
@@ -4864,26 +5413,26 @@
           },
           "referralRewards": {
             "type": "number",
-            "description": "Total referral rewards earned."
+            "description": "Total commission/rewards earned by the referrer."
           },
           "referredFriends": {
             "type": "integer",
-            "description": "Number of referred users."
+            "description": "Count of unique referred accounts."
           },
           "friendsWhoTraded": {
             "type": "integer",
-            "description": "Number of referred users with trading activity."
+            "description": "Count of referred accounts with trading activity."
           },
           "totalRebatesGiven": {
             "type": "number",
-            "description": "Total rebates given to referred users."
+            "description": "Total rebates paid to referred accounts."
           }
-        },
-        "additionalProperties": true,
-        "description": "Aggregated referral statistics for the current user."
+        }
       },
       "ReferralInfo": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Referral code ownership and rebate-rate configuration.",
         "properties": {
           "refCode": {
             "type": "string",
@@ -4891,45 +5440,49 @@
           },
           "ownerAccountId": {
             "type": "string",
-            "description": "Account that owns the referral code."
+            "description": "Account that owns this referral code."
           },
           "rebateRate": {
             "type": "number",
-            "description": "Rebate rate as a decimal between 0 and 1."
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Rebate rate in decimal form, for example 0.1 means 10%."
           },
           "createdAt": {
             "type": "string",
-            "description": "Creation timestamp."
+            "description": "Creation timestamp when available."
           },
           "updatedAt": {
             "type": "string",
-            "description": "Last update timestamp."
+            "description": "Last update timestamp when available."
           }
-        },
-        "additionalProperties": true,
-        "description": "Referral code owner and rebate-rate information."
+        }
       },
       "SetRefCodeRebateRateRequest": {
         "type": "object",
-        "properties": {
-          "refCode": {
-            "type": "string",
-            "description": "Referral code to update."
-          },
-          "rebateRate": {
-            "type": "number",
-            "description": "Rebate rate as a decimal between 0 and 1."
-          }
-        },
+        "additionalProperties": false,
+        "description": "Payload for setting or updating a referral code rebate rate.",
         "required": [
           "refCode",
           "rebateRate"
         ],
-        "additionalProperties": true,
-        "description": "Payload for setting rebate rate on a referral code."
+        "properties": {
+          "refCode": {
+            "type": "string",
+            "description": "Referral code to create or update."
+          },
+          "rebateRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Rebate rate from 0 to 1. Example: 0.1 means 10%."
+          }
+        }
       },
       "IdCardParseRequest": {
         "type": "object",
+        "additionalProperties": false,
+        "description": "Base64-encoded ID-card images captured or uploaded in the signup flow. frontImage is required; backImage and portraitImage are optional.",
         "required": [
           "frontImage"
         ],
@@ -4937,143 +5490,115 @@
           "frontImage": {
             "type": "string",
             "format": "byte",
-            "description": "Nội dung ảnh mặt trước CCCD/CMND ở dạng base64. Chỉ gửi phần base64, không gửi tiền tố data URL."
+            "description": "Base64 image content for the front side of the Vietnamese ID card. Do not include the data URL prefix."
           },
           "backImage": {
             "type": "string",
             "format": "byte",
-            "description": "Nội dung ảnh mặt sau CCCD/CMND ở dạng base64, gửi khi có ảnh mặt sau."
+            "description": "Optional base64 image content for the back side of the ID card."
           },
           "portraitImage": {
             "type": "string",
             "format": "byte",
-            "description": "Ảnh chân dung hoặc selfie ở dạng base64, gửi khi có ảnh xác minh khuôn mặt."
+            "description": "Optional base64 portrait/selfie image."
           }
-        },
-        "additionalProperties": false,
-        "description": "Payload gửi ảnh giấy tờ định danh trong luồng đăng ký."
+        }
       },
       "IdCardParseResponse": {
         "type": "object",
-        "required": [
-          "data"
-        ],
+        "additionalProperties": true,
+        "description": "ID-card parsing response returned by the chat/ekyc route.",
         "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether parsing succeeded."
+          },
           "data": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/IdCardData"
-              }
-            ],
-            "description": "Các trường định danh được trích xuất từ ảnh giấy tờ đã gửi."
+            "$ref": "#/components/schemas/IdCardData"
           },
           "imageUrls": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/IdCardImageUrls"
-              }
-            ],
-            "description": "URL ảnh đã lưu hoặc đã chuẩn hóa, trả về khi có."
+            "$ref": "#/components/schemas/IdCardImageUrls"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message when parsing fails."
           }
-        },
-        "additionalProperties": true,
-        "description": "Response thành công của API trích xuất thông tin CCCD/CMND."
+        }
       },
       "IdCardData": {
         "type": "object",
-        "required": [
-          "idNumber",
-          "fullName",
-          "dateOfBirth",
-          "sex",
-          "nationality",
-          "placeOfOrigin",
-          "placeOfResidence",
-          "dateOfExpiry"
-        ],
+        "additionalProperties": true,
+        "description": "Parsed Vietnamese ID card fields.",
         "properties": {
           "idNumber": {
             "type": "string",
-            "description": "Số CCCD/CMND được trích xuất từ mặt trước giấy tờ."
+            "description": "Citizen ID number."
           },
           "fullName": {
             "type": "string",
-            "description": "Họ tên đầy đủ được trích xuất từ giấy tờ."
+            "description": "Full name on the ID card."
           },
           "dateOfBirth": {
             "type": "string",
-            "example": "31/12/1990",
-            "description": "Ngày sinh được trích xuất từ giấy tờ, thường theo định dạng dd/MM/yyyy."
+            "description": "Date of birth as parsed from the document."
           },
           "sex": {
             "type": "string",
-            "example": "Nam",
-            "description": "Giới tính được trích xuất từ giấy tờ."
+            "description": "Sex/gender value on the document."
           },
           "nationality": {
             "type": "string",
-            "example": "Việt Nam",
-            "description": "Quốc tịch được trích xuất từ giấy tờ."
+            "description": "Nationality."
           },
           "placeOfOrigin": {
             "type": "string",
-            "description": "Quê quán hoặc nơi sinh được trích xuất từ giấy tờ."
+            "description": "Place of origin."
           },
           "placeOfResidence": {
             "type": "string",
-            "description": "Nơi thường trú được trích xuất từ giấy tờ."
+            "description": "Place of residence."
           },
           "dateOfExpiry": {
             "type": "string",
-            "example": "31/12/2030",
-            "description": "Ngày hết hạn của giấy tờ, thường theo định dạng dd/MM/yyyy."
+            "description": "Expiry date."
           },
           "dateOfIssue": {
             "type": "string",
-            "example": "01/01/2020",
-            "description": "Ngày cấp giấy tờ, nếu trích xuất được."
+            "description": "Issue date when available."
           },
           "issuedBy": {
             "type": "string",
-            "description": "Cơ quan cấp giấy tờ, nếu trích xuất được."
+            "description": "Issuing authority when available."
           },
           "address": {
             "type": "string",
-            "description": "Địa chỉ đã phân tích, nếu API trả về."
+            "description": "Parsed address when returned by backend."
           }
-        },
-        "additionalProperties": true,
-        "description": "Thông tin định danh được trích xuất từ CCCD/CMND."
+        }
       },
       "IdCardImageUrls": {
         "type": "object",
-        "required": [
-          "front",
-          "back",
-          "portrait"
-        ],
+        "additionalProperties": true,
+        "description": "Stored image URLs returned by the ID-card service.",
         "properties": {
           "front": {
             "type": "string",
-            "format": "uri",
-            "description": "URL ảnh mặt trước đã lưu hoặc đã xử lý."
+            "description": "Stored front image URL."
           },
           "back": {
             "type": "string",
-            "format": "uri",
-            "description": "URL ảnh mặt sau đã lưu hoặc đã xử lý."
+            "description": "Stored back image URL."
           },
           "portrait": {
             "type": "string",
-            "format": "uri",
-            "description": "URL ảnh chân dung hoặc selfie đã lưu hoặc đã xử lý."
+            "description": "Stored portrait image URL."
           }
-        },
-        "additionalProperties": true,
-        "description": "Các URL ảnh được trả về sau khi xử lý ảnh đăng ký."
+        }
       },
       "NewStopOrderRequest": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Payload for creating a stop order.",
         "required": [
           "symbol",
           "side",
@@ -5088,7 +5613,7 @@
           "symbol": {
             "type": "string",
             "example": "FPT",
-            "description": "Mã giao dịch hoặc mã sản phẩm."
+            "description": "Symbol to trade."
           },
           "side": {
             "type": "string",
@@ -5096,12 +5621,11 @@
               "B",
               "S"
             ],
-            "example": "B",
-            "description": "Chiều lệnh."
+            "description": "B for buy, S for sell."
           },
           "stopPrice": {
             "type": "number",
-            "description": "Giá kích hoạt lệnh stop-loss."
+            "description": "Trigger price."
           },
           "stopCondition": {
             "type": "string",
@@ -5109,91 +5633,49 @@
               ">=",
               "<="
             ],
-            "example": ">=",
-            "description": "Điều kiện so sánh giá thị trường với stopPrice."
+            "description": "Trigger condition comparing market price to stopPrice."
           },
           "orderType": {
             "type": "string",
             "enum": [
               "LO",
-              "MTL"
+              "MTL",
+              "MOK",
+              "MAK",
+              "ATC",
+              "ATO",
+              "BEST",
+              "OPPOSITE",
+              "LAST"
             ],
-            "example": "LO",
-            "description": "Loại lệnh gửi sau khi điều kiện kích hoạt được thỏa mãn."
+            "description": "Order type sent when the trigger fires. Frontend currently uses LO or MTL."
           },
           "price": {
             "type": "number",
-            "description": "Giá đặt lệnh sau khi điều kiện kích hoạt được thỏa mãn."
+            "description": "Limit price for LO orders; ignored or optional for market-style order types."
           },
           "quantity": {
-            "type": "number",
-            "description": "Khối lượng đặt lệnh sau khi điều kiện kích hoạt được thỏa mãn."
+            "type": "integer",
+            "description": "Order quantity sent after the trigger."
           },
           "account": {
             "type": "string",
-            "description": "Mã tài khoản giao dịch."
+            "description": "Trading account used for the order."
           }
-        },
-        "additionalProperties": true,
-        "description": "Payload tạo lệnh stop-loss."
+        }
       },
       "ModifyStopOrderRequest": {
-        "type": "object",
-        "properties": {
-          "symbol": {
-            "type": "string",
-            "example": "FPT",
-            "description": "Mã giao dịch hoặc mã sản phẩm."
-          },
-          "side": {
-            "type": "string",
-            "enum": [
-              "B",
-              "S"
-            ],
-            "example": "B",
-            "description": "Chiều lệnh."
-          },
-          "stopPrice": {
-            "type": "number",
-            "description": "Giá kích hoạt mới của lệnh stop-loss."
-          },
-          "stopCondition": {
-            "type": "string",
-            "enum": [
-              ">=",
-              "<="
-            ],
-            "example": ">=",
-            "description": "Điều kiện kích hoạt mới."
-          },
-          "orderType": {
-            "type": "string",
-            "enum": [
-              "LO",
-              "MTL"
-            ],
-            "example": "LO",
-            "description": "Loại lệnh gửi sau khi điều kiện kích hoạt được thỏa mãn."
-          },
-          "price": {
-            "type": "number",
-            "description": "Giá đặt lệnh mới."
-          },
-          "quantity": {
-            "type": "number",
-            "description": "Khối lượng đặt lệnh mới."
-          },
-          "account": {
-            "type": "string",
-            "description": "Mã tài khoản giao dịch."
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NewStopOrderRequest"
           }
-        },
-        "additionalProperties": true,
-        "description": "Payload sửa lệnh stop-loss hiện có."
+        ],
+        "description": "Payload for replacing the fields of an existing stop order. The order id is supplied in the path."
       },
       "NewBracketOrderRequest": {
         "type": "object",
+        "additionalProperties": true,
+        "description": "Payload for creating a bracket order with optional take-profit and stop-loss legs.",
         "required": [
           "symbol",
           "side",
@@ -5207,7 +5689,7 @@
           "symbol": {
             "type": "string",
             "example": "FPT",
-            "description": "Mã giao dịch hoặc mã sản phẩm."
+            "description": "Symbol to trade."
           },
           "side": {
             "type": "string",
@@ -5215,12 +5697,11 @@
               "B",
               "S"
             ],
-            "example": "B",
-            "description": "Chiều lệnh."
+            "description": "B for buy, S for sell."
           },
           "conditionPrice": {
             "type": "number",
-            "description": "Giá kích hoạt bracket order."
+            "description": "Entry trigger price."
           },
           "conditionType": {
             "type": "string",
@@ -5228,8 +5709,7 @@
               ">=",
               "<="
             ],
-            "example": ">=",
-            "description": "Điều kiện so sánh giá thị trường với conditionPrice."
+            "description": "Entry trigger condition comparing market price to conditionPrice."
           },
           "orderType": {
             "type": "string",
@@ -5237,28 +5717,612 @@
               "LO",
               "MTL"
             ],
-            "example": "LO",
-            "description": "Loại lệnh gửi sau khi điều kiện bracket được thỏa mãn."
+            "description": "Entry order type sent after the trigger."
           },
           "quantity": {
-            "type": "number",
-            "description": "Khối lượng đặt lệnh."
+            "type": "integer",
+            "description": "Entry order quantity."
           },
           "account": {
             "type": "string",
-            "description": "Mã tài khoản giao dịch."
+            "description": "Trading account used for the bracket order."
           },
           "takeProfitPrice": {
             "type": "number",
-            "description": "Giá chốt lời tùy chọn."
+            "description": "Optional take-profit target price."
           },
           "stopLossPrice": {
             "type": "number",
-            "description": "Giá cắt lỗ tùy chọn."
+            "description": "Optional stop-loss price."
           }
-        },
+        }
+      },
+      "OrderData": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Order"
+          }
+        ],
+        "description": "Alias for the order execution report payload."
+      },
+      "RestAPIRtn": {
+        "type": "object",
         "additionalProperties": true,
-        "description": "Payload tạo bracket order với nhánh chốt lời và cắt lỗ tùy chọn."
+        "description": "Native service.orderapi response body for order actions.",
+        "properties": {
+          "isSuccess": {
+            "type": "boolean",
+            "description": "Whether the backend accepted and processed the action."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Success or error detail returned by service.orderapi."
+          },
+          "data": {
+            "description": "Action-specific payload. For new stop orders this is the stop order id; for bracket orders this is the bracket order id; for modify/cancel it can be the updated order object or serialized backend detail."
+          }
+        }
+      },
+      "StopOrder": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Stored stop order state returned by the order service.",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "description": "System stop order id. JSON serialization may also return OrderId depending on backend settings."
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Trading symbol."
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "B",
+              "S"
+            ],
+            "description": "B for buy, S for sell."
+          },
+          "stopPrice": {
+            "type": "number",
+            "description": "Trigger price."
+          },
+          "stopCondition": {
+            "type": "string",
+            "enum": [
+              ">=",
+              "<="
+            ],
+            "description": "Trigger condition comparing current market price against stopPrice."
+          },
+          "orderType": {
+            "type": "string",
+            "description": "Child order type sent when the trigger fires."
+          },
+          "price": {
+            "type": "number",
+            "nullable": true,
+            "description": "Limit price for LO orders; null or ignored for market-style orders."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Requested quantity."
+          },
+          "account": {
+            "type": "string",
+            "description": "Trading account."
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation time."
+          },
+          "status": {
+            "type": "string",
+            "description": "Stop order status, for example PENDING, COMPLETE, CANCELLED, or MODIFIED."
+          },
+          "bracketOrderId": {
+            "type": "string",
+            "description": "Ma bracket order cha khi stop order la mot leg cua bracket; null voi stop order doc lap.",
+            "nullable": true
+          },
+          "specialOrderType": {
+            "type": "string",
+            "description": "Loai leg dac biet nhu ENTRY, TAKE_PROFIT hoac STOP_LOSS; null voi stop order doc lap.",
+            "nullable": true
+          },
+          "remainingQty": {
+            "type": "integer",
+            "description": "Remaining quantity for sliced execution."
+          },
+          "lastCheckTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Last trigger check time."
+          },
+          "lastSliceTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Last time a child slice order was sent."
+          },
+          "minSliceIntervalMs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Minimum interval between child slices in milliseconds."
+          },
+          "childOrderIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "System order ids of child broker orders."
+          },
+          "filledQty": {
+            "type": "number",
+            "description": "Filled quantity."
+          },
+          "filledAvgPrice": {
+            "type": "number",
+            "description": "Average filled price."
+          }
+        }
+      },
+      "BracketOrder": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Stored bracket order state returned by the order service.",
+        "properties": {
+          "bracketOrderId": {
+            "type": "string",
+            "description": "System bracket order id."
+          },
+          "entryStopOrderId": {
+            "type": "string",
+            "description": "Entry stop order id generated for the bracket entry condition."
+          },
+    "takeProfitOrderId": {
+      "type": "string",
+      "nullable": true,
+      "description": "Take-profit stop order id generated after entry is active/fillable."
+    },
+    "stopLossOrderId": {
+      "type": "string",
+      "nullable": true,
+      "description": "Stop-loss stop order id generated after entry is active/fillable."
+    },
+          "symbol": {
+            "type": "string",
+            "description": "Trading symbol."
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "B",
+              "S"
+            ],
+            "description": "B for buy, S for sell."
+          },
+          "conditionPrice": {
+            "type": "number",
+            "description": "Entry trigger price."
+          },
+          "conditionType": {
+            "type": "string",
+            "enum": [
+              ">=",
+              "<="
+            ],
+            "description": "Entry trigger condition."
+          },
+          "orderType": {
+            "type": "string",
+            "description": "Entry order type."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Entry order quantity."
+          },
+          "account": {
+            "type": "string",
+            "description": "Trading account."
+          },
+          "takeProfitPrice": {
+            "type": "number",
+            "nullable": true,
+            "description": "Optional take-profit trigger/target price."
+          },
+          "takeProfitStatus": {
+            "type": "string",
+            "description": "Take-profit leg status."
+          },
+          "stopLossPrice": {
+            "type": "number",
+            "nullable": true,
+            "description": "Optional stop-loss trigger price."
+          },
+          "stopLossStatus": {
+            "type": "string",
+            "description": "Stop-loss leg status."
+          },
+          "status": {
+            "type": "string",
+            "description": "Overall bracket status, for example PENDING, COMPLETE, or CANCELLED."
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation time."
+          },
+          "filledTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Entry fill time."
+          },
+          "completedTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Completion time."
+          },
+          "cancelledTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Cancellation time."
+          },
+          "lastCheckTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Last trigger check time."
+          }
+        }
+      },
+      "NewOrderRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Logical payload represented by the normal-order path parameters. This endpoint sends all required fields as path segments and has no JSON body.",
+        "required": [
+          "refOrderID",
+          "accountID",
+          "symbol",
+          "orderSide",
+          "price",
+          "qty",
+          "orderType"
+        ],
+        "properties": {
+          "refOrderID": {
+            "type": "string",
+            "description": "Client-generated reference order id for idempotency and tracking."
+          },
+          "accountID": {
+            "type": "string",
+            "description": "Trading account used to place the order."
+          },
+          "symbol": {
+            "type": "string",
+            "example": "FPT",
+            "description": "Symbol to trade."
+          },
+          "orderSide": {
+            "type": "string",
+            "enum": [
+              "B",
+              "S"
+            ],
+            "description": "B for buy, S for sell."
+          },
+          "price": {
+            "type": "number",
+            "description": "Order price."
+          },
+          "qty": {
+            "type": "integer",
+            "description": "Order quantity."
+          },
+          "orderType": {
+            "type": "string",
+            "enum": [
+              "LO",
+              "MTL",
+              "ATO",
+              "ATC"
+            ],
+            "description": "Order type: LO limit, MTL market-to-limit, ATO at-the-open, ATC at-the-close."
+          }
+        }
+      },
+      "BankAccountResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Response returned by bank-account create operations.",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "success or failed."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable result."
+          },
+          "data": {
+            "$ref": "#/components/schemas/BankAccount"
+          }
+        }
+      },
+      "WithdrawEquityResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Response returned after a successful equity withdrawal.",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "success or failed."
+          },
+          "account_id": {
+            "type": "string",
+            "description": "Account that was debited."
+          },
+          "amount": {
+            "type": "number",
+            "description": "Withdrawal amount."
+          },
+          "new_credit": {
+            "type": "number",
+            "description": "Credit balance after withdrawal."
+          },
+          "new_equity": {
+            "type": "number",
+            "description": "Total equity after withdrawal."
+          },
+          "trading_power": {
+            "type": "number",
+            "description": "Trading power after withdrawal."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable result."
+          }
+        }
+      },
+      "CoveredMarginCallResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Response returned after covered margin call is changed.",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "success or failed."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable result."
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Trading account id."
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Position symbol."
+          },
+          "amount": {
+            "type": "number",
+            "description": "Requested covered margin amount."
+          },
+          "newCoveredMarginCall": {
+            "type": "number",
+            "description": "Covered margin call value after update."
+          },
+          "maintenanceMargin": {
+            "type": "number",
+            "description": "Maintenance margin after recalculation."
+          },
+          "tradingPower": {
+            "type": "number",
+            "description": "Trading power after recalculation."
+          }
+        }
+      },
+      "FcmTokenRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Payload for registering a Firebase Cloud Messaging token.",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "FCM registration token."
+          },
+          "device_type": {
+            "type": "string",
+            "enum": [
+              "web",
+              "android",
+              "ios"
+            ],
+            "description": "Device type accepted by vero-notify-service."
+          },
+          "device_id": {
+            "type": "string",
+            "description": "Frontend-supplied device identifier. Current backend stores token and device_type; this field may be ignored by older deployments."
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "web",
+              "android",
+              "ios"
+            ],
+            "description": "Frontend alias for device_type used by web clients."
+          }
+        }
+      },
+      "ReferralHistoryItem": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Referral contribution from one referred account.",
+        "properties": {
+          "friendAddress": {
+            "type": "string",
+            "description": "Referred account identifier."
+          },
+          "dateJoined": {
+            "type": "string",
+            "description": "First trade/join date used by referral history."
+          },
+          "totalVolume": {
+            "type": "number",
+            "description": "Total trading volume from this referred account."
+          },
+          "feesPaid": {
+            "type": "number",
+            "description": "Total fees paid by this referred account."
+          },
+          "yourRewards": {
+            "type": "number",
+            "description": "Commission reward earned from this referred account."
+          }
+        }
+      },
+      "SetRefCodeRebateRateResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Response returned after setting a referral code rebate rate.",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "success or failed."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable result."
+          },
+          "refCode": {
+            "type": "string",
+            "description": "Referral code."
+          },
+          "ownerAccountId": {
+            "type": "string",
+            "description": "Owner account id."
+          },
+          "rebateRate": {
+            "type": "number",
+            "description": "Configured rebate rate."
+          }
+        }
+      },
+      "UserRightSubscription": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Right subscription request/entitlement for one account.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "User subscription id."
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account eligible for the right subscription."
+          },
+          "ruleId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Source right subscription rule id."
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Subscribed symbol."
+          },
+          "eligibleShares": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Shares held or eligible for the entitlement."
+          },
+          "maxNewShares": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Maximum new shares that can be subscribed."
+          },
+          "subscribedShares": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Shares requested by the user."
+          },
+          "remainingShares": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Remaining shares that can still be subscribed."
+          },
+          "price": {
+            "type": "number",
+            "description": "Subscription price per share."
+          },
+          "heldAmount": {
+            "type": "number",
+            "description": "Credit amount held for pending subscription."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "expired"
+            ],
+            "description": "Subscription request status."
+          },
+          "rejectReason": {
+            "type": "string",
+            "description": "Reason when rejected."
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Subscription end date."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Last update timestamp."
+          }
+        }
+      },
+      "SubscribeRightResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Response returned after submitting a right subscription request.",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "success or failed."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable result."
+          },
+          "subscription": {
+            "$ref": "#/components/schemas/UserRightSubscription"
+          },
+          "heldAmount": {
+            "type": "number",
+            "description": "Credit amount held by the backend."
+          }
+        }
       }
     }
   }
