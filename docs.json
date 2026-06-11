@@ -101,8 +101,6 @@
                 "pages": [
                   "en/apis/rest/orders/place-order",
                   "en/apis/rest/orders/cancel-order",
-                  "en/apis/rest/orders/list-orders",
-                  "en/apis/rest/orders/list-trades",
                   "en/apis/rest/orders/list-execution-reports",
                   "en/apis/rest/orders/list-stop-loss-orders",
                   "en/apis/rest/orders/place-stop-loss-order",
@@ -197,6 +195,13 @@
             ]
           },
           {
+            "group": "Integrations",
+            "pages": [
+              "en/integrations/mcp-server",
+              "en/integrations/openapi-spec"
+            ]
+          },
+          {
             "group": "Support",
             "pages": [
               "en/best-practices",
@@ -265,8 +270,6 @@
                 "pages": [
                   "vi/apis/rest/orders/place-order",
                   "vi/apis/rest/orders/cancel-order",
-                  "vi/apis/rest/orders/list-orders",
-                  "vi/apis/rest/orders/list-trades",
                   "vi/apis/rest/orders/list-execution-reports",
                   "vi/apis/rest/orders/list-stop-loss-orders",
                   "vi/apis/rest/orders/place-stop-loss-order",
@@ -358,6 +361,13 @@
                   "vi/apis/streaming/notification-events"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Tích hợp",
+            "pages": [
+              "vi/integrations/mcp-server",
+              "vi/integrations/openapi-spec"
             ]
           },
           {

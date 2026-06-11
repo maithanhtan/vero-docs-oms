@@ -1,0 +1,44 @@
+---
+title: 'OpenAPI Spec'
+description: 'Use the Vero OMS OpenAPI specification as the source of truth for API implementation'
+---
+
+Use the OpenAPI files when generating clients, validating payloads, or giving API context to AI tools.
+
+## Specification files
+
+| File | Purpose |
+|---|---|
+| [`/openapi.docs.en.json`](/openapi.docs.en.json) | English REST API reference used by the English docs |
+| [`/openapi.docs.vi.json`](/openapi.docs.vi.json) | Vietnamese REST API reference used by the Vietnamese docs |
+
+The published REST API currently contains 47 unique HTTP operations.
+
+## Use with AI tools
+
+Give the model the OpenAPI file plus this instruction:
+
+```text
+Implement against the Vero OMS OpenAPI spec.
+Use the operation's method and path exactly.
+Use Bearer authentication for protected endpoints unless the endpoint explicitly documents x-session-token.
+Validate all path, query, and body fields against the schema.
+Treat response schemas as authoritative for payload shape and field meanings.
+Handle documented 400, 401, 404, and 500 responses.
+Do not use deprecated or removed endpoints such as commissions and fees.
+```
+
+## Authentication rules
+
+- Most REST endpoints use `Authorization: Bearer <token>`.
+- Ory session endpoints that explicitly document session auth use `x-session-token`.
+- Do not send both credentials unless the endpoint documentation says it accepts both.
+
+## Implementation checklist
+
+1. Find the operation by `operationId`, method, or path.
+2. Read every path, query, header, and body parameter.
+3. Build the request from typed fields, not string concatenation where a structured client is available.
+4. Parse the success response according to the documented schema.
+5. Parse error responses as JSON, Problem Details, or text because gateway/backend errors can vary.
+

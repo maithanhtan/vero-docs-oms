@@ -1,0 +1,45 @@
+---
+title: 'OpenAPI Spec'
+description: 'Dùng Vero OMS OpenAPI specification làm nguồn chuẩn khi implement API'
+---
+
+Dùng các file OpenAPI khi generate client, validate payload hoặc đưa context API cho AI tools.
+
+## Specification files
+
+| File | Mục đích |
+|---|---|
+| [`/openapi.docs.en.json`](/openapi.docs.en.json) | REST API reference tiếng Anh dùng cho English docs |
+| [`/openapi.docs.vi.json`](/openapi.docs.vi.json) | REST API reference tiếng Việt dùng cho Vietnamese docs |
+| [`/openapi.json`](/openapi.json) | Bản working copy local; có thể bị git ignore trong repo này |
+
+REST API published hiện có 47 HTTP operations duy nhất.
+
+## Dùng với AI tools
+
+Đưa OpenAPI file cho model kèm instruction này:
+
+```text
+Implement against the Vero OMS OpenAPI spec.
+Use the operation's method and path exactly.
+Use Bearer authentication for protected endpoints unless the endpoint explicitly documents x-session-token.
+Validate all path, query, and body fields against the schema.
+Treat response schemas as authoritative for payload shape and field meanings.
+Handle documented 400, 401, 404, and 500 responses.
+Do not use deprecated or removed endpoints such as commissions and fees.
+```
+
+## Quy tắc xác thực
+
+- Phần lớn REST endpoints dùng `Authorization: Bearer <token>`.
+- Các Ory session endpoints có ghi rõ session auth thì dùng `x-session-token`.
+- Không gửi cả hai loại credential trừ khi endpoint document rõ là nhận cả hai.
+
+## Checklist implement
+
+1. Tìm operation theo `operationId`, method hoặc path.
+2. Đọc toàn bộ path, query, header và body parameters.
+3. Build request từ typed fields; tránh tự nối string nếu có structured client.
+4. Parse success response theo schema đã document.
+5. Parse error response dưới dạng JSON, Problem Details hoặc text vì gateway/backend errors có thể khác nhau.
+

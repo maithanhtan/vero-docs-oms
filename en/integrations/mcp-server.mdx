@@ -1,0 +1,65 @@
+---
+title: 'MCP Server'
+description: 'Connect AI tools to the Vero OMS API documentation MCP server'
+---
+
+Use the Vero OMS API docs MCP server when an AI tool needs to search the current docs, read API guides, and retrieve endpoint context without copying pages manually.
+
+## Server URL
+
+Use this MCP server URL:
+
+```text
+https://docs.oms.verolabs.co/mcp
+```
+
+## What the MCP server can access
+
+The MCP server searches content indexed from this repository:
+
+- REST API pages generated from `openapi.docs.en.json` and `openapi.docs.vi.json`
+- Streaming API pages
+- Integration guidance and support pages
+
+It is a search/read MCP server. It is not an order-routing gateway and cannot place trades or call live APIs.
+
+## Connect from AI tools
+
+Claude Code:
+
+```bash
+claude mcp add --transport http vero-oms-api https://docs.oms.verolabs.co/mcp
+```
+
+Cursor `mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "vero-oms-api": {
+      "url": "https://docs.oms.verolabs.co/mcp"
+    }
+  }
+}
+```
+
+VS Code `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "vero-oms-api": {
+      "type": "http",
+      "url": "https://docs.oms.verolabs.co/mcp"
+    }
+  }
+}
+```
+
+## Recommended prompt
+
+```text
+Use the Vero OMS API docs MCP server to find the relevant endpoint.
+Use the OpenAPI spec as source of truth for method, path, parameters, auth, request body, and response schema.
+Do not invent fields. If a live response conflicts with the spec, report the mismatch before implementing.
+```
