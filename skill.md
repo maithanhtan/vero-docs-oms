@@ -15,7 +15,6 @@ Use this skill when implementing a client, test, workflow, or debugging flow for
 ## Source of truth
 
 - REST API specification: `/openapi.docs.en.json` or `/openapi.docs.vi.json`
-- Local working spec when available: `/openapi.json`
 - REST docs contain 47 unique HTTP operations.
 - Streaming docs describe WebSocket channel patterns for market, order, account, and notification events.
 

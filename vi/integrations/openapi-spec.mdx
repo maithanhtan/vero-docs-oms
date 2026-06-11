@@ -11,7 +11,6 @@ Dùng các file OpenAPI khi generate client, validate payload hoặc đưa conte
 |---|---|
 | [`/openapi.docs.en.json`](/openapi.docs.en.json) | REST API reference tiếng Anh dùng cho English docs |
 | [`/openapi.docs.vi.json`](/openapi.docs.vi.json) | REST API reference tiếng Việt dùng cho Vietnamese docs |
-| [`/openapi.json`](/openapi.json) | Bản working copy local; có thể bị git ignore trong repo này |
 
 REST API published hiện có 47 HTTP operations duy nhất.
 
@@ -42,4 +41,3 @@ Do not use deprecated or removed endpoints such as commissions and fees.
 3. Build request từ typed fields; tránh tự nối string nếu có structured client.
 4. Parse success response theo schema đã document.
 5. Parse error response dưới dạng JSON, Problem Details hoặc text vì gateway/backend errors có thể khác nhau.
-
