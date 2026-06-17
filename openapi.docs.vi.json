@@ -73,7 +73,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Ory self-service flow object.",
+            "description": "self-service flow object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -254,7 +254,7 @@
               }
             }
           },
-          "description": "Payload cap nhat Ory self-service flow. Truyen ma flow tren query string va gui cac field bat buoc cua method dang dung."
+          "description": "Payload cap nhat self-service flow. Truyen ma flow tren query string va gui cac field bat buoc cua method dang dung."
         },
         "responses": {
           "200": {
@@ -434,7 +434,7 @@
         ],
         "operationId": "getWhoamiSession",
         "summary": "Lấy phiên xác thực hiện tại",
-        "description": "Tra ve Ory session va identity hien tai cho session token truyen trong header X-Session-Token. Bearer JWT don le khong duoc Ory endpoint nay chap nhan tren dev.",
+        "description": "Tra ve session va identity hien tai cho session token truyen trong header X-Session-Token. Bearer JWT don le khong duoc endpoint nay chap nhan tren dev.",
         "security": [
           {
             "sessionToken": []
@@ -446,14 +446,15 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "example": "jwt_template_1"
             },
-            "description": "Ten/audience Ory tuy chon de yeu cau phien dang tokenized. Khi truyen gia tri nay, response co the kem bearer token da token hoa."
+            "description": "Ten tokenizer template de yeu cau response dang tokenized (JWT). Template hien tai tren moi truong nay la jwt_template_1. Khi truyen gia tri nay, response se kem bearer token (JWT) trong field tokenized."
           }
         ],
         "responses": {
           "200": {
-            "description": "Current Ory session.",
+            "description": "Current session.",
             "content": {
               "application/json": {
                 "schema": {
@@ -627,7 +628,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Ory self-service flow object.",
+            "description": "self-service flow object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -808,11 +809,11 @@
               }
             }
           },
-          "description": "Payload cap nhat Ory self-service flow. Truyen ma flow tren query string va gui cac field bat buoc cua method dang dung."
+          "description": "Payload cap nhat self-service flow. Truyen ma flow tren query string va gui cac field bat buoc cua method dang dung."
         },
         "responses": {
           "200": {
-            "description": "Registration flow da duoc xu ly. Response la Ory registration flow moi nhat va co the kem session field neu he thong cho phep tao session ngay.",
+            "description": "Registration flow da duoc xu ly. Response la registration flow moi nhat va co the kem session field neu he thong cho phep tao session ngay.",
             "content": {
               "application/json": {
                 "schema": {
@@ -991,7 +992,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Ory self-service flow object.",
+            "description": "self-service flow object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1179,11 +1180,11 @@
               }
             }
           },
-          "description": "Payload cap nhat Ory self-service flow. Truyen ma flow tren query string va gui cac field bat buoc cua method dang dung."
+          "description": "Payload cap nhat self-service flow. Truyen ma flow tren query string va gui cac field bat buoc cua method dang dung."
         },
         "responses": {
           "200": {
-            "description": "Recovery flow da duoc cap nhat. Khi challenge thanh cong, response co the tra session_token truc tiep hoac continue_with chua set_ory_session_token.",
+            "description": "Recovery flow da duoc cap nhat. Khi challenge thanh cong, response co the tra session_token truc tiep hoac continue_with chua set_session_token.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1366,7 +1367,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Ory self-service flow object.",
+            "description": "self-service flow object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1551,11 +1552,11 @@
               }
             }
           },
-          "description": "Payload cap nhat Ory self-service flow. Truyen ma flow tren query string va gui cac field bat buoc cua method dang dung."
+          "description": "Payload cap nhat self-service flow. Truyen ma flow tren query string va gui cac field bat buoc cua method dang dung."
         },
         "responses": {
           "200": {
-            "description": "Settings flow da duoc cap nhat. Doi mat khau tra ve Ory settings flow moi nhat.",
+            "description": "Settings flow da duoc cap nhat. Doi mat khau tra ve settings flow moi nhat.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1736,16 +1737,20 @@
             "sessionToken": []
           }
         ],
-        "responses": {
-          "200": {
-            "description": "Logout response from Ory/KrakenD.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                }
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutRequest"
               }
             }
+          },
+          "description": "JSON body chua session token can huy."
+        },
+        "responses": {
+          "204": {
+            "description": "Session da duoc huy thanh cong. Khong tra ve body."
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized",
@@ -1900,7 +1905,7 @@
             "description": "DELETE /api/authen/self-service/logout/api"
           }
         },
-        "description": "Dang xuat Ory session hien tai duoc dinh danh bang header X-Session-Token. Khi test nen dung token sai hoac request sai de verify route ma khong invalidate session that."
+        "description": "Dang xuat session hien tai duoc dinh danh bang header X-Session-Token. Khi test nen dung token sai hoac request sai de verify route ma khong invalidate session that."
       }
     },
     "/api/v1/users/accounts": {
@@ -8266,7 +8271,8 @@
         ],
         "summary": "Trích xuất thông tin CCCD khi đăng ký",
         "operationId": "parseSignupIdCard",
-        "description": "Phân tích ảnh mặt trước CCCD/CMND và các ảnh mặt sau hoặc chân dung nếu có trong bước đăng ký. Gửi nội dung ảnh dạng base64 trong JSON, không gửi tiền tố data URL.",
+        "security": [],
+        "description": "Phân tích ảnh mặt trước CCCD/CMND và các ảnh mặt sau hoặc chân dung nếu có trong bước đăng ký. Gửi nội dung ảnh dạng base64 trong JSON, không gửi tiền tố data URL. Endpoint này không yêu cầu xác thực.",
         "requestBody": {
           "required": true,
           "content": {
@@ -8406,7 +8412,6 @@
             }
           }
         },
-        "security": [],
         "servers": [
           {
             "url": "https://api-gw.verolabs.co/api/v2/chat",
@@ -10464,7 +10469,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "description": "Ma loi Ory/gateway khi co."
+                    "description": "Ma loi gateway khi co."
                   },
                   "code": {
                     "type": "integer",
@@ -10476,7 +10481,7 @@
                   },
                   "reason": {
                     "type": "string",
-                    "description": "Ly do chi tiet do Ory hoac gateway tra ve."
+                    "description": "Ly do chi tiet do he thong hoac gateway tra ve."
                   },
                   "message": {
                     "type": "string",
@@ -10485,7 +10490,7 @@
                 }
               }
             ],
-            "description": "Chuoi ma/thong diep loi hoac object loi nested cua Ory/gateway."
+            "description": "Chuoi ma/thong diep loi hoac object loi nested cua gateway."
           },
           "message": {
             "type": "string",
@@ -10531,7 +10536,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Loai flow do Ory tra ve, vi du browser hoac api."
+            "description": "Loai flow do he thong tra ve, vi du browser hoac api."
           },
           "expires_at": {
             "type": "string",
@@ -10541,16 +10546,16 @@
           "issued_at": {
             "type": "string",
             "format": "date-time",
-            "description": "Thoi diem Ory tao flow."
+            "description": "Thoi diem he thong tao flow."
           },
           "ui": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Payload UI cua Ory gom action URL, method, nodes, messages va CSRF node khi can."
+            "description": "Payload UI cua gom action URL, method, nodes, messages va CSRF node khi can."
           },
           "state": {
             "type": "string",
-            "description": "Trang thai hien tai cua Ory flow, vi du choose_method, sent_email, passed_challenge hoac success."
+            "description": "Trang thai hien tai cua flow, vi du choose_method, sent_email, passed_challenge hoac success."
           },
           "request_url": {
             "type": "string",
@@ -10559,7 +10564,7 @@
           "organization_id": {
             "type": "string",
             "nullable": true,
-            "description": "Ma Ory organization cho flow theo organization, khi co."
+            "description": "Ma organization cho flow theo organization, khi co."
           },
           "created_at": {
             "type": "string",
@@ -10585,10 +10590,10 @@
                 "$ref": "#/components/schemas/AuthSession/properties/identity"
               }
             ],
-            "description": "Identity gan voi settings flow khi Ory tra ve."
+            "description": "Identity gan voi settings flow khi tra ve."
           }
         },
-        "description": "Ory self-service flow object duoc tra ve boi cac endpoint tao/cap nhat login, registration, recovery va settings flow."
+        "description": "self-service flow object duoc tra ve boi cac endpoint tao/cap nhat login, registration, recovery va settings flow."
       },
       "LoginFlowUpdateRequest": {
         "type": "object",
@@ -10608,7 +10613,7 @@
           },
           "csrf_token": {
             "type": "string",
-            "description": "CSRF token lay tu UI node cua login flow khi Ory yeu cau."
+            "description": "CSRF token lay tu UI node cua login flow khi he thong yeu cau."
           },
           "password_identifier": {
             "type": "string",
@@ -10621,7 +10626,7 @@
             "description": "Mat khau dang plain text do user nhap. Chi gui qua HTTPS."
           }
         },
-        "description": "JSON payload dung de submit thong tin dang nhap bang mat khau vao Ory login flow."
+        "description": "JSON payload dung de submit thong tin dang nhap bang mat khau vao login flow."
       },
       "LoginResponse": {
         "type": "object",
@@ -10633,12 +10638,12 @@
           },
           "session": {
             "$ref": "#/components/schemas/AuthSession",
-            "description": "Ory session object cua identity da dang nhap."
+            "description": "session object cua identity da dang nhap."
           },
           "identity": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Ory identity object, gom identity id va traits khi Ory tra ve."
+            "description": "identity object, gom identity id va traits khi tra ve."
           }
         },
         "description": "Response tra ve sau khi API login flow thanh cong."
@@ -10649,7 +10654,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Ma Ory session."
+            "description": "Ma session."
           },
           "active": {
             "type": "boolean",
@@ -10661,24 +10666,24 @@
             "properties": {
               "id": {
                 "type": "string",
-                "description": "Ma Ory identity cua user da dang nhap."
+                "description": "Ma identity cua user da dang nhap."
               },
               "traits": {
                 "type": "object",
                 "additionalProperties": true,
-                "description": "Thuoc tinh ho so identity luu tren Ory, vi du email va name."
+                "description": "Thuoc tinh ho so identity luu tren he thong, vi du email va name."
               },
               "schema_id": {
                 "type": "string",
-                "description": "Ma Ory identity schema."
+                "description": "Ma identity schema."
               },
               "schema_url": {
                 "type": "string",
-                "description": "URL cua Ory identity schema."
+                "description": "URL cua identity schema."
               },
               "state": {
                 "type": "string",
-                "description": "Trang thai Ory identity, vi du active."
+                "description": "Trang thai identity, vi du active."
               },
               "state_changed_at": {
                 "type": "string",
@@ -10695,7 +10700,7 @@
               },
               "metadata_public": {
                 "nullable": true,
-                "description": "Metadata public cua identity do Ory tra ve; co the null.",
+                "description": "Metadata public cua identity do he thong tra ve; co the null.",
                 "type": "object",
                 "additionalProperties": true
               },
@@ -10712,18 +10717,18 @@
               "organization_id": {
                 "type": "string",
                 "nullable": true,
-                "description": "Ma Ory organization neu identity thuoc organization; null neu khong co."
+                "description": "Ma organization neu identity thuoc organization; null neu khong co."
               }
             },
-            "description": "Ory identity da dang nhap, gom id, schema metadata, state, traits, recovery addresses va timestamps."
+            "description": "identity da dang nhap, gom id, schema metadata, state, traits, recovery addresses va timestamps."
           },
           "tokenized": {
             "type": "string",
-            "description": "Bearer token tra ve khi truyen tokenize_as va Ory tra tokenized session."
+            "description": "Bearer token tra ve khi truyen tokenize_as va tra tokenized session."
           },
           "expires_at": {
             "type": "string",
-            "description": "Thoi diem Ory session het han.",
+            "description": "Thoi diem session het han.",
             "format": "date-time"
           },
           "authenticated_at": {
@@ -10733,7 +10738,7 @@
           },
           "authenticator_assurance_level": {
             "type": "string",
-            "description": "Muc dam bao xac thuc cua Ory session, vi du aal1."
+            "description": "Muc dam bao xac thuc cua session, vi du aal1."
           },
           "authentication_methods": {
             "type": "array",
@@ -10760,19 +10765,19 @@
           },
           "issued_at": {
             "type": "string",
-            "description": "Thoi diem Ory phat hanh session.",
+            "description": "Thoi diem he thong phat hanh session.",
             "format": "date-time"
           },
           "devices": {
             "type": "array",
-            "description": "Metadata thiet bi/session do Ory tra ve, gom device id, IP address, user agent va location.",
+            "description": "Metadata thiet bi/session do he thong tra ve, gom device id, IP address, user agent va location.",
             "items": {
               "type": "object",
               "additionalProperties": true,
               "properties": {
                 "id": {
                   "type": "string",
-                  "description": "Ma thiet bi Ory."
+                  "description": "Ma thiet bi."
                 },
                 "ip_address": {
                   "type": "string",
@@ -10784,13 +10789,13 @@
                 },
                 "location": {
                   "type": "string",
-                  "description": "Chuoi location do Ory tra ve khi co."
+                  "description": "Chuoi location do he thong tra ve khi co."
                 }
               }
             }
           }
         },
-        "description": "Ory session tra ve boi whoami va login response."
+        "description": "session tra ve boi whoami va login response."
       },
       "RegistrationFlowUpdateRequest": {
         "type": "object",
@@ -10809,7 +10814,7 @@
           },
           "traits": {
             "$ref": "#/components/schemas/RegistrationTraits",
-            "description": "Cac identity traits se duoc tao tren Ory identity."
+            "description": "Cac identity traits se duoc tao tren identity."
           },
           "password": {
             "type": "string",
@@ -10818,10 +10823,10 @@
           },
           "csrf_token": {
             "type": "string",
-            "description": "CSRF token lay tu UI node cua registration flow khi Ory yeu cau."
+            "description": "CSRF token lay tu UI node cua registration flow khi he thong yeu cau."
           }
         },
-        "description": "JSON payload dung de submit dang ky user moi vao Ory registration flow."
+        "description": "JSON payload dung de submit dang ky user moi vao registration flow."
       },
       "RegistrationTraits": {
         "type": "object",
@@ -10834,7 +10839,7 @@
           "email": {
             "type": "string",
             "format": "email",
-            "description": "Email cua khach hang. Gia tri nay phai unique tren Ory identity."
+            "description": "Email cua khach hang. Gia tri nay phai unique tren identity."
           },
           "name": {
             "type": "object",
@@ -10893,7 +10898,7 @@
             "description": "Email se nhan ma recovery."
           }
         },
-        "description": "Payload dung de yeu cau ma recovery cho email tren Ory recovery flow."
+        "description": "Payload dung de yeu cau ma recovery cho email tren recovery flow."
       },
       "RecoveryVerifyRequest": {
         "type": "object",
@@ -10914,7 +10919,7 @@
             "description": "Ma recovery mot lan user nhan duoc."
           }
         },
-        "description": "Payload dung de xac minh ma recovery tren Ory recovery flow."
+        "description": "Payload dung de xac minh ma recovery tren recovery flow."
       },
       "RecoveryResponse": {
         "allOf": [
@@ -10926,7 +10931,7 @@
             "properties": {
               "session_token": {
                 "type": "string",
-                "description": "Session token tra ve sau khi xac minh recovery thanh cong, neu Ory phat truc tiep."
+                "description": "Session token tra ve sau khi xac minh recovery thanh cong, neu he thong phat truc tiep."
               },
               "continue_with": {
                 "type": "array",
@@ -10934,7 +10939,7 @@
                   "type": "object",
                   "additionalProperties": true
                 },
-                "description": "Cac hanh dong tiep theo do Ory tra ve, vi du instruction set_ory_session_token."
+                "description": "Cac hanh dong tiep theo do he thong tra ve, vi du instruction set_session_token."
               }
             }
           }
@@ -10961,7 +10966,7 @@
             "description": "Mat khau moi se gan cho identity dang dang nhap."
           }
         },
-        "description": "Payload dung de cap nhat mat khau cua user dang dang nhap trong Ory settings flow."
+        "description": "Payload dung de cap nhat mat khau cua user dang dang nhap trong settings flow."
       },
       "Account": {
         "type": "object",
@@ -11036,7 +11041,7 @@
           },
           "identityId": {
             "type": "string",
-            "description": "Ory Kratos identity id when present."
+            "description": "Hệ thống xác thực identity id when present."
           },
           "positions": {
             "type": "object",
@@ -12465,6 +12470,19 @@
           }
         }
       },
+      "LogoutRequest": {
+        "type": "object",
+        "required": [
+          "session_token"
+        ],
+        "properties": {
+          "session_token": {
+            "type": "string",
+            "description": "session token (st_...) can huy."
+          }
+        },
+        "description": "JSON payload chua session token de huy khi dang xuat."
+      },
       "ReferralSummary": {
         "type": "object",
         "additionalProperties": true,
@@ -13669,7 +13687,7 @@
             "$ref": "#/components/schemas/AuthFlow"
           }
         ],
-        "description": "Body lỗi có cấu trúc do Ory, gateway, ASP.NET service hoặc validation handler backend trả về."
+        "description": "Body lỗi có cấu trúc do gateway, ASP.NET service hoặc validation handler backend trả về."
       },
       "StopOrderModifyResponse": {
         "type": "object",

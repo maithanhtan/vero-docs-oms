@@ -24,7 +24,7 @@ Use this skill when implementing a client, test, workflow, or debugging flow for
 2. Do not invent request or response fields.
 3. Treat every documented parameter type, required flag, enum, and response field description as authoritative.
 4. Use `Authorization: Bearer <token>` for protected REST endpoints unless the endpoint explicitly documents `x-session-token`.
-5. Use `x-session-token` for Ory session endpoints that require a browser/Ory session.
+5. Use `x-session-token` for session endpoints that require a browser/session.
 6. Parse documented success responses and also handle JSON error bodies, Problem Details, and plain text errors.
 7. Do not use removed endpoints such as account commissions and fees.
 8. For order placement responses, treat `data` as the service-generated system id:

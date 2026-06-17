@@ -64,7 +64,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Ory self-service flow object.",
+            "description": "self-service flow object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -245,7 +245,7 @@
               }
             }
           },
-          "description": "Ory self-service flow update payload. Pass the flow id in the query string and include the fields required by the selected method."
+          "description": "self-service flow update payload. Pass the flow id in the query string and include the fields required by the selected method."
         },
         "responses": {
           "200": {
@@ -425,7 +425,7 @@
         ],
         "operationId": "getWhoamiSession",
         "summary": "Get current authenticated session",
-        "description": "Returns the current Ory session and identity for the session token supplied in X-Session-Token. A bearer JWT alone is not accepted by this Ory endpoint in dev.",
+        "description": "Returns the current session and identity for the session token supplied in X-Session-Token. A bearer JWT alone is not accepted by this endpoint in dev.",
         "security": [
           {
             "sessionToken": []
@@ -437,14 +437,15 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "example": "jwt_template_1"
             },
-            "description": "Optional Ory audience/name used to request a tokenized session response. When supplied, the response can include a tokenized bearer token."
+            "description": "tokenizer template name used to request a tokenized (JWT) session response. The configured template on this environment is jwt_template_1. When supplied, the response includes a tokenized bearer token in the tokenized field."
           }
         ],
         "responses": {
           "200": {
-            "description": "Current Ory session.",
+            "description": "Current session.",
             "content": {
               "application/json": {
                 "schema": {
@@ -618,7 +619,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Ory self-service flow object.",
+            "description": "self-service flow object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -799,11 +800,11 @@
               }
             }
           },
-          "description": "Ory self-service flow update payload. Pass the flow id in the query string and include the fields required by the selected method."
+          "description": "self-service flow update payload. Pass the flow id in the query string and include the fields required by the selected method."
         },
         "responses": {
           "200": {
-            "description": "Registration flow accepted. The response is the updated Ory registration flow and may include additional session fields when immediate session creation is enabled.",
+            "description": "Registration flow accepted. The response is the updated registration flow and may include additional session fields when immediate session creation is enabled.",
             "content": {
               "application/json": {
                 "schema": {
@@ -982,7 +983,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Ory self-service flow object.",
+            "description": "self-service flow object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1170,11 +1171,11 @@
               }
             }
           },
-          "description": "Ory self-service flow update payload. Pass the flow id in the query string and include the fields required by the selected method."
+          "description": "self-service flow update payload. Pass the flow id in the query string and include the fields required by the selected method."
         },
         "responses": {
           "200": {
-            "description": "Recovery flow updated. A passed challenge can return session_token directly or continue_with instructions that include set_ory_session_token.",
+            "description": "Recovery flow updated. A passed challenge can return session_token directly or continue_with instructions that include set_session_token.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1357,7 +1358,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Ory self-service flow object.",
+            "description": "self-service flow object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1542,11 +1543,11 @@
               }
             }
           },
-          "description": "Ory self-service flow update payload. Pass the flow id in the query string and include the fields required by the selected method."
+          "description": "self-service flow update payload. Pass the flow id in the query string and include the fields required by the selected method."
         },
         "responses": {
           "200": {
-            "description": "Settings flow updated. Password changes return the updated Ory settings flow.",
+            "description": "Settings flow updated. Password changes return the updated settings flow.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1727,16 +1728,20 @@
             "sessionToken": []
           }
         ],
-        "responses": {
-          "200": {
-            "description": "Logout response from Ory/KrakenD.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                }
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutRequest"
               }
             }
+          },
+          "description": "JSON body containing the session token to invalidate."
+        },
+        "responses": {
+          "204": {
+            "description": "Session successfully invalidated. No response body is returned."
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized",
@@ -1891,7 +1896,7 @@
             "description": "DELETE /api/authen/self-service/logout/api"
           }
         },
-        "description": "Logs out the current Ory session identified by X-Session-Token. Test invalid tokens or malformed requests to verify the route without invalidating a real session."
+        "description": "Logs out the current session identified by X-Session-Token. Test invalid tokens or malformed requests to verify the route without invalidating a real session."
       }
     },
     "/api/v1/users/accounts": {
@@ -8257,7 +8262,8 @@
         ],
         "summary": "Parse ID card images during signup",
         "operationId": "parseSignupIdCard",
-        "description": "Parses the front ID-card image and optional back/portrait images submitted during signup. Send base64 image content in JSON without the data URL prefix.",
+        "security": [],
+        "description": "Parses the front ID-card image and optional back/portrait images submitted during signup. Send base64 image content in JSON without the data URL prefix. This endpoint does not require authentication.",
         "requestBody": {
           "required": true,
           "content": {
@@ -8397,7 +8403,6 @@
             }
           }
         },
-        "security": [],
         "servers": [
           {
             "url": "https://api-gw.verolabs.co/api/v2/chat",
@@ -10455,7 +10460,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "description": "Ory/gateway error id when supplied."
+                    "description": "gateway error id when supplied."
                   },
                   "code": {
                     "type": "integer",
@@ -10467,7 +10472,7 @@
                   },
                   "reason": {
                     "type": "string",
-                    "description": "Detailed reason returned by Ory or gateway."
+                    "description": "Detailed reason returned by the authentication service or gateway."
                   },
                   "message": {
                     "type": "string",
@@ -10476,7 +10481,7 @@
                 }
               }
             ],
-            "description": "Error code/message string or nested Ory/gateway error object."
+            "description": "Error code/message string or nested gateway error object."
           },
           "message": {
             "type": "string",
@@ -10522,7 +10527,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Flow type returned by Ory, for example browser or api."
+            "description": "Flow type returned by the system, for example browser or api."
           },
           "expires_at": {
             "type": "string",
@@ -10532,16 +10537,16 @@
           "issued_at": {
             "type": "string",
             "format": "date-time",
-            "description": "Timestamp when Ory created the flow."
+            "description": "Timestamp when created the flow."
           },
           "ui": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Ory UI payload containing action URL, method, nodes, messages, and CSRF node when required."
+            "description": "UI payload containing action URL, method, nodes, messages, and CSRF node when required."
           },
           "state": {
             "type": "string",
-            "description": "Current Ory flow state, such as choose_method, sent_email, passed_challenge, or success."
+            "description": "Current flow state, such as choose_method, sent_email, passed_challenge, or success."
           },
           "request_url": {
             "type": "string",
@@ -10550,7 +10555,7 @@
           "organization_id": {
             "type": "string",
             "nullable": true,
-            "description": "Ory organization id for organization-scoped flows, when supplied."
+            "description": "organization id for organization-scoped flows, when supplied."
           },
           "created_at": {
             "type": "string",
@@ -10576,10 +10581,10 @@
                 "$ref": "#/components/schemas/AuthSession/properties/identity"
               }
             ],
-            "description": "Identity attached to settings flows when Ory includes it."
+            "description": "Identity attached to settings flows when the system includes it."
           }
         },
-        "description": "Ory self-service flow object returned by login, registration, recovery, and settings create/update endpoints."
+        "description": "self-service flow object returned by login, registration, recovery, and settings create/update endpoints."
       },
       "LoginFlowUpdateRequest": {
         "type": "object",
@@ -10599,7 +10604,7 @@
           },
           "csrf_token": {
             "type": "string",
-            "description": "CSRF token copied from the login flow UI node when Ory requires it."
+            "description": "CSRF token copied from the login flow UI node when required."
           },
           "password_identifier": {
             "type": "string",
@@ -10612,7 +10617,7 @@
             "description": "Plain-text password entered by the user. Send only over HTTPS."
           }
         },
-        "description": "JSON payload used to submit password credentials to an Ory login flow."
+        "description": "JSON payload used to submit password credentials to an login flow."
       },
       "LoginResponse": {
         "type": "object",
@@ -10624,12 +10629,12 @@
           },
           "session": {
             "$ref": "#/components/schemas/AuthSession",
-            "description": "Ory session object for the authenticated identity."
+            "description": "session object for the authenticated identity."
           },
           "identity": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Ory identity object. Includes identity id and traits when returned by Ory."
+            "description": "identity object. Includes identity id and traits when returned by the system."
           }
         },
         "description": "Response returned after a successful API login flow."
@@ -10640,7 +10645,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Ory session id."
+            "description": "session id."
           },
           "active": {
             "type": "boolean",
@@ -10652,24 +10657,24 @@
             "properties": {
               "id": {
                 "type": "string",
-                "description": "Ory identity id for the authenticated user."
+                "description": "identity id for the authenticated user."
               },
               "traits": {
                 "type": "object",
                 "additionalProperties": true,
-                "description": "Identity profile attributes stored by Ory, such as email and name."
+                "description": "Identity profile attributes stored by, such as email and name."
               },
               "schema_id": {
                 "type": "string",
-                "description": "Ory identity schema id."
+                "description": "identity schema id."
               },
               "schema_url": {
                 "type": "string",
-                "description": "URL of the Ory identity schema."
+                "description": "URL of the identity schema."
               },
               "state": {
                 "type": "string",
-                "description": "Ory identity state, for example active."
+                "description": "identity state, for example active."
               },
               "state_changed_at": {
                 "type": "string",
@@ -10686,7 +10691,7 @@
               },
               "metadata_public": {
                 "nullable": true,
-                "description": "Public identity metadata returned by Ory; can be null.",
+                "description": "Public identity metadata returned by the system; can be null.",
                 "type": "object",
                 "additionalProperties": true
               },
@@ -10703,18 +10708,18 @@
               "organization_id": {
                 "type": "string",
                 "nullable": true,
-                "description": "Ory organization id when the identity belongs to an organization; null otherwise."
+                "description": "organization id when the identity belongs to an organization; null otherwise."
               }
             },
-            "description": "Authenticated Ory identity object, including id, schema metadata, state, traits, recovery addresses, and timestamps."
+            "description": "Authenticated identity object, including id, schema metadata, state, traits, recovery addresses, and timestamps."
           },
           "tokenized": {
             "type": "string",
-            "description": "Bearer token returned when tokenize_as is supplied and Ory returns a tokenized session."
+            "description": "Bearer token returned when tokenize_as is supplied and returns a tokenized session."
           },
           "expires_at": {
             "type": "string",
-            "description": "Timestamp when the Ory session expires.",
+            "description": "Timestamp when the session expires.",
             "format": "date-time"
           },
           "authenticated_at": {
@@ -10724,7 +10729,7 @@
           },
           "authenticator_assurance_level": {
             "type": "string",
-            "description": "Ory authenticator assurance level for the session, for example aal1."
+            "description": "authenticator assurance level for the session, for example aal1."
           },
           "authentication_methods": {
             "type": "array",
@@ -10751,19 +10756,19 @@
           },
           "issued_at": {
             "type": "string",
-            "description": "Timestamp when Ory issued the session.",
+            "description": "Timestamp when issued the session.",
             "format": "date-time"
           },
           "devices": {
             "type": "array",
-            "description": "Device/session metadata returned by Ory, including device id, IP address, user agent, and location.",
+            "description": "Device/session metadata returned by the system, including device id, IP address, user agent, and location.",
             "items": {
               "type": "object",
               "additionalProperties": true,
               "properties": {
                 "id": {
                   "type": "string",
-                  "description": "Ory device id."
+                  "description": "device ID."
                 },
                 "ip_address": {
                   "type": "string",
@@ -10775,13 +10780,13 @@
                 },
                 "location": {
                   "type": "string",
-                  "description": "Location string returned by Ory when available."
+                  "description": "Location string returned by the system when available."
                 }
               }
             }
           }
         },
-        "description": "Ory session returned by whoami and login responses."
+        "description": "session returned by whoami and login responses."
       },
       "RegistrationFlowUpdateRequest": {
         "type": "object",
@@ -10800,7 +10805,7 @@
           },
           "traits": {
             "$ref": "#/components/schemas/RegistrationTraits",
-            "description": "User identity traits to create on the Ory identity."
+            "description": "User identity traits to create on the identity."
           },
           "password": {
             "type": "string",
@@ -10809,10 +10814,10 @@
           },
           "csrf_token": {
             "type": "string",
-            "description": "CSRF token copied from the registration flow UI node when Ory requires it."
+            "description": "CSRF token copied from the registration flow UI node when required."
           }
         },
-        "description": "JSON payload used to submit a new user registration to an Ory registration flow."
+        "description": "JSON payload used to submit a new user registration to an registration flow."
       },
       "RegistrationTraits": {
         "type": "object",
@@ -10825,7 +10830,7 @@
           "email": {
             "type": "string",
             "format": "email",
-            "description": "Customer email address. Must be unique for the Ory identity."
+            "description": "Customer email address. Must be unique for the identity."
           },
           "name": {
             "type": "object",
@@ -10884,7 +10889,7 @@
             "description": "Email address that should receive the recovery code."
           }
         },
-        "description": "Payload used to request a recovery code for the email address on an Ory recovery flow."
+        "description": "Payload used to request a recovery code for the email address on an recovery flow."
       },
       "RecoveryVerifyRequest": {
         "type": "object",
@@ -10905,7 +10910,7 @@
             "description": "One-time recovery code received by the user."
           }
         },
-        "description": "Payload used to verify the recovery code on an Ory recovery flow."
+        "description": "Payload used to verify the recovery code on an recovery flow."
       },
       "RecoveryResponse": {
         "allOf": [
@@ -10917,7 +10922,7 @@
             "properties": {
               "session_token": {
                 "type": "string",
-                "description": "Session token returned after successful recovery verification, when Ory issues it directly."
+                "description": "Session token returned after successful recovery verification, when issued directly."
               },
               "continue_with": {
                 "type": "array",
@@ -10925,7 +10930,7 @@
                   "type": "object",
                   "additionalProperties": true
                 },
-                "description": "Follow-up actions returned by Ory, such as set_ory_session_token instructions."
+                "description": "Follow-up actions returned by the system, such as set_session_token instructions."
               }
             }
           }
@@ -10952,7 +10957,7 @@
             "description": "New password to set for the authenticated identity."
           }
         },
-        "description": "Payload used to update the authenticated user password in an Ory settings flow."
+        "description": "Payload used to update the authenticated user password in an settings flow."
       },
       "Account": {
         "type": "object",
@@ -11027,7 +11032,7 @@
           },
           "identityId": {
             "type": "string",
-            "description": "Ory Kratos identity id when present."
+            "description": "Authentication identity id when present."
           },
           "positions": {
             "type": "object",
@@ -12456,6 +12461,19 @@
           }
         }
       },
+      "LogoutRequest": {
+        "type": "object",
+        "required": [
+          "session_token"
+        ],
+        "properties": {
+          "session_token": {
+            "type": "string",
+            "description": "The session token (st_...) to invalidate."
+          }
+        },
+        "description": "JSON payload containing the session token to revoke when logging out."
+      },
       "ReferralSummary": {
         "type": "object",
         "additionalProperties": true,
@@ -13660,7 +13678,7 @@
             "$ref": "#/components/schemas/AuthFlow"
           }
         ],
-        "description": "Structured error body returned by Ory, gateway, ASP.NET services, or backend validation handlers."
+        "description": "Structured error body returned by gateway, ASP.NET services, or backend validation handlers."
       },
       "StopOrderModifyResponse": {
         "type": "object",
