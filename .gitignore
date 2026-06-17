@@ -40,3 +40,10 @@ asyncapi.json
 .playwright-cli/
 playwright-report/
 test-results/
+
+# Test scripts and reports
+test_all_apis.py
+api_test_report.json
+test_wss_all/
+subscribe_realtime.py
+README.md
