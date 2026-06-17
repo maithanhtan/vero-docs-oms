@@ -1,0 +1,813 @@
+[
+  {
+    "path": "/api/authen/self-service/login/api",
+    "resolved_path": "/api/authen/self-service/login/api",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 126,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "default",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"id\":\"12ab4707-e691-4f55-a213-857dfb869543\",\"organization_id\":null,\"type\":\"api\",\"expires_at\":\"2026-06-17T15:44:21.791228547Z\",\"issued_at\":\"2026-06-17T15:34:21.791228547Z\",\"request_url\":\"http://api-gw"
+  },
+  {
+    "path": "/api/authen/self-service/registration/api",
+    "resolved_path": "/api/authen/self-service/registration/api",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 139,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "default",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"id\":\"2efe185f-ad4d-4fe9-9f7f-ccec0a2f268f\",\"type\":\"api\",\"expires_at\":\"2026-06-17T15:44:21.925516133Z\",\"issued_at\":\"2026-06-17T15:34:21.925516133Z\",\"request_url\":\"http://api-gw.verolabs.co/self-servi"
+  },
+  {
+    "path": "/api/authen/self-service/recovery/api",
+    "resolved_path": "/api/authen/self-service/recovery/api",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 184,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "default",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"id\":\"96305d15-0533-4857-b113-c69c225109a4\",\"type\":\"api\",\"expires_at\":\"2026-06-17T16:34:22.120427545Z\",\"issued_at\":\"2026-06-17T15:34:22.120427545Z\",\"request_url\":\"http://api-gw.verolabs.co/self-servi"
+  },
+  {
+    "path": "/api/authen/self-service/settings/api",
+    "resolved_path": "/api/authen/self-service/settings/api",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 207,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "401",
+      "default",
+      "400",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"id\":\"363c810a-477c-4bf9-bf87-1838a70cc979\",\"type\":\"api\",\"expires_at\":\"2026-06-17T16:34:22.266857436Z\",\"issued_at\":\"2026-06-17T15:34:22.266857436Z\",\"request_url\":\"http://api-gw.verolabs.co/self-servi"
+  },
+  {
+    "path": "/api/authen/self-service/login",
+    "resolved_path": "/api/authen/self-service/login",
+    "method": "POST",
+    "status_code": 400,
+    "latency_ms": 132,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "default",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"error\":{\"code\":400,\"status\":\"Bad Request\",\"reason\":\"The flow query parameter is missing or malformed.\",\"message\":\"The request was malformed or contained invalid parameters\"}}"
+  },
+  {
+    "path": "/api/authen/self-service/registration",
+    "resolved_path": "/api/authen/self-service/registration",
+    "method": "POST",
+    "status_code": 400,
+    "latency_ms": 122,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "default",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"error\":{\"code\":400,\"status\":\"Bad Request\",\"reason\":\"The flow query parameter is missing or malformed.\",\"message\":\"The request was malformed or contained invalid parameters\"}}"
+  },
+  {
+    "path": "/api/authen/self-service/recovery",
+    "resolved_path": "/api/authen/self-service/recovery",
+    "method": "POST",
+    "status_code": 400,
+    "latency_ms": 156,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "default",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"error\":{\"code\":400,\"status\":\"Bad Request\",\"reason\":\"The flow query parameter is missing or malformed.\",\"message\":\"The request was malformed or contained invalid parameters\"}}"
+  },
+  {
+    "path": "/api/authen/self-service/settings",
+    "resolved_path": "/api/authen/self-service/settings",
+    "method": "POST",
+    "status_code": 400,
+    "latency_ms": 124,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "default",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"error\":{\"code\":400,\"status\":\"Bad Request\",\"reason\":\"The flow query parameter is missing or malformed.\",\"message\":\"The request was malformed or contained invalid parameters\"}}"
+  },
+  {
+    "path": "/api/authen/sessions/whoami",
+    "resolved_path": "/api/authen/sessions/whoami",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 206,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "401",
+      "default",
+      "400",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"id\":\"b901350a-a10a-41d1-b2d8-7549aef8f57c\",\"active\":true,\"expires_at\":\"2026-06-18T03:34:21.12461Z\",\"authenticated_at\":\"2026-06-17T15:34:21.124741Z\",\"authenticator_assurance_level\":\"aal1\",\"authentica"
+  },
+  {
+    "path": "/api/authen/self-service/logout/api",
+    "resolved_path": "/api/authen/self-service/logout/api",
+    "method": "DELETE",
+    "status_code": 204,
+    "latency_ms": 151,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "204",
+      "401",
+      "default",
+      "400",
+      "404",
+      "500"
+    ],
+    "response_snippet": ""
+  },
+  {
+    "path": "/api/v1/users/accounts",
+    "resolved_path": "/api/v1/users/accounts",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 122,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "[{\"id\":\"k4xihRgKIOwun8ZNTqR9Wt4G0hpZ\",\"accountId\":\"demo-test_all_apis_a5b8a9e4@verolabs.co\",\"userId\":\"test_all_apis_a5b8a9e4@verolabs.co\",\"connectionType\":\"DEMO\",\"totalEquity\":100000000,\"credit\":0,\"ma"
+  },
+  {
+    "path": "/api/v1/users/accounts/{accountID}/orders/{start_time}/{end_time}",
+    "resolved_path": "/api/v1/users/accounts/demo-test_all_apis_a5b8a9e4@verolabs.co/orders/1781624106485/1781710506485",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 316,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "null"
+  },
+  {
+    "path": "/api/v1/users/accounts/{accountID}/trades/{start_time}/{end_time}",
+    "resolved_path": "/api/v1/users/accounts/demo-test_all_apis_a5b8a9e4@verolabs.co/trades/1781624106485/1781710506485",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 280,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "null"
+  },
+  {
+    "path": "/api/v1/users/accounts/{accountID}/transactions/{start_time}/{end_time}",
+    "resolved_path": "/api/v1/users/accounts/demo-test_all_apis_a5b8a9e4@verolabs.co/transactions/1781624106485/1781710506485",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 151,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "[{\"id\":\"U9113S8Y4EDQfmgtDKlgzlq6YfWU\",\"accountId\":\"demo-test_all_apis_a5b8a9e4@verolabs.co\",\"transactionType\":\"deposit\",\"amount\":100000000,\"status\":\"complete\",\"network\":\"\",\"tx\":\"\",\"recvAddress\":\"\",\"se"
+  },
+  {
+    "path": "/api/v1/users/accounts/{accountID}/equity/withdraw",
+    "resolved_path": "/api/v1/users/accounts/demo-test_all_apis_a5b8a9e4@verolabs.co/equity/withdraw",
+    "method": "POST",
+    "status_code": 400,
+    "latency_ms": 119,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "bank_id is required for withdrawal"
+  },
+  {
+    "path": "/api/v1/bank-accounts",
+    "resolved_path": "/api/v1/bank-accounts",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 110,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "null"
+  },
+  {
+    "path": "/api/v1/bank-accounts",
+    "resolved_path": "/api/v1/bank-accounts",
+    "method": "POST",
+    "status_code": 400,
+    "latency_ms": 113,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "Missing required fields: bankAccountName, bankAccountNumber, bankCode"
+  },
+  {
+    "path": "/api/v1/orders/new/{refOrderID}/{accountID}/{symbol}/{orderSide}/{price}/{qty}/{orderType}",
+    "resolved_path": "/api/v1/orders/new/REF-d806ba7d/demo-test_all_apis_a5b8a9e4@verolabs.co/VN30F1M/Buy/1000/1/Limit",
+    "method": "POST",
+    "status_code": 500,
+    "latency_ms": 162,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.6.1\",\"title\":\"An error occurred while processing your request.\",\"status\":500,\"detail\":\"orderSide must be B or S\",\"traceId\":\"00-ccdeaffe504d2115f"
+  },
+  {
+    "path": "/api/v1/orders/cancel/{orderID}",
+    "resolved_path": "/api/v1/orders/cancel/test-order-id",
+    "method": "POST",
+    "status_code": 500,
+    "latency_ms": 124,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.6.1\",\"title\":\"An error occurred while processing your request.\",\"status\":500,\"detail\":\"Order test-order-id not found in system\",\"traceId\":\"00-ad"
+  },
+  {
+    "path": "/api/v1/orders/execution-reports",
+    "resolved_path": "/api/v1/orders/execution-reports",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 113,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "[]"
+  },
+  {
+    "path": "/api/v1/MarketData/GetWatchList/{watchlist_id}",
+    "resolved_path": "/api/v1/MarketData/GetWatchList/1",
+    "method": "GET",
+    "status_code": 500,
+    "latency_ms": 224,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"isSuccess\":false,\"returnCode\":500,\"serviceInstance\":[{\"serviceType\":\"svc-marketdata\",\"instanceID\":\"svc-marketdata-6974c876df-lp2fm\",\"lastUnixTime\":1781710465059.2893}],\"requestID\":\"4ba6b1d7-5816-4af"
+  },
+  {
+    "path": "/api/v1/MarketData/GetVN30Spot",
+    "resolved_path": "/api/v1/MarketData/GetVN30Spot",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 494,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"isSuccess\":true,\"returnCode\":0,\"serviceInstance\":[{\"serviceType\":\"svc-marketdata\",\"instanceID\":\"svc-marketdata-6974c876df-lp2fm\",\"lastUnixTime\":1781710465555.9233}],\"requestID\":\"ba9d5687-bd86-417f-9"
+  },
+  {
+    "path": "/api/v1/MarketData/GetSymbolSearch/{search}",
+    "resolved_path": "/api/v1/MarketData/GetSymbolSearch/VN30",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 131,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"isSuccess\":true,\"returnCode\":0,\"serviceInstance\":[{\"serviceType\":\"svc-marketdata\",\"instanceID\":\"svc-marketdata-6974c876df-lp2fm\",\"lastUnixTime\":1781710465694.6726}],\"requestID\":\"d8215165-2cad-48cf-8"
+  },
+  {
+    "path": "/api/v1/MarketData/GetProductMaster/{symbol}",
+    "resolved_path": "/api/v1/MarketData/GetProductMaster/VN30F1M",
+    "method": "GET",
+    "status_code": 404,
+    "latency_ms": 128,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"isSuccess\":false,\"returnCode\":404,\"serviceInstance\":[{\"serviceType\":\"svc-marketdata\",\"instanceID\":\"svc-marketdata-6974c876df-lp2fm\",\"lastUnixTime\":1781710465823.7893}],\"requestID\":\"0504eee9-344a-498"
+  },
+  {
+    "path": "/GetOhlcvHis/{symbol}/{resolution}/{from}/{to}",
+    "resolved_path": "/GetOhlcvHis/VN30F1M/1/1781624106485/1781710506485",
+    "method": "GET",
+    "status_code": 404,
+    "latency_ms": 126,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "default",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "404 page not found"
+  },
+  {
+    "path": "/GetOhlcvHis/{symbol}/{resolution}/{from}/{to}/{countBack}",
+    "resolved_path": "/GetOhlcvHis/VN30F1M/1/1781624106485/1781710506485/10",
+    "method": "GET",
+    "status_code": 404,
+    "latency_ms": 134,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "default",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "404 page not found"
+  },
+  {
+    "path": "/api/v1/diagnostics/margin-ratios/{symbol}",
+    "resolved_path": "/api/v1/diagnostics/margin-ratios/VN30F1M",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 130,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"forceCloseRate\":0,\"marginCallRate\":0,\"marginRatio\":1,\"productGroup\":\"\",\"symbol\":\"VN30F1M\"}"
+  },
+  {
+    "path": "/api/v1/notifications",
+    "resolved_path": "/api/v1/notifications",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 152,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"limit\":50,\"notifications\":[{\"id\":3012,\"user_id\":\"test_all_apis_a5b8a9e4@verolabs.co\",\"account_id\":\"demo-test_all_apis_a5b8a9e4@verolabs.co\",\"type\":\"Deposit\",\"topic\":\"Notify\",\"message_id\":\"1sIBGnilEk"
+  },
+  {
+    "path": "/api/v1/notifications/{notify_id}/read",
+    "resolved_path": "/api/v1/notifications/test-notify-id/read",
+    "method": "PUT",
+    "status_code": 400,
+    "latency_ms": 115,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"error\":\"invalid notify_id\"}"
+  },
+  {
+    "path": "/api/v1/referral/stats",
+    "resolved_path": "/api/v1/referral/stats",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 136,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"friendsWhoTraded\":0,\"refCode\":\"\",\"referralRewards\":0,\"referredCode\":\"\",\"referredFriends\":0,\"totalRebatesGiven\":0,\"totalVolume\":0}"
+  },
+  {
+    "path": "/api/v1/referral/refcode/{ref_code}",
+    "resolved_path": "/api/v1/referral/refcode/TESTREF",
+    "method": "GET",
+    "status_code": 404,
+    "latency_ms": 126,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "Ref_code not found"
+  },
+  {
+    "path": "/api/v1/referral/history",
+    "resolved_path": "/api/v1/referral/history",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 147,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "[]"
+  },
+  {
+    "path": "/api/v1/referral/refcode",
+    "resolved_path": "/api/v1/referral/refcode",
+    "method": "POST",
+    "status_code": 400,
+    "latency_ms": 192,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "refCode is required"
+  },
+  {
+    "path": "/api/v1/bank-accounts/{bankID}",
+    "resolved_path": "/api/v1/bank-accounts/test-bank-id",
+    "method": "GET",
+    "status_code": 404,
+    "latency_ms": 131,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "Bank account not found"
+  },
+  {
+    "path": "/api/v1/users/right-subscriptions",
+    "resolved_path": "/api/v1/users/right-subscriptions",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 124,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "[]"
+  },
+  {
+    "path": "/api/v1/users/right-subscriptions",
+    "resolved_path": "/api/v1/users/right-subscriptions",
+    "method": "POST",
+    "status_code": 400,
+    "latency_ms": 141,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "symbol is required"
+  },
+  {
+    "path": "/api/v1/users/covered-margin-call",
+    "resolved_path": "/api/v1/users/covered-margin-call",
+    "method": "PATCH",
+    "status_code": 400,
+    "latency_ms": 131,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "Missing required field: symbol"
+  },
+  {
+    "path": "/api/v2/chat/api/id-card",
+    "resolved_path": "/api/v2/chat/api/id-card",
+    "method": "POST",
+    "status_code": 200,
+    "latency_ms": 1271,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "500",
+      "401",
+      "404"
+    ],
+    "response_snippet": "{\"success\":false,\"data\":{\"idNumber\":\"\",\"fullName\":\"\",\"dateOfBirth\":\"\",\"sex\":\"\",\"nationality\":\"\",\"placeOfOrigin\":\"\",\"placeOfResidence\":\"\",\"placeOfBirth\":\"\",\"dateOfIssue\":\"\",\"dateOfExpiry\":\"\"},\"template"
+  },
+  {
+    "path": "/api/v1/MarketData/GetProductTradeLog/{symbol}/{from}/{to}",
+    "resolved_path": "/api/v1/MarketData/GetProductTradeLog/VN30F1M/1781624106485/1781710506485",
+    "method": "GET",
+    "status_code": 500,
+    "latency_ms": 184,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"isSuccess\":false,\"returnCode\":500,\"serviceInstance\":[{\"serviceType\":\"svc-marketdata\",\"instanceID\":\"svc-marketdata-6974c876df-lp2fm\",\"lastUnixTime\":1781710469072.4143}],\"requestID\":\"d84619b3-2e7f-406"
+  },
+  {
+    "path": "/api/v1/MarketData/GetVNIndex/{index}",
+    "resolved_path": "/api/v1/MarketData/GetVNIndex/VNINDEX",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 264,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"isSuccess\":true,\"returnCode\":0,\"serviceInstance\":[{\"serviceType\":\"svc-marketdata\",\"instanceID\":\"svc-marketdata-6974c876df-lp2fm\",\"lastUnixTime\":1781710469336.13}],\"requestID\":\"5c2f1ddc-396f-4808-9f9"
+  },
+  {
+    "path": "/api/v1/orders/stop-orders",
+    "resolved_path": "/api/v1/orders/stop-orders",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 126,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "[]"
+  },
+  {
+    "path": "/api/v1/orders/stop-order",
+    "resolved_path": "/api/v1/orders/stop-order",
+    "method": "POST",
+    "status_code": 400,
+    "latency_ms": 116,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\"title\":\"One or more validation errors occurred.\",\"status\":400,\"errors\":{\"Side\":[\"The Side field is required.\"],\"Account\":[\"The Account fie"
+  },
+  {
+    "path": "/api/v1/orders/stop-order/{orderId}",
+    "resolved_path": "/api/v1/orders/stop-order/test-stop-order-id",
+    "method": "GET",
+    "status_code": 404,
+    "latency_ms": 120,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "Stop order with ID test-stop-order-id not found"
+  },
+  {
+    "path": "/api/v1/orders/modify-stop-order/{orderId}",
+    "resolved_path": "/api/v1/orders/modify-stop-order/test-stop-order-id",
+    "method": "PUT",
+    "status_code": 400,
+    "latency_ms": 122,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\"title\":\"One or more validation errors occurred.\",\"status\":400,\"errors\":{\"Side\":[\"The Side field is required.\"],\"Account\":[\"The Account fie"
+  },
+  {
+    "path": "/api/v1/orders/bracket-orders",
+    "resolved_path": "/api/v1/orders/bracket-orders",
+    "method": "GET",
+    "status_code": 200,
+    "latency_ms": 212,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "[]"
+  },
+  {
+    "path": "/api/v1/orders/bracket-order",
+    "resolved_path": "/api/v1/orders/bracket-order",
+    "method": "POST",
+    "status_code": 400,
+    "latency_ms": 138,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "{\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\"title\":\"One or more validation errors occurred.\",\"status\":400,\"errors\":{\"Side\":[\"The Side field is required.\"],\"Account\":[\"The Account fie"
+  },
+  {
+    "path": "/api/v1/orders/bracket-order/{bracketOrderId}",
+    "resolved_path": "/api/v1/orders/bracket-order/test-bracket-order-id",
+    "method": "GET",
+    "status_code": 404,
+    "latency_ms": 142,
+    "success": true,
+    "is_status_documented": true,
+    "documented_statuses": [
+      "200",
+      "400",
+      "401",
+      "404",
+      "500"
+    ],
+    "response_snippet": "Bracket order with ID test-bracket-order-id not found"
+  }
+]
