@@ -403,7 +403,9 @@
         "javascript",
         "python",
         "go",
-        "csharp"
+        "csharp",
+        "rust",
+        "cpp"
       ],
       "autogenerate": true,
       "prefill": true

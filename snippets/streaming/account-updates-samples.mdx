@@ -289,4 +289,88 @@ async fn main() -> anyhow::Result<()> {
 }
 ```
 
+```cpp C++
+#include <ixwebsocket/IXWebSocket.h>
+#include <ixwebsocket/IXNetSystem.h>
+#include <nlohmann/json.hpp>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+using json = nlohmann::json;
+
+int main() {
+    ix::initNetSystem();
+
+    std::string stream_url = "wss://streaming.verolabs.co/connection/websocket";
+    std::string channel = "order:Account:ACC123456";
+
+    ix::WebSocket webSocket;
+    webSocket.setUrl(stream_url);
+
+    int request_id = 1;
+
+    auto send_command = [&webSocket](const json& command) {
+        if (command.empty()) {
+            webSocket.send("\n");
+        } else {
+            webSocket.send(command.dump() + "\n");
+        }
+    };
+
+    webSocket.setOnMessageCallback([&](const ix::WebSocketMessagePtr& msg) {
+        if (msg->type == ix::WebSocketMessageType::Open) {
+            send_command({
+                {"id", request_id++},
+                {"connect", json::object()}
+            });
+        }
+        else if (msg->type == ix::WebSocketMessageType::Message) {
+            std::stringstream ss(msg->str);
+            std::string raw;
+            while (std::getline(ss, raw, '\n')) {
+                if (raw.empty()) continue;
+
+                try {
+                    json reply = json::parse(raw);
+
+                    if (reply.empty()) {
+                        send_command(json::object());
+                        continue;
+                    }
+
+                    if (reply.contains("connect") && !reply.contains("error")) {
+                        send_command({
+                            {"id", request_id++},
+                            {"subscribe", {{"channel", channel}}}
+                        });
+                        continue;
+                    }
+
+                    if (reply.contains("push")) {
+                        auto push = reply["push"];
+                        if (push.value("channel", "") == channel && push.contains("pub")) {
+                            auto pub = push["pub"];
+                            if (pub.contains("data")) {
+                                std::cout << pub["data"].dump() << std::endl;
+                            }
+                        }
+                    }
+                } catch (const std::exception& e) {
+                    std::cerr << "Parse error: " << e.what() << std::endl;
+                }
+            }
+        }
+    });
+
+    webSocket.start();
+
+    std::string line;
+    std::getline(std::cin, line);
+
+    webSocket.stop();
+    return 0;
+}
+```
+
 </CodeGroup>
