@@ -5,7 +5,7 @@ import time
 import sys
 import os
 
-BASE_URL = "https://api-gw.verolabs.co"
+BASE_URL = "https://api-x9.verolabs.co"
 
 # Use relative path if running from project root, otherwise fallback to absolute path
 SPEC_PATH = "openapi.docs.en.json"

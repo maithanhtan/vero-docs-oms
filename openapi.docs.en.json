@@ -7,8 +7,8 @@
   },
   "servers": [
     {
-      "url": "https://api-gw.verolabs.co",
-      "description": "API gateway"
+      "url": "https://api-x9.verolabs.co",
+      "description": "OMS API gateway"
     }
   ],
   "tags": [
@@ -6054,8 +6054,8 @@
     "/GetOhlcvHis/{symbol}/{resolution}/{from}/{to}": {
       "servers": [
         {
-          "url": "https://openapi.verolabs.co",
-          "description": "Market micro API"
+          "url": "https://api-data-hub.verolabs.co",
+          "description": "Market data API"
         }
       ],
       "get": {
@@ -6284,8 +6284,8 @@
     "/GetOhlcvHis/{symbol}/{resolution}/{from}/{to}/{countBack}": {
       "servers": [
         {
-          "url": "https://openapi.verolabs.co",
-          "description": "Market micro API"
+          "url": "https://api-data-hub.verolabs.co",
+          "description": "Market data API"
         }
       ],
       "get": {
@@ -8441,7 +8441,7 @@
         },
         "servers": [
           {
-            "url": "https://api-gw.verolabs.co/api/v2/chat",
+            "url": "https://api-x9.verolabs.co/api/v2/chat",
             "description": "Signup API"
           }
         ],
