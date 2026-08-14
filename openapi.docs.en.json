@@ -3654,6 +3654,12 @@
         "tags": [
           "Market Data"
         ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "Market data API"
+          }
+        ],
         "operationId": "getWatchList",
         "summary": "Get a watchlist by id",
         "security": [],
@@ -4264,6 +4270,12 @@
         "tags": [
           "Market Data"
         ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "Market data API"
+          }
+        ],
         "operationId": "getVN30Spot",
         "summary": "Get default VN30 spot symbol",
         "security": [],
@@ -4844,6 +4856,12 @@
       "get": {
         "tags": [
           "Market Data"
+        ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "Market data API"
+          }
         ],
         "operationId": "searchSymbols",
         "summary": "Search symbols",
@@ -5439,6 +5457,12 @@
       "get": {
         "tags": [
           "Market Data"
+        ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "Market data API"
+          }
         ],
         "operationId": "getProductMaster",
         "summary": "Get product master data for a symbol",
@@ -6038,6 +6062,12 @@
         "tags": [
           "Market Data"
         ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "Market data API"
+          }
+        ],
         "operationId": "getOhlcvHistory",
         "summary": "Get OHLCV history",
         "security": [],
@@ -6261,6 +6291,12 @@
       "get": {
         "tags": [
           "Market Data"
+        ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "Market data API"
+          }
         ],
         "operationId": "getOhlcvHistoryCountBack",
         "summary": "Get OHLCV history with countBack",
@@ -8423,6 +8459,12 @@
         "tags": [
           "Market Data"
         ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "Market data API"
+          }
+        ],
         "operationId": "getProductTradeLog",
         "summary": "Get product trade log in range",
         "description": "Get product trade log for a symbol within a Unix millisecond time range.",
@@ -8722,6 +8764,12 @@
       "get": {
         "tags": [
           "Market Data"
+        ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "Market data API"
+          }
         ],
         "operationId": "getVNIndex",
         "summary": "Get VN index data",

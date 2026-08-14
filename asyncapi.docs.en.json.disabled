@@ -8,7 +8,7 @@
   "defaultContentType": "application/json",
   "servers": {
     "centrifugoWebSocket": {
-      "host": "streaming.verolabs.co",
+      "host": "api-data-hub.verolabs.co",
       "protocol": "wss",
       "description": "Centrifugo WebSocket endpoint from tenant.json. Current mobile client connects without a token; server allows anonymous subscriptions for these channels.",
       "bindings": {
@@ -24,8 +24,8 @@
         "auth": "anonymous"
       },
       "x-alternateTransportsFromTenant": {
-        "httpStream": "https://streaming.verolabs.co/connection/http_stream",
-        "sse": "https://streaming.verolabs.co/connection/sse",
+        "httpStream": "https://api-data-hub.verolabs.co/connection/http_stream",
+        "sse": "https://api-data-hub.verolabs.co/connection/sse",
         "note": "Configured in tenant.json but not used by the current mobile StreamingService."
       },
       "pathname": "/connection/websocket"

@@ -3663,6 +3663,12 @@
         "tags": [
           "Dữ liệu thị trường"
         ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "API dữ liệu thị trường"
+          }
+        ],
         "operationId": "getWatchList",
         "summary": "Lấy watchlist theo id",
         "security": [],
@@ -4273,6 +4279,12 @@
         "tags": [
           "Dữ liệu thị trường"
         ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "API dữ liệu thị trường"
+          }
+        ],
         "operationId": "getVN30Spot",
         "summary": "Lấy mã VN30 spot mặc định",
         "security": [],
@@ -4853,6 +4865,12 @@
       "get": {
         "tags": [
           "Dữ liệu thị trường"
+        ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "API dữ liệu thị trường"
+          }
         ],
         "operationId": "searchSymbols",
         "summary": "Tìm kiếm mã giao dịch",
@@ -5448,6 +5466,12 @@
       "get": {
         "tags": [
           "Dữ liệu thị trường"
+        ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "API dữ liệu thị trường"
+          }
         ],
         "operationId": "getProductMaster",
         "summary": "Lấy dữ liệu product master theo mã",
@@ -6047,6 +6071,12 @@
         "tags": [
           "Dữ liệu thị trường"
         ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "API dữ liệu thị trường"
+          }
+        ],
         "operationId": "getOhlcvHistory",
         "summary": "Lấy lịch sử OHLCV",
         "security": [],
@@ -6270,6 +6300,12 @@
       "get": {
         "tags": [
           "Dữ liệu thị trường"
+        ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "API dữ liệu thị trường"
+          }
         ],
         "operationId": "getOhlcvHistoryCountBack",
         "summary": "Lấy lịch sử OHLCV với countBack",
@@ -8432,6 +8468,12 @@
         "tags": [
           "Dữ liệu thị trường"
         ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "API dữ liệu thị trường"
+          }
+        ],
         "operationId": "getProductTradeLog",
         "summary": "Lấy trade log của mã theo khoảng thời gian",
         "description": "Lấy trade log của một mã giao dịch trong khoảng thời gian Unix milliseconds.",
@@ -8731,6 +8773,12 @@
       "get": {
         "tags": [
           "Dữ liệu thị trường"
+        ],
+        "servers": [
+          {
+            "url": "https://api-data-hub.verolabs.co",
+            "description": "API dữ liệu thị trường"
+          }
         ],
         "operationId": "getVNIndex",
         "summary": "Lấy dữ liệu VN index",

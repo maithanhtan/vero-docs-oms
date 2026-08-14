@@ -123,6 +123,8 @@ for path, path_item in paths.items():
         
         security = operation.get("security", spec.get("security", []))
         has_security = len(security) > 0
+        servers = operation.get("servers", spec.get("servers", []))
+        base_url = servers[0].get("url", BASE_URL) if servers else BASE_URL
         
         parameters = operation.get("parameters", [])
         
@@ -138,6 +140,7 @@ for path, path_item in paths.items():
         test_cases.append({
             "path": path,
             "method": method.upper(),
+            "base_url": base_url.rstrip("/"),
             "has_security": has_security,
             "security": security,
             "parameters": [
@@ -378,7 +381,7 @@ for idx, tc in enumerate(test_cases):
     has_sec = tc["has_security"]
     body_schema = tc["body_schema"]
     
-    url = BASE_URL + build_path(path)
+    url = tc["base_url"] + build_path(path)
     body = build_body(path, body_schema)
     
     # Build headers

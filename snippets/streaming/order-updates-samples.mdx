@@ -1,7 +1,7 @@
 <CodeGroup dropdown>
 
 ```javascript JavaScript
-const streamUrl = "wss://streaming.verolabs.co/connection/websocket";
+const streamUrl = "wss://api-data-hub.verolabs.co/connection/websocket";
 const channel = "order:ACC123456";
 
 const socket = new WebSocket(streamUrl);
@@ -49,7 +49,7 @@ import json
 
 import websockets
 
-STREAM_URL = "wss://streaming.verolabs.co/connection/websocket"
+STREAM_URL = "wss://api-data-hub.verolabs.co/connection/websocket"
 channel = "order:ACC123456"
 
 
@@ -100,7 +100,7 @@ import (
 )
 
 func main() {
-	streamURL := "wss://streaming.verolabs.co/connection/websocket"
+	streamURL := "wss://api-data-hub.verolabs.co/connection/websocket"
 	channel := "order:ACC123456"
 
 	conn, _, err := websocket.DefaultDialer.Dial(streamURL, nil)
@@ -174,7 +174,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 
-var streamUrl = new Uri("wss://streaming.verolabs.co/connection/websocket");
+var streamUrl = new Uri("wss://api-data-hub.verolabs.co/connection/websocket");
 var channel = "order:ACC123456";
 
 using var socket = new ClientWebSocket();
@@ -245,7 +245,7 @@ use tokio_tungstenite::{connect_async, tungstenite::Message};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let stream_url = "wss://streaming.verolabs.co/connection/websocket";
+    let stream_url = "wss://api-data-hub.verolabs.co/connection/websocket";
     let channel = "order:ACC123456";
 
     let (mut ws, _) = connect_async(stream_url).await?;
@@ -302,7 +302,7 @@ using json = nlohmann::json;
 int main() {
     ix::initNetSystem();
 
-    std::string stream_url = "wss://streaming.verolabs.co/connection/websocket";
+    std::string stream_url = "wss://api-data-hub.verolabs.co/connection/websocket";
     std::string channel = "order:ACC123456";
 
     ix::WebSocket webSocket;
